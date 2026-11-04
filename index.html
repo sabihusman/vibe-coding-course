@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRM Companion — Today</title>
+<style>
+:root{--bg:#f4f4f5;--card:#fff;--text:#18181b;--muted:#6b7280;--border:#e5e7eb;--blue:#3b82f6;--green:#22c55e;--red:#dc2626;--amber:#d97706}
+[data-theme="dark"]{--bg:#18181b;--card:#27272a;--text:#fafafa;--muted:#a1a1aa;--border:#3f3f46;--blue:#60a5fa;--green:#4ade80;--red:#f87171;--amber:#fbbf24}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:640px;margin:0 auto;padding:24px 16px 110px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{font-size:24px;margin:0} p{margin:6px 0} .muted{color:var(--muted);font-size:14px}
+button{font:inherit;cursor:pointer} .theme{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px}
+.progress{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:20px 0}
+.bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:10px}.fill{height:100%;background:var(--green);width:0%;transition:width .2s}
+h2{font-size:18px;margin:24px 0 12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.card b{display:block}.badge{font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;display:inline-block;margin-top:6px}
+.overdue{background:#fee2e2;color:var(--red)}.today{background:#fef3c7;color:var(--amber)}
+.log{margin-left:auto;border:0;background:var(--blue);color:#fff;border-radius:999px;padding:9px 14px;white-space:nowrap}
+.big{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;width:min(600px,calc(100% - 32px));background:var(--blue);color:#fff;border:0;border-radius:999px;padding:16px;font-size:17px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:flex-end;justify-content:center}.sheet.open{display:flex}
+.sheetbox{background:var(--card);width:100%;max-width:640px;border-radius:20px 20px 0 0;padding:20px;max-height:90vh;overflow:auto}
+.sheetbox label{display:block;margin:14px 0 6px;font-weight:600}.sheetbox input,.sheetbox select{width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font:inherit}
+.outcomes{display:flex;flex-wrap:wrap;gap:8px}.outcomes button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:99px;padding:8px 12px}.outcomes button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.row{display:flex;gap:10px;margin-top:18px}.row button{flex:1;padding:13px;border-radius:999px}.cancel{border:1px solid var(--border);background:var(--card);color:var(--text)}.save{border:0;background:var(--blue);color:#fff;font-weight:700}
+.toast{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:86px;background:var(--text);color:var(--bg);padding:12px 16px;border-radius:999px;gap:12px;align-items:center}.toast.show{display:flex}.toast button{background:none;border:0;color:inherit;font-weight:700;text-decoration:underline}
+.empty{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div><h1>Today</h1><p class="muted">Your follow-ups, in one place. Log between calls.</p></div>
+<button class="theme" id="themeBtn" type="button">Dark</button>
+</header>
+<div class="progress"><div><strong id="progressText">0 of 6 done</strong></div><div class="bar"><div class="fill" id="progressFill"></div></div><p class="muted">Sample data only. It resets if you reload the page.</p></div>
+<h2>Needs follow-up</h2><div id="needs"></div>
+<h2>Updated today</h2><div id="updated"></div>
+<div id="caught" style="display:none"><div class="empty"><h2 style="margin-top:0">All caught up</h2><p class="muted">All 6 follow-ups are logged for today.</p><button class="theme" id="resetBtn" type="button">Reset sample day</button></div></div>
+</div>
+<button class="big" id="bigLog" type="button">Log activity</button>
+<div class="sheet" id="sheet"><div class="sheetbox">
+<h2 style="margin-top:0">Log activity</h2>
+<label for="dealSel">Deal</label><select id="dealSel"></select>
+<label>Outcome</label><div class="outcomes" id="outcomes"></div>
+<label for="nextStep">Next step</label><input id="nextStep" type="text" placeholder="e.g. Send the signed quote back">
+<label for="nextDate">Next step date</label><input id="nextDate" type="date">
+<div class="row"><button class="cancel" id="cancelBtn" type="button">Cancel</button><button class="save" id="saveBtn" type="button">Save</button></div>
+</div></div>
+<div class="toast" id="toast"><span id="toastText"></span><button id="undoBtn" type="button">Undo</button></div>
+<script>
+const deals=[
+{id:1,name:"Maya Chen",company:"Northwind Retail",next:"Send the signed quote back for countersign",status:"overdue",label:"Overdue by 2 days"},
+{id:2,name:"Sofia Reyes",company:"Cascade Fitness Co.",next:"Follow up on trial renewal",status:"overdue",label:"Overdue by 1 day"},
+{id:3,name:"Daniel Ortiz",company:"BluePeak Logistics",next:"Confirm delivery schedule",status:"today",label:"Due today"},
+{id:4,name:"Priya Nair",company:"Harbor Dental Group",next:"Send treatment plan",status:"today",label:"Due today"},
+{id:5,name:"James Whitfield",company:"Meridian Legal",next:"Review contract draft",status:"today",label:"Due today"},
+{id:6,name:"Aisha Bello",company:"GreenLeaf Grocers",next:"Confirm weekly order",status:"today",label:"Due today"}];
+const outcomes=["Called","Emailed","Met","No answer"];
+let done={}, selectedOutcome="Called", lastMoved=null;
+const needsEl=document.getElementById("needs"), updatedEl=document.getElementById("updated"), dealSel=document.getElementById("dealSel"), outcomesEl=document.getElementById("outcomes");
+function initials(n){return n.split(" ").map(x=>x[0]).join("")}
+function render(){
+const needs=deals.filter(d=>!done[d.id]), updated=deals.filter(d=>done[d.id]);
+document.getElementById("progressText").textContent=updated.length+" of "+deals.length+" done";
+document.getElementById("progressFill").style.width=(updated.length/deals.length*100)+"%";
+document.getElementById("caught").style.display=needs.length===0?"block":"none";
+needsEl.innerHTML=needs.map(d=>'<div class="card"><div class="avatar">'+initials(d.name)+'</div><div style="flex:1"><b>'+d.name+'</b><span class="muted">'+d.company+'</span><div>Next: '+d.next+'</div><span class="badge '+(d.status==="overdue"?"overdue":"today")+'">'+d.label+'</span></div><button class="log" data-id="'+d.id+'" type="button">Log</button></div>').join("") || '<p class="muted">Nothing left to follow up.</p>';
+updatedEl.innerHTML=updated.map(d=>'<div class="card"><div class="avatar">'+initials(d.name)+'</div><div><b>'+d.name+'</b><span class="muted">'+d.company+'</span><div>'+done[d.id].outcome+' · just now. Next: '+done[d.id].next+'</div></div></div>').join("") || '<p class="muted">Nothing logged yet today.</p>';
+dealSel.innerHTML=needs.map(d=>'<option value="'+d.id+'">'+d.name+' — '+d.company+'</option>').join("");
+needsEl.querySelectorAll(".log").forEach(b=>b.addEventListener("click",()=>openSheet(Number(b.dataset.id))));
+}
+function renderOutcomes(){outcomesEl.innerHTML=outcomes.map(o=>'<button type="button" class="'+(o===selectedOutcome?"on":"")+'" data-o="'+o+'">'+o+'</button>').join("");outcomesEl.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{selectedOutcome=b.dataset.o;renderOutcomes()}))}
+function openSheet(id){if(!id)id=Number(dealSel.value);if(!id)return;dealSel.value=id;const d=deals.find(x=>x.id===id);document.getElementById("nextStep").value="";const t=new Date();t.setDate(t.getDate()+1);document.getElementById("nextDate").value=t.toISOString().slice(0,10);document.getElementById("sheet").classList.add("open")}
+function closeSheet(){document.getElementById("sheet").classList.remove("open")}
+document.getElementById("bigLog").addEventListener("click",()=>openSheet());
+document.getElementById("cancelBtn").addEventListener("click",closeSheet);
+document.getElementById("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
+document.getElementById("saveBtn").addEventListener("click",()=>{const id=Number(dealSel.value);const next=document.getElementById("nextStep").value.trim()||deals.find(x=>x.id===id).next;done[id]={outcome:selectedOutcome,next};lastMoved=id;closeSheet();render();const d=deals.find(x=>x.id===id);document.getElementById("toastText").textContent="Logged — "+d.name+" moved to Updated today";document.getElementById("toast").classList.add("show");setTimeout(()=>document.getElementById("toast").classList.remove("show"),4000)});
+document.getElementById("undoBtn").addEventListener("click",()=>{if(lastMoved){delete done[lastMoved];lastMoved=null;document.getElementById("toast").classList.remove("show");render()}});
+document.getElementById("resetBtn").addEventListener("click",()=>{done={};lastMoved=null;render()});
+document.getElementById("themeBtn").addEventListener("click",()=>{const dark=document.documentElement.getAttribute("data-theme")==="dark";document.documentElement.setAttribute("data-theme",dark?"light":"dark");document.getElementById("themeBtn").textContent=dark?"Dark":"Light"});
+renderOutcomes();render();
+</script>
+</body>
+</html>
