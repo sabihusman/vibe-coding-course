@@ -47,7 +47,9 @@ Also on screen:
 
 ## Show & Swap notes
 
-- What I showed: [add link and one line after the swap]
-- What my partner understood (in their words): [to add]
-- Where they got confused / pushed back: [to add]
-- What I'll change as a result: [to add]
+- What I showed: CRM Companion v3, testing Hypothesis B — call or email right from the task, so reps stay in the CRM and log as they go. Link above.
+- What my partner understood (in their words): "If reps can call or email straight from the follow-up card, they'll stay in the CRM and log as they go, instead of working in their phone or inbox and logging afterwards (or never). Kill switch: if the reps pick a follow-up and still open their phone or email app rather than doing the call, email and log from that card, Hypothesis B has failed." They got it exactly right.
+- Where they got confused / pushed back: (1) Cancelling the call/email panel without "Save and log" does not count as a call, even if the call was made — false metric. (2) Was not sure if the left nav was intentionally disabled for the test scope. (3) The kill-switch line on screen primes testers — it tells them what failure looks like, so they will stay in the CRM because they know they are being watched, and the kill switch cannot fire honestly. It should be hidden, with a neutral instruction instead.
+- What I'll change as a result: Hide the kill-switch line from the screen, replace it with "Work this follow-up as you normally would", and keep the kill-switch criteria in the internal test plan only. Also count a started call/email as attempted if the panel is closed without saving, and label the left nav as out of scope for this test.
+
+Note: my partner did not answer the third question — did the data feel like a real product?
