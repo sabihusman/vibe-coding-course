@@ -7,7 +7,7 @@ CRM Companion hardening chain
 CRM Companion v3, Module 2. Scenario 02 — The Internal Tool Nobody Uses.
 Hypothesis B: letting reps call or email right from the task will keep them in the CRM and log as they go, instead of doing the work in email and on the phone, then logging it after.
 Live: https://vibe-coding-course-weld-omega.vercel.app
-Main baseline: a6e7b38
+Main baseline: 19fc70b (Module 3 live site merged 2026-11-10 evening)
 
 Design to keep throughout: dark sidebar #1e1e2d, light content #f9fafb, white cards, 8px radius, borders #e5e7eb, blue primary #3b82f6, green success #22c55e. Same 6 sample deals, same ARR order, same stepper. Do not rebuild what already works. Do not change the hypothesis, the pack quotes, or the metrics on screen.
 
@@ -49,14 +49,30 @@ Maintain the same design language throughout and tether all behavior strictly to
 
 The Today screen needs a polish.
 1. Start by listing the 3 biggest gaps in typography and spacing compared to the existing Today design system.
-2. Once you've identified those, make this one change only: remove the kill-switch test line from the screen — "If you'd still open your phone or email app instead, Hypothesis B has failed" — and replace it with the neutral instruction "Work this follow-up as you normally would." Keep the kill-switch criteria in the internal test plan only, not on screen. Also label the left nav as out of scope for this test, with the short note "Nav is off for this test — only the follow-ups on this screen are in scope." And count a call or email as attempted if the panel is closed without "Save and log", instead of counting it as no call.
+2. Once you've identified those, make only these changes, and nothing else:
+- Keep the Hypothesis B strip, the pack quotes, and the metrics exactly as they are. Remove only the paragraph starting "Test it yourself" and ending "Hypothesis B has failed", and replace it in the same place, directly under the hypothesis strip, with "Work this follow-up as you normally would." Keep the kill-switch criteria in the internal test plan only, not on screen.
+- Label the left nav as out of scope for this test, with the short note "Nav is off for this test — only the follow-ups on this screen are in scope."
+- Call and Email buttons: both 8px radius, same size. Call is primary filled, Email is secondary outline. Green #22c55e stays only for success, the stepper and success states, not as an action color.
+- ARR numbers use tabular figures, so digits line up in a column.
+- This is the one logic change allowed: if a Call or Email panel is closed without "Save and log", and the timer ran or a draft was typed, count it as attempted in Activity. Do not move the deal to Updated today.
 
-Don't change anything else in the project or touch the underlying logic, navigation, or screens from Prompts 1 and 2.
+Do not add new data, do not add a last-message field, and do not change anything else in the project or touch any other logic.
+
+Note: the lab guide's finished Prompt 3 ("resize the headers and update the kill-switch test line to match") does not say any of this. It does not say to remove the line, what to replace it with, or to label the nav, count an attempt, or fix the buttons. Do not use that version — use the prompt above, which is the one that was actually run.
 
 ---
 
 ## What I learned
-[to add after executing the chain]
+- Naming the exact element stops the AI touching the rest.
+- Passing the README as context keeps the chain consistent.
+- Hard-coding the exact empty and error strings is what separates a mockup from a product.
+- Audit first, then act — listing the gaps before fixing them keeps a Refine prompt to one change.
+- Chain order matters: Expand, then Behavior, then Refine. Running Refine first meant checking later that its changes survived the next two prompts.
+- A prompt that says "do not touch the underlying logic" and then asks for a logic change will contradict itself. Name the one logic change allowed, in the prompt.
 
 ## What broke
-[to add after executing the chain]
+- The lab guide's Prompt 3 was too vague to run as written. "Resize the headers and update the kill-switch test line to match" does not say to remove the line, what to replace it with, or to fix the nav, the attempted count, or the buttons. Fix: rewrote it with the exact line to remove, the exact replacement, and the exact place it goes.
+- The copyable Refine prompt from the design-system mockup contradicted itself in 5 places, and Claude Code flagged them before anything was applied: "do not show any hypothesis text" would have removed the whole Hypothesis B strip; counting a closed panel as attempted is a logic change, against a "no logic changes" line; showing the contact's last message needs new data, which the prompt forbade; Email could not be both 8px and fully rounded; "no second accent" conflicted with green #22c55e. Fix: kept the strip, named the attempted count as the one logic change allowed, dropped the last-message idea, set both buttons to 8px, and kept green for success only.
+- Live-site test after the merge found an Email attempted bug: closing a Call panel without saving logged "Call attempted", but closing an Email panel without sending logged nothing. Fix: made Email match Call — a typed or edited draft closed without "Send and log" now logs "Email attempted" in Activity, and the deal stays in Follow-ups. Fixed in the Muse artifact 2026-11-10 evening; not yet pushed to the live site at the time this file was updated.
+- Module 2 was built with one big prompt plus fixes after, so the loading, empty, and error wording was never written down. Chaining fixed that — Prompt 2 writes the exact strings down, and the test controls force each state.
+- Show and Swap of the prompts was not done in this lab. No partner feedback on the prompts is recorded here.
