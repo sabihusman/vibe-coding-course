@@ -993,9 +993,11 @@ byId("sendEmail").addEventListener("click", function(){
 
 /* ---------- Close handling ---------- */
 /* The one logic change in this polish: closing a Call or Email panel without
-   "Save and log" counts as attempted in Activity when the timer ran (call)
-   or a draft was typed (call note, or an edited email draft). The deal is
-   NOT moved to Updated today. */
+   saving counts as attempted in Activity when the timer ran (call) or a
+   draft was typed or edited (call note, or the email subject or body
+   changed from what the composer opened with). Email mirrors Call through
+   the same close paths — Cancel, the X button, a backdrop click, or
+   Escape. The deal is NOT moved to Updated today. */
 function maybeLogAttempt(kind){
   if(!currentId || done[currentId]) return;
   var d = dealById(currentId);
@@ -1007,7 +1009,7 @@ function maybeLogAttempt(kind){
   } else {
     var draftTyped = byId("emailSubject").value !== emailInitialSubject || byId("emailBody").value !== emailInitialBody;
     if(draftTyped){
-      addAttempt(currentId, "email", "Email attempted — " + d.contact + ", " + d.company, "Draft started · Panel closed without Save & log");
+      addAttempt(currentId, "email", "Email attempted — " + d.contact + ", " + d.company, "Panel closed without Send and log");
     }
   }
 }
