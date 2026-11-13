@@ -1,6 +1,6 @@
 /* render(): redraws every list after any change. */
 function render(){
-  renderStepper(); renderTodo(); renderUpdated(); renderFeed(); renderHistory();
+  renderProgress(); renderTodo(); renderUpdated(); renderHistory();
   if(detailId) renderDetailActivity();
-  byId("navCount").textContent = DEALS.length - doneCount();
+  byId("navCount").textContent = String(DEALS.length - doneCount());
 }

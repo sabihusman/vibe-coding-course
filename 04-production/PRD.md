@@ -3,9 +3,9 @@
 **Product:** CRM Companion. A rep's Today view for a CRM that only 18% of reps use.
 **Stage:** Prototype (Modules 1–3) → Production (Module 4)
 **Owner:** Sabih Usman
-**Last updated:** 2026-11-12
+**Last updated:** 2026-11-13 (design handoff v1.0 built: focused Today queue, Problem statement, intentional forms)
 **Live prototype:** https://vibe-coding-course-weld-omega.vercel.app
-**Repo main:** 2144688
+**Repo main:** c7514e5
 **Source of truth:** the live prototype above. This PRD is extracted from what that build actually does, in the eight blocks below. Where the build is mocked, this PRD says so.
 
 ---
@@ -15,8 +15,8 @@
 CRM Companion is a rep's Today view. Each morning, a rep opens one screen, sees who to call or email next, does the call or email right there, and has it logged, with no extra admin.
 
 - **One-liner:** "Do the work here, not log it after."
-- **Surface:** a web page. Today is the main screen. Deal Detail and Activity History are the other two screens. An Admin portal, the Orbit Code Explorer, is separate from the rep's view.
-- **Primary action:** call or email a follow-up, right from the task card.
+- **Surface:** a web page with a sidebar. Workspace: Today (the main screen), Activity history, and Problem statement. Deal Detail opens from a deal. Admin, the Orbit Code Explorer with the Living PRD and Handoff, is in its own Admin group, separate from the rep's view.
+- **Primary action:** call or email a follow-up, right from the queue.
 - **Who it is for:** Sales reps, Account Executives, and Sales Development Representatives. The person on the screen is a sample rep, Alex Rivera.
 - **Job to be done:** open one screen, see who to call or email next, do it right there, and have it logged.
 
@@ -26,17 +26,23 @@ CRM Companion is a rep's Today view. Each morning, a rep opens one screen, sees 
 - **Hypothesis:** Letting reps call or email right from the task will keep them in the CRM and log as they go, instead of doing the work in email and on the phone, then logging it after.
 - **Risk type:** Usability. Will reps actually do the call or email inside the CRM, instead of in their usual email or phone app?
 - **Kill switch:** If a tester still opens their phone or email app instead of doing the call or email in the tool, or gets stuck more than 30 seconds on Call or Email, Hypothesis B has failed. Fix the flow or pivot. Do not fix the look. The kill-switch rules live in the test plan only. They are never on screen.
+- **Where the research lives:** the hypothesis, the research metrics and the rep quotes are on the Problem statement screen, not on Today. They are supplied research figures, not the rep's own results.
 
 ## 03 · User Flow & Screen Map
 
-1. **Today:** 6 follow-ups, biggest first ($663k total). Call and Email first on every card. Log activity second.
-2. **Call or Email:** a simulated panel opens. Call has a timer, a note, and an outcome (Called / No answer / Met). Email has a pre-filled draft and Send. Saving or sending logs the activity and moves the deal to Updated today.
-3. **Attempted:** closing a Call or Email panel without saving logs it as attempted in Activity, if the timer ran or a draft was typed. The deal stays in Follow-ups.
-4. **Deal Detail:** click a follow-up card to open that deal. Company, contact, sample ARR, due date, next step, past activity. Call and Email first there too. Back returns to Today.
-5. **Activity History:** every call, email, log, and attempted call or email, newest first. Search by name or company. Click a row to open Deal Detail. Back returns to Today.
-6. **Admin:** an "Admin" entry in the sidebar opens the Orbit Code Explorer. It maps the app as an orbit, with 27 nodes. Click a node to see what it does, what it connects to, and if it is real or mocked. Each node has a "Show code" toggle with a short piece of that node's real code.
+1. **Today:** a quiet summary line (6 follow-ups · 2 overdue · $663k total sample ARR) and progress (0 of 6 updated), then the follow-up queue. Sort is Highest ARR by default, or Overdue first (most days overdue, then ARR). Each row has small labelled Call, Email and Log activity actions.
+2. **Select a contact:** selecting a row updates the deal context panel beside the queue — company, contact, ARR, due, next step, Call, Open deal, and recent activity. Selecting never changes data.
+3. **Call:** a named dialog says "Ready when you are". The timer starts only after Start simulated call. An outcome — Connected, No answer or Left voicemail — is required to save. Saving records one activity and moves the deal to Updated today.
+4. **Email:** a named dialog with an editable subject and message, both required. Sending records one activity and moves the deal to Updated today. Nothing is actually sent.
+5. **Log activity:** a short note form. A real note is required; saving records one activity and moves the deal to Updated today.
+6. **Cancel records nothing:** opening, cancelling or closing Call, Email or Log activity creates no activity and no attempted entry. Unsent text is kept as a draft for that deal.
+7. **Undo:** from the toast or from Updated today. It removes that one activity, restores the progress count, and puts the deal back in its place in the queue.
+8. **Deal Detail:** Open deal in the context panel (or a row in Activity history, or Updated today) opens the full deal. Back returns to Today.
+9. **Activity history:** a sidebar destination. Every call, email and note, newest first. Search by name or company. Select a row to open Deal Detail.
+10. **Problem statement:** a sidebar destination with the full research block. Switching to it and back keeps the queue, sort, selection, progress and history.
+11. **Admin:** in its own sidebar group. Orbit Code Explorer (30 nodes, each with a "Show code" excerpt), Living PRD and Handoff, with cross-links.
 
-*Screen map:* `Today → Call / Email panel → Updated today` · `Today → Deal Detail → Activity History → Deal Detail` · `Today → Activity History → Today` · `Sidebar → Admin → Orbit Code Explorer`
+*Screen map:* `Today → Call / Email / Log dialog → Updated today` · `Today → context panel → Open deal → Deal Detail → Activity history → Deal Detail` · `Sidebar → Activity history` · `Sidebar → Problem statement → Today` · `Sidebar → Admin → Orbit / Living PRD / Handoff`
 
 ## 04 · Success Metrics
 
@@ -45,9 +51,11 @@ CRM Companion is a rep's Today view. Each morning, a rep opens one screen, sees 
 | North Star: work done in the tool | % of follow-ups where the call or email was done from the task, not outside it | ≥ 70% in a test session (proposed, not yet measured) |
 | Activation | % of testers who do at least one Call or Email from a task | ≥ 80% in a test session (proposed) |
 | Log as you go | % of calls/emails that are logged in the same step, with no log-after | ≥ 80% (proposed) |
-| Attempted, not lost | % of closed panels that are counted as attempted, not as no call | 100% — Call and Email must match (Email was fixed in 4f68201 after it failed this check live) |
+| No accidental activity | % of opened-then-cancelled dialogs that create no activity | 100% — checked by the acceptance tests |
 | Time to first action | Time from opening Today to starting the first Call or Email | Under 30 seconds — the kill-switch floor |
 | Loading / empty / error | % of testers who see the right state with the exact wording, when forced | 100% in the test controls |
+
+**Retired:** "Attempted, not lost" (% of closed panels counted as attempted). The design handoff replaced the attempted-on-close rule: opening or cancelling a dialog now records nothing.
 
 No metric above has been measured in a real user session yet. The A/B test plan is written (6–8 testers, each tries Version A and Version B, half A-first). No session has run yet.
 
@@ -55,50 +63,53 @@ No metric above has been measured in a real user session yet. The A/B test plan 
 
 Extracted from the prototype, what was actually built.
 
-- **Frontend:** a single self-contained HTML file. The Muse artifact `crm-companion-today-view-v3`, exported as the repo's root `index.html`. It is not a Vite / React project, so there is no `src/pages` folder.
-- **Screens:** Today, Deal Detail, and Activity History, switched in place in one page. Admin Orbit is a fourth view, in the same file.
-- **Call / Email:** simulated panels only. No real call is made. No real email is sent.
-- **Data:** 6 sample deals and 12 seeded sample activities, Oct 28–Nov 4, in data arrays in the file. Anything logged in the session is added on top, newest first.
-- **State:** in memory only. Nothing is saved to a server, a file, or a database. It resets on reload.
-- **Naming:** screens and functions are named for what they do — Today, Deal Detail, Activity History, `showView`, `openDeal`, `openHistory`, `renderTodo`, `renderUpdated`, `completeDeal`, `addAttempt`. An engineer can tell what each does from its name. It is not `Component_1.tsx` naming.
-- **Separation:** the sample data sits in data arrays, separate from the functions that draw the screen. But everything lives in one file. Data and display are not in separate files. There is no data service layer yet.
-- **Documentation:** there is no README inside the project itself. The build summary is on the computer only, per the Module 3 lab guide. The prompt chain is in `03-chaining/PROMPTS.md`.
-- **Gap to production:** needs a real backend and auth, a split into files by feature, and a decision on the sidebar Deals and Activity tabs.
+- **Frontend:** plain HTML, CSS and JavaScript, with no build step and no framework. `index.html` is a short shell; the code lives in `src/`, grouped by feature (Lab 2 refactor). Scripts are classic `<script>` tags loaded in a fixed order.
+- **Screens:** Today, Problem statement, Deal Detail, Activity history and Admin, switched in place. Each has its own address (`#today`, `#problem`, `#history`, `#admin`, `#deal-…`), so browser Back works.
+- **Call / Email / Log:** accessible dialogs with focus kept inside, Escape to cancel, and focus returned afterwards. Call and Email are simulated: no real call is made and no real email is sent.
+- **Data:** 6 sample deals and 12 seeded sample activities, Oct 28–Nov 4. On the live site, each browser gets its own copy in Supabase.
+- **State:** saved in Supabase for each browser's anonymous rep (project `toctukiccnirfkkoaqog`, tables `deals`, `activities`, `follow_ups`, with row-level security), so it survives a reload. Without the Supabase settings, the app falls back to in-page sample data that resets on reload.
+- **Naming:** screens and functions are named for what they do — `showView`, `openDeal`, `openHistory`, `renderTodo`, `renderContext`, `sortDeals`, `completeDeal`, `undoDeal`, `openDialog`. An engineer can tell what each does from its name.
+- **Separation:** sample data in `src/shared/data/`, calculations (including the sort) in `src/shared/model/`, dialogs and list states in `src/shared/components/`, one folder per screen in `src/pages/`, navigation and start-up in `src/app/`, and checks in `tests/`.
+- **Documentation:** this PRD, the handoff note, the prompt chain in `03-chaining/PROMPTS.md`, and the Orbit Code Explorer. The build summary is on the computer only, per the Module 3 lab guide.
+- **Gap to production:** real sign-in instead of anonymous reps, and a decision on a Deals screen.
 
 ## 06 · Assumptions & Risks
 
 - **Assumption:** reps will do the call or email inside the CRM, instead of in their usual email or phone app. *Risk:* if they do not, a faster log screen alone will not fix adoption. That is the kill switch above.
-- **Assumption:** 6 follow-ups in ARR order is the right morning list. *Risk:* a rep may need due-date order, or a mix of due date and ARR, instead.
+- **Assumption:** Highest ARR is the right default order for the morning list. *Risk:* some reps work overdue items first. Overdue first is offered as a sort; which default works better is untested.
 - **Assumption:** the sample history makes the screens feel real. *Risk:* the 12 seeded activities are invented, Oct 28–Nov 4, and will go stale. They are useful for testing, not real rep history.
-- **Risk:** Call and Email may not stay symmetric. The live test found Email attempted did not log while Call attempted did. It was fixed in 4f68201, but Pause/Reset and the No answer / Met outcomes were not clicked in that test.
-- **Risk:** Log activity logs instantly, with no panel or form. That was not specified in the prompts. A rep may expect a note and outcome there too.
-- **Risk:** the single file will tangle as it grows. The next refactor should split it by feature before adding a backend.
+- **Risk:** removing attempted-on-close means a rep who makes a call and then closes the dialog without saving leaves no record. The handoff chose this so that only intentional saves count; the cost is under-counting abandoned attempts.
+- **Risk:** the `src/` files share globals and a fixed load order. Moving one script in `index.html` can break the app. Converting to ES modules is the next structural step.
+- **Risk:** anonymous sign-in gives each browser its own rep. It suits a prototype test; real reps need accounts.
 - **Comprehension debt:** the build was made with prompts, not written by hand. This PRD, the prompt chain in `03-chaining/PROMPTS.md`, and the Orbit Code Explorer in the Admin portal are the first steps in paying that debt down.
 
 ## 07 · In vs. Out of Scope
 
 **In scope (this build):**
-- Today, Deal Detail, and Activity History, with Call and Email first, Log activity second.
-- Simulated Call and Email panels, with save/send logging and attempted counting.
-- Loading, empty, and error states for Today and Activity History, with exact wording and Retry.
-- Neutral line "Work this follow-up as you normally would." Left nav labelled out of scope.
-- Admin portal: Orbit Code Explorer, with 27 nodes, search, filters, FAQ and tips, and "Show code" per node.
+- Today as a compact queue: summary and progress, Highest ARR and Overdue first sorts, a selected-deal context panel, small labelled Call, Email and Log activity actions.
+- Problem statement screen with the full research block: signal, hypothesis, feedback and attribution, the instruction "Work this follow-up as you normally would.", four metrics and three quotes.
+- Call, Email and Log activity dialogs that save only on explicit submission, with required fields, drafts kept on cancel, one activity per save, and Undo.
+- Working sidebar: Today, Activity history and Problem statement; Admin in its own group.
+- Loading, empty and error states for Today and Activity history, with exact wording and Retry; forced-state controls in a Test controls area.
+- Accessible dialogs, keyboard operation, screen-reader announcements, and layouts from 320px to 1366px and at 200% zoom.
+- Supabase persistence with anonymous auth and row-level security.
+- Admin portal: Orbit Code Explorer, with 30 nodes, search, filters, FAQ and tips, and "Show code" per node; Living PRD and Handoff tabs.
 
 **Out of scope (this build):**
-- Real calls or emails. Both panels are simulated. Nothing is sent.
+- Real calls or emails. Call and Email are simulated. Nothing is sent.
 - Real CRM data or a CRM link. All names, deals, and amounts are sample data.
-- Saving data. Everything is in memory only. It resets on reload.
-- Sign-in, accounts, or multi-user support. There is no sign-in.
-- Sidebar Deals and Activity tabs. They are plain text, not links. They do nothing by design in this test.
+- Real accounts. Each browser is an anonymous rep; there is no sign-in screen.
+- A Deals screen. It is hidden from the sidebar until it is built.
+- Attempted-on-close logging. Retired by the design handoff.
+- A dark theme or theme picker.
 - Version B, the dispatch-board layout. It is a separate Muse artifact, kept apart for later A/B testing. It is not in this build, not in the repo, and not on the live site.
-- Supabase backend. Proposed in the handoff note. Not built or connected yet.
 
 ## 08 · Engineering Recommendation
 
 - **Front Door:** this PRD lives at `04-production/PRD.md`. The handoff note lives at `04-production/handoff-note.md`.
-- **Cleanup:** split the single HTML file by feature, following the handoff note and your instructor's layout: `src/pages/` with one folder per screen (Today, Deal Detail, Activity History), `src/shared/data/` for the sample deals and activities, `src/shared/model/` for the calculations, `src/shared/components/` for the panels, `src/app/` for navigation, and `tests/` for the logic checks. Do this before adding a backend, or the data and display logic will tangle further.
-- **Memory:** move deals and activities to Supabase (PostgreSQL + Auth), with row-level security so a rep sees only their own data. Replace the in-page data arrays. The Call and Email panels stay simulated in v1 — the backend only needs to store what was attempted, saved, or sent in the tool.
-- **Next spike:** run the A/B test first, with Version A and Version B, before building the backend. The test plan is written. If Version B wins, build the backend for the winning layout, not for both.
+- **Cleanup:** done in Lab 2 — the code is split by feature into `src/`. Next: convert the classic scripts to ES modules so the load order is explicit.
+- **Memory:** done — deals and activities live in Supabase with row-level security. Call and Email stay simulated in v1; the backend only stores what was saved or sent in the tool.
+- **Next spike:** run the A/B test, Version A against Version B. The test plan is written. If Version B wins, move the backend to the winning layout.
 - **Handoff:** see `04-production/handoff-note.md` for the engineer-ready summary.
 
 ---

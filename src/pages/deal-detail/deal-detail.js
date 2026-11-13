@@ -36,7 +36,7 @@ byId("detailEmailBtn").innerHTML = mailSvg + " Email";
 byId("detailCallBtn").addEventListener("click", function(){ if(detailId) openCall(detailId); });
 byId("detailEmailBtn").addEventListener("click", function(){ if(detailId) openEmail(detailId); });
 byId("detailLogBtn").addEventListener("click", function(){ if(detailId) logActivity(detailId); });
-byId("detailBack").addEventListener("click", function(){ showView("today"); });
+byId("detailBack").addEventListener("click", function(){ showView("today", { focusHeading: true }); });
 byId("detailHistoryLink").addEventListener("click", function(){
   var d = dealById(detailId);
   openHistory(d ? d.contact : ""); /* Deal Detail anchors into Activity History, filtered to this deal */

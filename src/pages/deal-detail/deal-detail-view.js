@@ -10,10 +10,9 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
     </button>
     <div class="pagehead">
       <div>
-        <h1 id="detailName">Deal</h1>
+        <h1 id="detailName" tabindex="-1">Deal</h1>
         <div class="sub" id="detailCompany"></div>
       </div>
-      <span class="sample-pill"><i></i> Sample data only — resets on reload</span>
     </div>
 
     <article class="deal" style="margin-top:20px;cursor:default">
@@ -34,7 +33,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         <button class="btn btn-email" id="detailEmailBtn" type="button"></button>
         <button class="btn btn-log" id="detailLogBtn" type="button">Log activity</button>
       </div>
-      <p class="hint" style="font-size:12.5px;color:var(--muted);font-weight:600;margin:12px 0 0;line-height:1.45">Call and Email come first here too — do the work in the CRM, and saving logs it and takes you back to Today.</p>
+      <p class="hint detail-hint">Saving a call, email or note records it here and takes you back to Today. Calls and emails are simulated.</p>
     </article>
 
     <section class="panelcard" aria-label="Past activity for this deal">

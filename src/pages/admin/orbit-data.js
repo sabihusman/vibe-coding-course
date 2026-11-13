@@ -1,232 +1,229 @@
-/* Orbit Code Explorer content: the 27 nodes and their Show code excerpts. */
+/* Orbit Code Explorer content: the 30 nodes and their Show code excerpts.
+   Excerpts are cut from the real source files (see where:) and should be refreshed when that code changes. */
 /* ---------- Admin · Orbit Code Explorer ---------- */
 var NODES = [
-  { id:"app", name:"CRM Companion", cat:"app", catLabel:"The whole app", ring:0, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
-    about:"The whole app in one place. CRM Companion is index.html plus the src/ folder, grouped by feature — still with no server and no database behind it. Every screen, panel, and piece of sample data on this orbit has its own file; each node's Show code says which.",
-    connects:["today","detail","history","design"] },
-  { id:"today", name:"Today", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The rep's home screen and the start of every path through the app. It shows the day's follow-ups, the progress stepper, Updated today, and the Activity feed. Nothing else in the app opens first — Deal Detail and Activity History are both reached from here.",
-    connects:["app","followups","stepper","updated","feed","detail"] },
-  { id:"detail", name:"Deal Detail", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"One deal on its own screen: who it is, how much it is worth, what is due, and the next step. It is the anchor screen — it opens from a follow-up card, and it links onward into Activity History filtered to this one deal.",
-    connects:["app","header","past","seehist","backlinks","call","email","log"] },
-  { id:"history", name:"Activity History", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"Every call, email, and log in one list, newest first — the 12 seeded past activities plus anything done in this session. It can be opened on its own from Today's Activity feed, or pre-filtered to one deal from Deal Detail.",
-    connects:["app","actlist","search","rowopen","backlinks"] },
-  { id:"followups", name:"Follow-ups list", cat:"panel", catLabel:"Panel · Today", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
-    about:"The working list on Today: 6 deals, $663k of sample ARR in total, ordered biggest first. Each card carries the due badge, the next step, and the Call, Email, and Log activity actions. When a deal is updated it leaves this list and moves to Updated today.",
-    connects:["today","call","email","log","dealsdata","loading","emptytoday","errortoday"] },
-  { id:"call", name:"Call panel", cat:"panel", catLabel:"Panel", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked call",
-    about:"Opens from a follow-up card or from Deal Detail. It shows the deal's context, runs a call timer, and takes a short note and an outcome (Called, No answer, or Met). Save & log moves the deal to Updated today; closing the panel without saving counts as a Call attempted once the timer has run or a note is typed. No real call is placed.",
-    connects:["followups","detail","updated","feed","actdata"] },
-  { id:"email", name:"Email panel", cat:"panel", catLabel:"Panel", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked email",
-    about:"A small composer that opens from a follow-up card or from Deal Detail, pre-filled with a subject and a draft built from the deal's next step. Send & log email moves the deal to Updated today; closing the panel without sending counts as an Email attempted once the subject or draft has been typed or edited. No real email is sent.",
-    connects:["followups","detail","updated","feed","actdata"] },
-  { id:"log", name:"Log activity", cat:"panel", catLabel:"Action", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The quick action on every follow-up card and on Deal Detail. It logs the deal's next step as done straight away, with no panel or form, and moves the deal to Updated today with a matching entry in the Activity feed and Activity History.",
-    connects:["followups","detail","updated","feed"] },
-  { id:"stepper", name:"Progress stepper", cat:"panel", catLabel:"Panel · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The progress strip at the top of Today. It counts the follow-ups — “0 of 6 updated” at the start — and fills in a step for each deal as it is called, emailed, or logged, ending with an “All caught up” banner at 6 of 6.",
-    connects:["today","followups","updated"] },
-  { id:"updated", name:"Updated today", cat:"panel", catLabel:"Panel · Today", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The right-hand panel on Today where finished deals collect. Each entry shows how the deal was updated — call, email, or log, with its note or subject — and has an Undo that sends the deal back to the follow-ups list. Selecting an entry opens that deal's Deal Detail.",
-    connects:["today","call","email","log","detail"] },
-  { id:"feed", name:"Activity feed", cat:"panel", catLabel:"Panel · Today", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The live feed on Today. Every call, email, log, and attempted panel close from this session appears here as it happens, newest first. Its “View all in Activity History” link opens the full Activity History screen.",
-    connects:["today","history","session","actlist"] },
-  { id:"header", name:"Deal header", cat:"panel", catLabel:"Panel · Deal Detail", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
-    about:"The top block of Deal Detail: the contact, the company, the sample ARR, the due badge, and the next step, with Call, Email, and Log activity in the same order as Today — Call first. If the deal was already updated today, it says so here.",
-    connects:["detail","dealsdata","call","email","log"] },
-  { id:"past", name:"Past activity", cat:"panel", catLabel:"Panel · Deal Detail", ring:3, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
-    about:"The activity list inside Deal Detail, showing only this deal's history — its seeded past activities plus anything logged for it in this session, newest first. The same activities appear in full on the Activity History screen.",
-    connects:["detail","actdata","history","seehist"] },
-  { id:"backlinks", name:"Back to Today links", cat:"panel", catLabel:"Navigation", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The way back. Both Deal Detail and Activity History open with a “Back to Today” link at the top, because Today is the home screen for this test — the sidebar nav is off, so these links are how a rep returns. Saving a call or email from Deal Detail also returns to Today on its own.",
-    connects:["today","detail","history"] },
-  { id:"seehist", name:"“See this deal in Activity History”", cat:"panel", catLabel:"Navigation link", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The link on Deal Detail, above Past activity, that carries the deal into Activity History. It opens Activity History with the search already set to this deal's contact, so only that deal's activities show. This is the link that makes Deal Detail the anchor for Activity History.",
-    connects:["detail","history","search","past"] },
-  { id:"actlist", name:"Activity list", cat:"panel", catLabel:"Panel · Activity History", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
-    about:"The list itself on Activity History: 12 seeded activities to start with, plus this session's activity added on top, newest first, with a count line above it. Each row shows the kind of activity, the deal, the detail, and the day and time.",
-    connects:["history","actdata","session","rowopen","loading","emptyhistory","errorhistory"] },
-  { id:"search", name:"Search by name / company", cat:"panel", catLabel:"Panel · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The “Find a deal” box at the top of Activity History. Typing a contact name or a company filters the activity list to matching deals and updates the count line — for example, one contact's name shows just their activities. It is also how the Deal Detail link arrives pre-filtered.",
-    connects:["history","actlist","seehist"] },
-  { id:"rowopen", name:"Row opens Deal Detail", cat:"panel", catLabel:"Navigation", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"Every row in the Activity History list is a button. Selecting a row opens that row's deal on Deal Detail, so a rep can go from something that happened to the deal it belongs to in one tap — and back again with Back to Today.",
-    connects:["history","detail","actlist"] },
-  { id:"dealsdata", name:"Deals data — 6 deals", cat:"data", catLabel:"Data", ring:2, verdict:"mocked", verdictLabel:"Mocked — sample data only",
-    about:"The sample deals written into the file: James Whitfield at Meridian Legal ($312k), Daniel Ortiz ($148k), Priya Nair ($92k), Maya Chen ($54k), Sofia Reyes ($38k), and Aisha Bello ($19k) — 6 deals, $663k in total. Each carries a due label and a next step. None of it comes from a real CRM.",
-    connects:["followups","header","session"] },
-  { id:"actdata", name:"Activities data — 12 activities", cat:"data", catLabel:"Data", ring:3, verdict:"mocked", verdictLabel:"Mocked — sample data only",
-    about:"The seeded past history written into the file: 12 activities dated Tue, Oct 28 to Tue, Nov 4, covering all 6 deals with a mix of calls, emails, and logs. Activity History and Deal Detail's Past activity both read from this same set.",
-    connects:["actlist","past","call","email"] },
-  { id:"session", name:"Session state — in memory only", cat:"data", catLabel:"Data", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"Where this session's work is kept: which deals are done, the Activity feed entries, and the Undo history. It all lives in the page's memory only — there is no account, no saving, and no database, so a reload wipes it and the app starts again from the sample data.",
-    connects:["feed","updated","dealsdata","app"] },
-  { id:"design", name:"Design system", cat:"panel", catLabel:"Design", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"The shared look every screen uses: a dark sidebar (#1e1e2d), light content (#f9fafb), white cards with 8px radius and #e5e7eb borders, blue (#3b82f6) as the primary colour, and green (#22c55e) kept for success only — a deal updated, a step completed. This Admin portal follows the same system.",
-    connects:["app","today","detail","history"] },
-  { id:"loading", name:"Loading state — skeletons", cat:"state", catLabel:"State", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"While a list loads, it shows skeleton cards — grey placeholder bars in the shape of the real content — instead of a blank screen. Today shows three skeleton follow-up cards; Activity History shows skeleton rows. On load, the follow-ups sit in this state briefly before the deals appear.",
-    connects:["followups","actlist","emptytoday","errortoday"] },
-  { id:"emptytoday", name:"Empty state — Today", cat:"state", catLabel:"State · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"What the follow-ups list shows when there is nothing left to work. The exact wording from the build is shown below. Testers can force it with the Empty control above the follow-ups list; it also appears on its own when all 6 deals are updated and the list is empty.",
-    exact:"All caught up. No follow-ups today.",
-    connects:["followups","loading","errortoday"] },
-  { id:"errortoday", name:"Error state — Today", cat:"state", catLabel:"State · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"What the follow-ups list shows when loading fails, with a Retry button that loads the list again. The exact wording from the build is shown below. Testers can force it with the Error control above the follow-ups list.",
-    exact:"Couldn't load your follow-ups. Check your connection and try again.",
-    connects:["followups","loading","emptytoday"] },
-  { id:"emptyhistory", name:"Empty state — Activity History", cat:"state", catLabel:"State · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"What the activity list shows when there is no activity to list. The exact wording from the build is shown below. Testers can force it with the Empty control above the list; a search that matches nothing shows a separate “No activity found” message instead.",
-    exact:"No activity yet. Call or email a follow-up to see it here.",
-    connects:["actlist","loading","errorhistory","search"] },
-  { id:"errorhistory", name:"Error state — Activity History", cat:"state", catLabel:"State · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"What the activity list shows when loading fails, with a Retry button that loads the list again — the same pattern as Today's error state. The exact wording from the build is shown below. Testers can force it with the Error control above the list.",
-    exact:"Couldn't load your activity. Check your connection and try again.",
-    connects:["actlist","loading","emptyhistory"] }
+  { id:"app", name:"CRM Companion", cat:"app", catLabel:"The whole app", ring:0, verdict:"mixed", verdictLabel:"Real behaviour · mocked data", about:"The whole app: index.html (a short shell) plus the src/ folder, grouped by feature. Screens are in src/pages/, shared data, model and components in src/shared/, and navigation and start-up in src/app/. On the live site the rep's work is saved in Supabase; without the Supabase settings it falls back to in-page sample data.", connects:["today","problem","detail","history","design"] },
+  { id:"today", name:"Today", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build", about:"The rep's home screen and the default view. A quiet summary and progress line, then the follow-up queue with its sort control and the selected-deal context panel beside it. Updated today appears after the first saved update. It contains none of the research block — that lives on Problem statement.", connects:["app","followups","sort","context","stepper","updated","detail"] },
+  { id:"problem", name:"Problem statement", cat:"screen", catLabel:"Screen", ring:1, verdict:"mocked", verdictLabel:"Supplied research — not live data", about:"A sidebar destination holding the research and product context that used to sit on Today: the 18% signal, Hypothesis B, the swap feedback and its attribution, the instruction, the four research metrics, and the three rep quotes. It is hidden on first load, and opening it never resets the queue, sort, selection or progress. These are supplied research figures, not the rep's own results.", connects:["app","today","design"] },
+  { id:"detail", name:"Deal Detail", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build", about:"One deal on its own screen: who it is, its sample ARR, what is due, the next step, and its past activity, with Call, Email and Log activity. It opens from Open deal in the context panel, from Updated today, or from an Activity history row, and it links onward into Activity history filtered to this deal.", connects:["app","header","past","seehist","backlinks","call","email","log"] },
+  { id:"history", name:"Activity history", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build", about:"Every call, email and note in one list, newest first — the 12 seeded activities plus the rep's saved updates. It is a working sidebar destination, and it can also open pre-filtered to one deal from Deal Detail or the context panel. Name and company search and row-to-deal access are unchanged.", connects:["app","actlist","search","rowopen","backlinks"] },
+  { id:"followups", name:"Follow-up queue", cat:"panel", catLabel:"Panel · Today", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data", about:"The working list on Today: aligned rows with subtle dividers, each with the contact, company, sample ARR, next step, due label, and small labelled Call, Email and Log activity actions. Selecting a contact only changes the context panel. When a deal is updated it leaves the queue; Undo puts it back in its place under the current sort.", connects:["today","sort","context","call","email","log","dealsdata","loading","emptytoday","errortoday"] },
+  { id:"sort", name:"Sort — Highest ARR / Overdue first", cat:"panel", catLabel:"Control · Today", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The Sort control above the queue. Highest ARR is the default (James, Daniel, Priya, Maya, Sofia, Aisha). Overdue first puts the most days overdue on top, then the larger ARR, so Maya and Sofia lead. Sorting never changes the deals, and the choice is kept when switching views.", connects:["followups","today","dealsdata"] },
+  { id:"context", name:"Deal context panel", cat:"panel", catLabel:"Panel · Today", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data", about:"The panel beside the queue showing the selected deal: company, contact, sample ARR, due label, next step, a primary Call button, a separate Open deal button that reaches the full Deal Detail, and the deal's three most recent activities with a link into Activity history. Selecting a contact updates this panel only; it never changes data.", connects:["today","followups","detail","history","call"] },
+  { id:"call", name:"Call dialog", cat:"panel", catLabel:"Panel", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked call", about:"A named dialog for one deal, showing the contact, company and follow-up. It says “Ready when you are” until the rep chooses Start simulated call; only then does the timer run. An outcome — Connected, No answer or Left voicemail — is required to save. Saving creates one activity and moves the deal to Updated today. Opening, cancelling or closing records nothing, and the note and outcome are kept as a draft. No real call is placed.", connects:["followups","context","detail","updated","actdata"] },
+  { id:"email", name:"Email dialog", cat:"panel", catLabel:"Panel", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked email", about:"A named dialog with an editable subject and message, pre-filled from the deal's next step. Both are required. Sending creates one activity and moves the deal to Updated today. Closing without sending records nothing and keeps the edited draft for next time. Nothing is actually sent.", connects:["followups","detail","updated","actdata"] },
+  { id:"log", name:"Log activity dialog", cat:"panel", catLabel:"Panel", ring:2, verdict:"real", verdictLabel:"Real — works in this build", about:"A short note form. The note is required — whitespace alone cannot be saved — and saving happens only on explicit submission. Saving creates one activity with the note and moves the deal to Updated today. Cancel leaves the queue, progress and history unchanged and keeps the typed note as a draft.", connects:["followups","detail","updated","actdata"] },
+  { id:"stepper", name:"Summary and progress line", cat:"panel", catLabel:"Panel · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build", about:"The quiet line above the queue: “6 follow-ups · 2 overdue · $663k total sample ARR”, and “0 of 6 updated” with a thin bar. Progress counts follow-ups updated today — not deals won or contacts reached — and the six-item total stays stable for the sample day.", connects:["today","followups","updated"] },
+  { id:"updated", name:"Updated today", cat:"panel", catLabel:"Panel · Today", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The section on Today that appears after the first saved update. Each entry shows how the deal was updated, an Open deal button, and Undo. Undo removes that one activity, restores the progress count, and puts the deal back in its place in the queue.", connects:["today","call","email","log","detail"] },
+  { id:"feed", name:"Recent activity", cat:"panel", catLabel:"Panel · Today", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The selected deal's three most recent activities, shown inside the context panel, newest first, with a link into Activity history for the rest. It replaces the old Today-wide Activity feed; every activity is still listed on Activity history.", connects:["context","history","session","actlist"] },
+  { id:"header", name:"Deal header", cat:"panel", catLabel:"Panel · Deal Detail", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data", about:"The top block of Deal Detail: the contact, the company, the sample ARR, the due badge, and the next step, with Call, Email, and Log activity in the same order as Today — Call first. If the deal was already updated today, it says so here.", connects:["detail","dealsdata","call","email","log"] },
+  { id:"past", name:"Past activity", cat:"panel", catLabel:"Panel · Deal Detail", ring:3, verdict:"mixed", verdictLabel:"Real behaviour · mocked data", about:"The activity list inside Deal Detail, showing only this deal's history — its seeded past activities plus anything logged for it in this session, newest first. The same activities appear in full on the Activity History screen.", connects:["detail","actdata","history","seehist"] },
+  { id:"backlinks", name:"Back to Today links", cat:"panel", catLabel:"Navigation", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The way back. Deal Detail and Activity history have a “Back to Today” link, and the sidebar is now fully working: Today, Activity history and Problem statement in Workspace, and Admin in its own group. Each view has its own address, so browser Back works too.", connects:["today","detail","history"] },
+  { id:"seehist", name:"“See this deal in Activity History”", cat:"panel", catLabel:"Navigation link", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The link on Deal Detail, above Past activity, that carries the deal into Activity History. It opens Activity History with the search already set to this deal's contact, so only that deal's activities show. This is the link that makes Deal Detail the anchor for Activity History.", connects:["detail","history","search","past"] },
+  { id:"actlist", name:"Activity list", cat:"panel", catLabel:"Panel · Activity History", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data", about:"The list itself on Activity History: 12 seeded activities to start with, plus this session's activity added on top, newest first, with a count line above it. Each row shows the kind of activity, the deal, the detail, and the day and time.", connects:["history","actdata","session","rowopen","loading","emptyhistory","errorhistory"] },
+  { id:"search", name:"Search by name / company", cat:"panel", catLabel:"Panel · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The “Find a deal” box at the top of Activity History. Typing a contact name or a company filters the activity list to matching deals and updates the count line — for example, one contact's name shows just their activities. It is also how the Deal Detail link arrives pre-filtered.", connects:["history","actlist","seehist"] },
+  { id:"rowopen", name:"Row opens Deal Detail", cat:"panel", catLabel:"Navigation", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"Every row in the Activity History list is a button. Selecting a row opens that row's deal on Deal Detail, so a rep can go from something that happened to the deal it belongs to in one tap — and back again with Back to Today.", connects:["history","detail","actlist"] },
+  { id:"dealsdata", name:"Deals data — 6 deals", cat:"data", catLabel:"Data", ring:2, verdict:"mocked", verdictLabel:"Mocked — sample data only", about:"The sample deals written into the file: James Whitfield at Meridian Legal ($312k), Daniel Ortiz ($148k), Priya Nair ($92k), Maya Chen ($54k), Sofia Reyes ($38k), and Aisha Bello ($19k) — 6 deals, $663k in total. Each carries a due label and a next step. None of it comes from a real CRM.", connects:["followups","header","session"] },
+  { id:"actdata", name:"Activities data — 12 activities", cat:"data", catLabel:"Data", ring:3, verdict:"mocked", verdictLabel:"Mocked — sample data only", about:"The seeded past history written into the file: 12 activities dated Tue, Oct 28 to Tue, Nov 4, covering all 6 deals with a mix of calls, emails, and logs. Activity History and Deal Detail's Past activity both read from this same set.", connects:["actlist","past","call","email"] },
+  { id:"session", name:"Session state — saved per browser", cat:"data", catLabel:"Data", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"Where the rep's work is kept: which deals are updated, the activity entries, Undo, the sort, the selected deal and unsent drafts. The page holds it while you work; on the live site each saved update is also stored in Supabase under this browser's anonymous rep, so a reload brings it back. Without the Supabase settings nothing is saved and a reload starts the sample day again.", connects:["feed","updated","dealsdata","app"] },
+  { id:"design", name:"Design system", cat:"panel", catLabel:"Design", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The shared tokens from the design handoff: navy sidebar #131F32 with #283A59 for the selected item, canvas #F5F6F8 and white surfaces, primary blue #315CE8 with #EEF3FF for the selected row, text #172338 and #637086, dividers #E4E8EF, overdue #A52E31 and updated #23705A always paired with words. Spacing 4/8/12/16/24/32px, 10px panels and 6px controls.", connects:["app","today","detail","history"] },
+  { id:"loading", name:"Loading state — skeletons", cat:"state", catLabel:"State", ring:2, verdict:"real", verdictLabel:"Real — works in this build", about:"While a list loads it shows skeletons in the shape of the real rows — three queue rows on Today, activity rows on Activity history — instead of a blank screen. The forced Data / Loading / Empty / Error switches now sit in a collapsed Test controls area, out of the rep's way.", connects:["followups","actlist","emptytoday","errortoday"] },
+  { id:"emptytoday", name:"Empty state — Today", cat:"state", catLabel:"State · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build", about:"What the queue shows when there is nothing left to work, or every follow-up is updated. The exact wording is below. Reviewers can force it from the Test controls area at the bottom of Today.", exact:"All caught up. No follow-ups today.", connects:["followups","loading","errortoday"] },
+  { id:"errortoday", name:"Error state — Today", cat:"state", catLabel:"State · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build", about:"What the queue shows when loading fails, with a Retry button. It is announced to screen readers, keeps existing activity, and never shows a false success. The exact wording is below. Reviewers can force it from the Test controls area.", exact:"Couldn't load your follow-ups. Check your connection and try again.", connects:["followups","loading","emptytoday"] },
+  { id:"emptyhistory", name:"Empty state — Activity History", cat:"state", catLabel:"State · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"What the activity list shows when there is no activity. The exact wording is below. Reviewers can force it from the Test controls area on Activity history; a search that matches nothing shows a separate message.", exact:"No activity yet. Call or email a follow-up to see it here.", connects:["actlist","loading","errorhistory","search"] },
+  { id:"errorhistory", name:"Error state — Activity History", cat:"state", catLabel:"State · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"What the activity list shows when loading fails, with a Retry button — the same pattern as Today. The exact wording is below. Reviewers can force it from the Test controls area on Activity history.", exact:"Couldn't load your activity. Check your connection and try again.", connects:["actlist","loading","emptyhistory"] }
 ];
-/* Short, real code excerpts — one per node, for the "Show code" toggle.
-   Each is a trimmed excerpt of the actual code in this file, not the whole file. */
+/* Short, real code excerpts — one per node, for the "Show code" toggle. */
 var SNIPPETS = {
-  app: { fn:"showView(v)", does:"The file's only router — it shows one view and hides the other three, and moves the sidebar highlight.",
-    where:"src/app/navigation.js — showView(). The app is index.html (a short shell that loads everything) plus the src/ folder: screens in src/pages/, shared data, model and components in src/shared/, and navigation and start-up in src/app/.",
-    code:`function showView(v){
+  app: { fn:"showView(v, opts)", does:"The router: shows one view, marks the matching sidebar item as the current page, sets the page title, and records the view's address so Back works.",
+    where:"src/app/navigation.js — showView().",
+    code:`function showView(v, opts){
+  opts = opts || {};
+  if(!VIEW_IDS[v]) v = "today";
   currentView = v;
-  byId("viewToday").hidden = v!=="today";
-  byId("viewDetail").hidden = v!=="detail";
-  byId("viewHistory").hidden = v!=="history";
-  byId("viewAdmin").hidden = v!=="admin";
-  …
+  Object.keys(VIEW_IDS).forEach(function(k){ byId(VIEW_IDS[k]).hidden = k !== v; });
+  ["navTodayLink","navHistoryLink","navProblemLink","navAdminLink"].forEach(function(nid){
+    var a = byId(nid); var on = nid === NAV_FOR_VIEW[v];
+    a.classList.toggle("active", on);
+    if(on){ a.setAttribute("aria-current", "page"); } else { a.removeAttribute("aria-current"); }
+  });
+  var title = v === "detail" && dealById(detailId) ? dealById(detailId).contact : VIEW_TITLES[v];
+  document.title = title + " · CRM Companion";
+  var hash = v === "detail" ? "#deal-" + detailId : "#" + v;
+  if(!opts.fromHistory && location.hash !== hash){
+    try { history.pushState(null, "", hash); } catch(e){ /* file:// in some browsers */ }
+  …` },
+  today: { fn:"render()", does:"Redraws Today and the other lists after any change — progress, queue, Updated today, and history.",
+    where:"src/app/render.js — render(). The screen markup is src/pages/today/today-view.js; its logic is src/pages/today/today.js.",
+    code:`function render(){
+  renderProgress(); renderTodo(); renderUpdated(); renderHistory();
+  if(detailId) renderDetailActivity();
+  byId("navCount").textContent = String(DEALS.length - doneCount());
 }` },
-  today: { fn:"render()", does:"Redraws everything on Today at once — stepper, follow-ups list, Updated today, and the Activity feed.",
-    where:"src/app/render.js — render(). The screen it fills is built by src/pages/today/today-view.js; its drawing code is in src/pages/today/today.js.",
-    code:`<div id='viewToday'> … follow-ups, stepper,
-  Updated today, Activity feed … </div>
-
-function render(){
-  renderStepper(); renderTodo();
-  renderUpdated(); renderFeed(); renderHistory();
-  …
-}` },
-  detail: { fn:"openDeal(id)", does:"Opens one deal — remembers which deal it is, fills the Deal Detail screen, and switches to it.",
-    where:"src/app/navigation.js — openDeal(). The screen it fills is built by src/pages/deal-detail/deal-detail-view.js.",
-    code:`function openDeal(id){
+  problem: { fn:"showView(\"problem\")", does:"Problem statement is just another view: navigating to it hides Today without touching the queue, sort, selection or progress, which live in session state.",
+    where:"src/pages/problem-statement/problem-statement-view.js holds the content; src/pages/problem-statement/problem-statement.css styles it; navigation is in src/app/navigation.js.",
+    code:`document.querySelectorAll("[data-nav]").forEach(function(a){
+  a.addEventListener("click", function(e){
+    e.preventDefault();
+    var v = a.getAttribute("data-nav");
+    if(v === "history"){ openHistory(null, { focusHeading: true }); }
+    else { showView(v, { focusHeading: true }); }
+  });
+});` },
+  detail: { fn:"openDeal(id)", does:"Opens one deal: remembers it, fills Deal Detail, and switches to it.",
+    where:"src/app/navigation.js — openDeal().",
+    code:`function openDeal(id, opts){
   if(!dealById(id)) return;
   detailId = id;
   renderDetail();
-  showView("detail");
+  showView("detail", opts);
 }` },
-  history: { fn:"openHistory(preset)", does:"Opens Activity History, with the search box pre-filled if a deal was passed in, and plays the loading state.",
-    where:"src/app/navigation.js — openHistory(). The screen it fills is built by src/pages/activity-history/activity-history-view.js.",
-    code:`function openHistory(preset){
-  if(typeof preset==="string")
-    byId("historySearch").value = preset;
-  showView("history");
+  history: { fn:"openHistory(preset)", does:"Opens Activity history, optionally pre-filtered to a deal, and plays the loading state.",
+    where:"src/app/navigation.js — openHistory().",
+    code:`function openHistory(preset, opts){
+  if(typeof preset==="string") byId("historySearch").value = preset;
+  showView("history", opts);
   setHistoryState("loading");
 }` },
-  followups: { fn:"renderTodo()", does:"Turns the DEALS data into follow-up cards — one card per deal that is not done yet, with Call, Email, and Log activity buttons.",
-    where:"src/pages/today/today.js — renderTodo(), reading the deals from src/shared/data/sample-deals.js. It fills the <div id='todoList'> on Today.",
-    code:`var pending = DEALS.filter(function(d){
-  return !done[d.id]; });
-wrap.innerHTML = pending.map(function(d){
-  return '<article class="deal clickable" …>'
-    + '<div class="deal-name">'
-    + esc(d.contact) + '</div> …'
-    + '<button class="btn btn-call" '
-    + 'data-call="' + d.id + '">Call</button> …'
-}).join("");` },
-  call: { fn:"openCall(id) — and maybeLogAttempt(\"call\")", does:"openCall fills the panel with the deal's details, resets and starts the timer; if the panel is closed without Save & log, maybeLogAttempt logs the attempt instead.",
-    where:"src/shared/components/call-panel.js — openCall() and the timer; maybeLogAttempt() is in src/shared/components/panel-close.js. The markup is src/shared/components/call-panel-view.js.",
-    code:`function openCall(id){
-  currentId = id; var d = dealById(id);
-  byId("callTitle").textContent =
-    "Call " + d.contact;
-  …
-  timerSec = 0;
-  byId("callOverlay").classList.add("open");
-  startTimer();
-}
-function startTimer(){
-  timerInt = setInterval(function(){
-    timerSec++;
-    byId("timerDisplay").textContent =
-      fmtTimer();
-  }, 1000);
-}
-// closed without Save & log:
-addAttempt(currentId, "call",
-  "Call attempted — " + d.contact,
-  "Panel closed without Save & log · Duration "
-    + fmtTimer());` },
-  email: { fn:"openEmail(id) — and maybeLogAttempt(\"email\")", does:"openEmail pre-fills the subject and draft from the deal's next step and remembers them; if either is edited and the panel is closed without sending, the close counts as an Email attempted.",
-    where:"src/shared/components/email-panel.js — openEmail(); maybeLogAttempt() is in src/shared/components/panel-close.js. The markup is src/shared/components/email-panel-view.js.",
-    code:`function openEmail(id){
-  currentId = id; var d = dealById(id);
-  byId("emailSubject").value =
-    "Following up — "
-    + d.next.charAt(0).toLowerCase()
-    + d.next.slice(1);
-  byId("emailBody").value = "Hi "
-    + d.contact.split(" ")[0] + ", …";
-  emailInitialSubject =
-    byId("emailSubject").value;
-  emailInitialBody = byId("emailBody").value;
-  byId("emailOverlay").classList.add("open");
-}
-// closed without Send & log:
-var draftTyped =
-  byId("emailSubject").value
-    !== emailInitialSubject
-  || byId("emailBody").value
-    !== emailInitialBody;
-if(draftTyped){ addAttempt(…,
-  "Email attempted — " + d.contact, …); }` },
-  log: { fn:"logActivity(id)", does:"The whole Log flow in four lines — it completes the deal straight away, using the deal's next step as the logged detail.",
-    where:"src/shared/components/log-activity.js — logActivity(). The button is wired by bindCardButtons() in src/pages/today/today.js.",
-    code:`function logActivity(id){
+  followups: { fn:"renderTodo()", does:"Builds the queue rows from the pending deals in the current sort order. Each row has a select button and the three labelled actions.",
+    where:"src/pages/today/today.js — renderTodo().",
+    code:`function renderTodo(){
+  var wrap = byId("todoList");
+  if(!wrap) return;
+  var pending = pendingDeals();
+  byId("queueCount").textContent = String(followupsState === "ready" ? pending.length : 0);
+  byId("sortNote").textContent = SORT_NOTES[sortMode];
+  if(followupsState==="loading"){ wrap.innerHTML = followupsSkeletonHtml(); renderContext(); return; }
+  if(followupsState==="error"){
+    wrap.innerHTML = '<div class="state-error" role="alert"><p>Couldn\\'t load your follow-ups. Check your connection and try again.</p><button type="button" class="btn-retry" id="followupsRetry">Retry</button></div>';
+    byId("followupsRetry").addEventListener("click", function(){ setFollowupsState("loading"); });
+    renderContext(); return;
+  }
+  if(followupsState==="empty" || pending.length===0){
+    wrap.innerHTML = '<div class="empty"><span class="empty-plain">All caught up. No follow-ups today.</span></div>';
+    renderContext(); return;
+  }
+  ensureSelection();
+  …` },
+  sort: { fn:"sortDeals(list, mode)", does:"Highest ARR sorts by ARR; Overdue first sorts by days overdue, then ARR. It sorts a copy and never changes the deals.",
+    where:"src/shared/model/queue-sort.js — sortDeals() and daysOverdue(). The control is the Sort select in src/pages/today/today-view.js.",
+    code:`function sortDeals(list, mode){
+  var copy = list.slice();
+  if(mode === "overdue"){
+    copy.sort(function(a, b){ return (daysOverdue(b) - daysOverdue(a)) || (b.arr - a.arr); });
+  } else {
+    copy.sort(function(a, b){ return b.arr - a.arr; });
+  }
+  return copy;
+}` },
+  context: { fn:"selectDeal(id) and renderContext()", does:"Selecting a contact only changes selectedId and redraws; renderContext() then fills the panel for that deal.",
+    where:"src/pages/today/today.js — selectDeal() and renderContext().",
+    code:`function selectDeal(id){
+  if(!dealById(id) || done[id]) return;
+  selectedId = id;
+  renderTodo();
+  var b = document.querySelector('#todoList [data-select="' + id + '"]');
+  if(b) b.focus();
+}` },
+  call: { fn:"the Call form's submit handler", does:"An outcome is required. The save button is disabled on first submit, so a double-click cannot save twice, then completeDeal() records one activity.",
+    where:"src/shared/components/call-panel.js. Markup: src/shared/components/call-panel-view.js. Focus, Escape and Cancel: src/shared/components/dialog.js.",
+    code:`byId("callForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  if(!currentId || callSaving) return;
+  var outcome = byId("callOutcome").value;
+  if(!outcome){
+    setFieldError("callOutcome", "callOutcomeErr", "Choose an outcome before saving: Connected, No answer or Left voicemail.");
+    byId("callOutcome").focus(); return;
+  }
+  setFieldError("callOutcome", "callOutcomeErr", "");
+  callSaving = true; byId("saveCall").disabled = true;
+  var id = currentId, d = dealById(id);
+  var note = byId("callNote").value.trim(), dur = fmtTimer();
+  stopTimer(); currentId = null;
+  closeDialog("callOverlay", true);
+  completeDeal(id, "call", "Call · " + outcome + " · " + dur,
+    "Call — " + d.contact + ", " + d.company + " · " + outcome,
+    (note ? "“" + note + "” · " : "") + "Duration " + dur);
+  …` },
+  email: { fn:"the Email form's submit handler", does:"Subject and message are both required; sending records one activity. Closing without sending keeps the draft instead.",
+    where:"src/shared/components/email-panel.js. Markup: src/shared/components/email-panel-view.js.",
+    code:`byId("emailForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  if(!currentId || emailSaving) return;
+  var subj = byId("emailSubject").value.trim(), body = byId("emailBody").value.trim();
+  setFieldError("emailSubject", "emailSubjectErr", subj ? "" : "Add a subject before sending.");
+  setFieldError("emailBody", "emailBodyErr", body ? "" : "Write a message before sending.");
+  if(!subj){ byId("emailSubject").focus(); return; }
+  if(!body){ byId("emailBody").focus(); return; }
+  emailSaving = true; byId("sendEmail").disabled = true;
+  var id = currentId, d = dealById(id);
+  currentId = null;
+  closeDialog("emailOverlay", true);
+  completeDeal(id, "email", "Email sent", "Email — " + d.contact + ", " + d.company, "Subject: " + subj);
+  focusNextTask();
+});` },
+  log: { fn:"the Log activity form's submit handler", does:"Whitespace-only or near-empty notes are refused with a field error; a real note is saved once.",
+    where:"src/shared/components/log-activity.js. Markup: src/shared/components/log-panel-view.js.",
+    code:`byId("logForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  if(!currentId || logSaving) return;
+  var note = byId("logNote").value.trim();
+  if(note.replace(/[^\\p{L}\\p{N}]/gu, "").length < 2){
+    setFieldError("logNote", "logNoteErr", "Add a short note about what happened — at least a few words.");
+    byId("logNote").focus(); return;
+  }
+  setFieldError("logNote", "logNoteErr", "");
+  logSaving = true; byId("saveLog").disabled = true;
+  var id = currentId, d = dealById(id);
+  currentId = null;
+  closeDialog("logOverlay", true);
+  completeDeal(id, "log", "Logged activity", "Logged activity — " + d.contact + ", " + d.company, note);
+  focusNextTask();
+});` },
+  stepper: { fn:"renderProgress()", does:"Writes the summary line and “n of 6 updated”, and sets the progress bar's value for screen readers.",
+    where:"src/pages/today/today.js — renderProgress().",
+    code:`function renderProgress(){
+  var n = doneCount(), total = DEALS.length;
+  byId("summaryCount").textContent = total + (total === 1 ? " follow-up" : " follow-ups");
+  byId("summaryOverdue").textContent = overdueCount() + " overdue";
+  byId("summaryArr").textContent = "$" + totalArr() + "k total sample ARR";
+  byId("progressLabel").textContent = n + " of " + total + " updated";
+  var bar = byId("progressBar");
+  bar.setAttribute("aria-valuemax", String(total));
+  bar.setAttribute("aria-valuenow", String(n));
+  byId("progressFill").style.width = (total ? Math.round(100 * n / total) : 0) + "%";
+}` },
+  updated: { fn:"undoDeal(id)", does:"Undo removes that one activity, restores the deal and the counts, announces the change, and focuses the restored row.",
+    where:"src/shared/model/activity-log.js — undoDeal(). The list is drawn by renderUpdated() in src/pages/today/today.js.",
+    code:`function undoDeal(id){
+  if(!done[id]) return false;
+  delete done[id];
+  for(var i=0;i<feed.length;i++){ if(feed[i].dealId===id && !feed[i].attempt){ feed.splice(i,1); break; } }
+  undoStack = undoStack.filter(function(h){ return h!==id; });
+  hideToast();
+  selectedId = id;
+  render();
+  if(currentView==="detail" && detailId===id) renderDetail();
   var d = dealById(id);
-  completeDeal(id, "log", "Logged activity",
-    "Logged activity — " + d.contact
-    + ", " + d.company, d.next);
+  announce("Undone. " + d.contact + " is back in your queue. " + doneCount() + " of " + DEALS.length + " updated.");
+  var row = document.querySelector('#todoList [data-select="' + id + '"]');
+  if(row && currentView==="today") row.focus();
+  return true;
 }` },
-  stepper: { fn:"renderStepper()", does:"Counts the deals marked done, writes the “n of 6 updated” label, and shows the All caught up banner only at 6 of 6.",
-    where:"src/pages/today/today.js — renderStepper(). It fills the <div id='stepper'> strip near the top of Today.",
-    code:`function renderStepper(){
-  var n = doneCount();
-  byId("progressLabel").textContent =
-    n + " of 6 updated";
-  …
-  byId("caughtBanner").className =
-    "caught" + (n===6 ? " show" : "");
-}` },
-  updated: { fn:"renderUpdated()", does:"Lists the deals in the done set, each with how it was updated and an Undo button; before any are done it shows the starter line instead.",
-    where:"src/pages/today/today.js — renderUpdated(). It fills the <div id='updatedList'> panel on Today.",
-    code:`var list = DEALS.filter(function(d){
-  return done[d.id]; });
-if(list.length===0){ wrap.innerHTML =
-  '<p class="none">Nothing updated yet. '
-  + 'Start at the top — James Whitfield, '
-  + '$312k.</p>'; return; }
-… each row ends with:
-'<button class="undo-link" data-undo="'
-  + d.id + '">Undo</button>'` },
-  feed: { fn:"renderFeed()", does:"Rebuilds the Activity feed from the session feed array, newest first, with an icon per kind of activity.",
-    where:"src/pages/today/today.js — renderFeed(). It fills the <div id='feedList'> panel on Today.",
-    code:`function renderFeed(){
-  var wrap = byId("feedList");
-  if(feed.length===0){ wrap.innerHTML =
-    '<p class="none">No activity yet '
-    + 'today.</p>'; return; }
-  wrap.innerHTML = feed.map(function(f){
-    …
-    return '<div class="feed-item">…'
-      + '<b>' + esc(f.title) + '</b>…'
-      + '<time>' + esc(f.time)
-      + '</time></div>';
-  }).join("");
-}` },
+  feed: { fn:"renderContext() — recent activity", does:"Takes all activity, keeps this deal's, and shows the newest three.",
+    where:"src/pages/today/today.js — inside renderContext().",
+    code:`function renderContext(){
+  var box = byId("dealContext"); if(!box) return;
+  var d = followupsState === "ready" ? dealById(selectedId) : null;
+  if(!d || done[d.id]){
+    box.innerHTML = '<p class="ctx-eyebrow">Deal context</p><p class="ctx-empty">' +
+      (followupsState === "ready" && pendingDeals().length === 0 ? "All follow-ups are updated. Undo any of them from Updated today." : "Select a follow-up to see its context.") + '</p>';
+    return;
+  }
+  var recent = allActivity().filter(function(f){ return f.dealId === d.id; }).slice(0, 3);
+  box.innerHTML = '<p class="ctx-eyebrow">Deal context <span class="chip">Selected</span></p>'
+    + '<h3 class="ctx-company">' + esc(d.company) + '</h3><p class="ctx-contact">' + esc(d.contact) + '</p>'
+  …` },
   header: { fn:"renderDetail()", does:"Fills the Deal Detail header from the selected deal — name, company, ARR, due badge — and flags it if the deal was already updated today.",
     where:"src/pages/deal-detail/deal-detail.js — renderDetail(). It fills the header built by src/pages/deal-detail/deal-detail-view.js.",
     code:`function renderDetail(){
@@ -253,17 +250,14 @@ if(list.length===0){ wrap.innerHTML =
     return activityRowHtml(f, false);
   }).join("");
 }` },
-  backlinks: { fn:"detailBack / historyBack click handlers", does:"Both Back buttons do exactly one thing — call showView(\"today\"). Saving from Deal Detail returns the same way, inside completeDeal().",
-    where:"src/pages/deal-detail/deal-detail.js and src/pages/activity-history/activity-history.js wire the two Back buttons. The buttons are the <button class='view-back'> in each screen's view file.",
-    code:`<button class="view-back" id="detailBack">
-  ← Back to Today</button>
-
-byId("detailBack").addEventListener(
-  "click", function(){
-    showView("today"); });
-byId("historyBack").addEventListener(
-  "click", function(){
-    showView("today"); });` },
+  backlinks: { fn:"routeFromHash()", does:"Reads the address (#today, #history, #problem, #admin or #deal-…) on start and on Back/Forward, so every view is addressable.",
+    where:"src/app/navigation.js — routeFromHash().",
+    code:`function routeFromHash(opts){
+  var h = (location.hash || "#today").slice(1);
+  if(h.indexOf("deal-") === 0 && dealById(h.slice(5))){ openDeal(h.slice(5), opts); return; }
+  if(h === "history"){ openHistory(null, opts); return; }
+  showView(VIEW_IDS[h] ? h : "today", opts);
+}` },
   seehist: { fn:"detailHistoryLink click handler", does:"Passes the deal's contact name into Activity History as its search, so the history opens already filtered to this deal.",
     where:"src/pages/deal-detail/deal-detail.js — right after the Back button wiring.",
     code:`byId("detailHistoryLink").addEventListener(
@@ -342,30 +336,23 @@ byId("historySearch").addEventListener(
 ];
 function allActivity(){
   return feed.concat(PAST); }` },
-  session: { fn:"done / feed / undoStack", does:"Three plain variables hold the whole session — which deals are done, the feed entries, and the Undo stack. Nothing writes them anywhere, so a reload starts over.",
-    where:"src/app/session-state.js — the state block. There is deliberately no storage code anywhere in the app.",
-    code:`var done = {};       // id -> {via, detail}
-var feed = [];       // newest first:
-        // {dealId, via, title, detail, time}
-var undoStack = [];  // action stack for Undo
-var currentView = "today";
-var detailId = null; // deal on Deal Detail
-
-// No localStorage, no database, no server —
-// a reload resets all of this.` },
-  design: { fn:":root { … } — the design tokens", does:"Every colour, radius, and shadow in the app comes from these CSS variables; components reference the variables, never raw colours.",
-    where:"src/app/base.css — the very first rule, loaded before every other stylesheet.",
-    code:`:root{
-  --bg:#f4f5f7; --panel:#ffffff;
-  --ink:#131a26; --ink-2:#3d4759;
-  --muted:#6b7688; --line:#e3e6ec;
-  --sidebar:#121a2a; --sidebar-2:#1b2740;
-  --primary:#1f4fd8;
-  --success:#22c55e;
-  --radius:14px;
-  --shadow:0 1px 2px rgba(16,24,40,.05),
-    0 4px 16px rgba(16,24,40,.04);
-}` },
+  session: { fn:"session state", does:"The session's state in one place, now including the sort, the selected deal and unsent drafts. With Supabase, supabase-source.js loads and saves it.",
+    where:"src/app/session-state.js.",
+    code:`var done = {};       // id -> {via, summary}` },
+  design: { fn:":root { … } — the design tokens", does:"Every colour, spacing step and radius comes from these variables; components never use raw colours for state.",
+    where:"src/app/base.css — the first rule, loaded before every other stylesheet.",
+    code:`  :root{
+    /* Handoff tokens */
+    --nav:#131F32; --nav-selected:#283A59;
+    --canvas:#F5F6F8; --surface:#FFFFFF;
+    --primary:#315CE8; --primary-hover:#2449C4; --selected-surface:#EEF3FF;
+    --text:#172338; --text-2:#637086; --divider:#E4E8EF;
+    --overdue:#A52E31; --overdue-bg:#FBEDED; --updated:#23705A; --updated-bg:#E6F2ED;
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
+    --radius:10px; --radius-sm:6px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    /* Names used across the existing screens, mapped to the tokens above */
+  …` },
   loading: { fn:"followupsSkeletonHtml() + setFollowupsState(\"loading\")", does:"The skeleton builder makes three grey placeholder cards in the shape of a follow-up card; the state setter shows them, then swaps to the real list after 750 ms.",
     where:"src/shared/components/list-states.js — the skeleton builders and state setters. The .sk skeleton styles are in src/pages/today/today.css.",
     code:`function followupsSkeletonHtml(){
@@ -383,22 +370,19 @@ if(state==="loading"){
     followupsState="ready"; renderTodo();
   }, 750);
 }` },
-  emptytoday: { fn:"renderTodo() — the empty branch", does:"When the list is forced empty, or every deal is done, the list is replaced with this one line — the exact string is written into the code, not loaded from anywhere.",
+  emptytoday: { fn:"renderTodo() — the empty branch", does:"Shown when the list is empty or every deal is updated.",
     where:"src/pages/today/today.js — inside renderTodo().",
-    code:`if(followupsState==="empty"
-    || pending.length===0){
-  wrap.innerHTML = '<div class="empty"><span class="empty-plain">All caught up. No follow-ups today.</span></div>';
-  return;
-}` },
-  errortoday: { fn:"renderTodo() — the error branch", does:"When the list state is error, it renders the exact failure string and a Retry button whose click sends the list back through the loading state.",
+    code:`  if(followupsState==="empty" || pending.length===0){
+    wrap.innerHTML = '<div class="empty"><span class="empty-plain">All caught up. No follow-ups today.</span></div>';
+    renderContext(); return;
+  }` },
+  errortoday: { fn:"renderTodo() — the error branch", does:"Renders the exact failure text with role=alert and a Retry that reloads.",
     where:"src/pages/today/today.js — inside renderTodo(), above the empty branch.",
-    code:`if(followupsState==="error"){
-  wrap.innerHTML = '<div class="state-error" role="alert"><p>Couldn't load your follow-ups. Check your connection and try again.</p><button type="button" class="btn-retry" id="followupsRetry">Retry</button></div>';
-  byId("followupsRetry").addEventListener(
-    "click", function(){
-      setFollowupsState("loading"); });
-  return;
-}` },
+    code:`  if(followupsState==="error"){
+    wrap.innerHTML = '<div class="state-error" role="alert"><p>Couldn\\'t load your follow-ups. Check your connection and try again.</p><button type="button" class="btn-retry" id="followupsRetry">Retry</button></div>';
+    byId("followupsRetry").addEventListener("click", function(){ setFollowupsState("loading"); });
+    renderContext(); return;
+  }` },
   emptyhistory: { fn:"renderHistory() — the empty branch", does:"When the history state is empty, the count line is set to zero and the list is replaced with the exact empty string from the build.",
     where:"src/pages/activity-history/activity-history.js — inside renderHistory().",
     code:`if(historyState==="empty"){

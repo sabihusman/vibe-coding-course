@@ -1,4 +1,4 @@
-/* Logic checks for CRM Companion's data and model.
+/* Logic checks for CRM Companion's data, model and queue sort.
    Run with:  node tests/logic-checks.js
    No dependencies. Loads the real data and model files, with the
    screen-drawing functions replaced by no-op stubs. */
@@ -12,8 +12,8 @@ const files = [
   "src/shared/data/sample-activities.js",
   "src/app/session-state.js",
   "src/shared/model/deals-model.js",
+  "src/shared/model/queue-sort.js",
   "src/shared/model/activity-log.js",
-  "src/shared/components/log-activity.js",
 ];
 
 /* The app files are classic browser scripts that share globals. To test them in Node
@@ -22,18 +22,22 @@ const files = [
    Each call to the factory gives a fresh app, with the screen functions stubbed. */
 const bundle = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "crm-logic-")), "app-bundle.js");
 fs.writeFileSync(bundle,
-  "module.exports = function createApp(render, renderFeed, renderHistory, renderDetail, renderDetailActivity, syncDemo, hideToast, showView, showToast) {\n" +
+  "module.exports = function createApp(render, renderHistory, renderDetail, syncDemo, hideToast, showView, showToast, announce) {\n" +
+  "var document = { querySelector: function(){ return null; } };\n" +
   files.map((f) => fs.readFileSync(path.join(root, f), "utf8")).join("\n;\n") +
-  "\nreturn { DEALS, PAST, done, feed, get undoStack(){ return undoStack; }, dealById, doneCount, allActivity, completeDeal, undoDeal, addAttempt, logActivity };\n};\n");
+  "\nreturn { DEALS, PAST, done, feed, get undoStack(){ return undoStack; }, get selectedId(){ return selectedId; }," +
+  " setSort: function(m){ sortMode = m; }, dealById, doneCount, allActivity, completeDeal, undoDeal, sortDeals, daysOverdue," +
+  " pendingDeals, overdueCount, totalArr };\n};\n");
 const createApp = require(bundle);
 
 function freshApp() {
-  const calls = { render: 0, toast: [], view: [] };
+  const calls = { render: 0, toast: [], view: [], announce: [] };
   const noop = () => {};
   const app = createApp(
-    () => { calls.render++; }, noop, noop, noop, noop, noop, noop,
+    () => { calls.render++; }, noop, noop, noop, noop,
     (v) => { calls.view.push(v); },
-    (t) => { calls.toast.push(t); });
+    (t) => { calls.toast.push(t); },
+    (t) => { calls.announce.push(t); });
   return { app, calls };
 }
 
@@ -61,38 +65,51 @@ function check(name, cond, detail) {
 // ---------------------------------------------------------------- saving a call
 {
   const { app, calls } = freshApp();
-  app.completeDeal("james", "call", "Call logged", "Call — James Whitfield, Meridian Legal · Called", "Note");
-  check("Saving a call marks the deal done", !!app.done.james && app.doneCount() === 1);
-  check("Saving a call adds one feed entry at the top", app.feed.length === 1 && app.feed[0].dealId === "james");
-  check("Saving returns to Today and shows a toast", calls.view.includes("today") && calls.toast.length === 1);
+  const ok = app.completeDeal("james", "call", "Call · Connected · 00:42", "Call — James Whitfield, Meridian Legal · Connected", "Duration 00:42");
+  check("Saving a call marks the deal done", ok === true && !!app.done.james && app.doneCount() === 1);
+  check("Saving a call adds one activity at the top", app.feed.length === 1 && app.feed[0].dealId === "james");
+  check("Saving shows a toast and announces it", calls.toast.length === 1 && /1 of 6 updated/.test(calls.announce.join(" ")));
   check("Saved activity appears first in all activity", app.allActivity()[0].dealId === "james" && app.allActivity().length === 13);
+  check("The selection moves to the next pending deal", app.selectedId === "daniel" || app.selectedId === null);
 }
 
-// ---------------------------------------------------------------- attempted
+// ---------------------------------------------------------------- one save, no duplicates
 {
   const { app } = freshApp();
-  app.addAttempt("daniel", "email", "Email attempted — Daniel Ortiz, BluePeak Logistics", "Panel closed without Send and log");
-  check("An attempt does not mark the deal done", !app.done.daniel && app.doneCount() === 0);
-  check("An attempt is logged in the feed, flagged as attempt", app.feed.length === 1 && app.feed[0].attempt === true);
+  const first = app.completeDeal("daniel", "email", "Email sent", "Email — Daniel Ortiz, BluePeak Logistics", "Subject: Pilot");
+  const second = app.completeDeal("daniel", "email", "Email sent", "Email — Daniel Ortiz, BluePeak Logistics", "Subject: Pilot");
+  check("A repeated save is refused: one update, one activity", first === true && second === false && app.doneCount() === 1 && app.feed.length === 1);
+  check("An unknown deal cannot be saved", app.completeDeal("nobody", "log", "x", "x", "x") === false);
 }
 
-// ---------------------------------------------------------------- undo keeps attempts
+// ---------------------------------------------------------------- undo
 {
-  const { app } = freshApp();
-  app.addAttempt("priya", "call", "Call attempted — Priya Nair", "Panel closed without Save & log");
-  app.completeDeal("priya", "call", "Call logged", "Call — Priya Nair", "");
-  app.undoDeal("priya");
-  check("Undo puts the deal back in Follow-ups", !app.done.priya && app.doneCount() === 0);
-  check("Undo removes the saved entry but keeps the attempt", app.feed.length === 1 && app.feed[0].attempt === true);
+  const { app, calls } = freshApp();
+  app.completeDeal("priya", "log", "Logged activity", "Logged activity — Priya Nair, Harbor Dental Group", "Booked the meeting");
+  const undone = app.undoDeal("priya");
+  check("Undo puts the deal back in the queue", undone === true && !app.done.priya && app.doneCount() === 0);
+  check("Undo removes only that activity", app.feed.length === 0 && app.allActivity().length === 12);
   check("Undo clears the Undo stack for that deal", !app.undoStack.includes("priya"));
+  check("Undo selects the restored deal and announces it", app.selectedId === "priya" && calls.announce.some((t) => /Undone/.test(t)));
+  check("Undo on a deal that is not updated does nothing", app.undoDeal("priya") === false);
 }
 
-// ---------------------------------------------------------------- log activity
+// ---------------------------------------------------------------- sorting
 {
   const { app } = freshApp();
-  app.logActivity("aisha");
-  check("Log activity completes the deal straight away", app.done.aisha && app.done.aisha.via === "log");
-  check("Log activity records the next step as the detail", app.feed[0].detail === app.dealById("aisha").next);
+  const order = (mode) => app.sortDeals(app.DEALS, mode).map((d) => d.contact.split(" ")[0]).join(",");
+  check("Highest ARR: James, Daniel, Priya, Maya, Sofia, Aisha", order("arr") === "James,Daniel,Priya,Maya,Sofia,Aisha", order("arr"));
+  check("Overdue first: days overdue, then ARR", order("overdue") === "Maya,Sofia,James,Daniel,Priya,Aisha", order("overdue"));
+  check("Days overdue is read from the due label",
+    app.daysOverdue(app.dealById("maya")) === 2 && app.daysOverdue(app.dealById("sofia")) === 1 && app.daysOverdue(app.dealById("james")) === 0);
+  check("Sorting does not change the deals", app.DEALS.map((d) => d.id).join(",") === "james,daniel,priya,maya,sofia,aisha");
+  check("Summary figures: 2 overdue, $663k total", app.overdueCount() === 2 && app.totalArr() === 663);
+  app.setSort("overdue");
+  app.completeDeal("maya", "call", "Call · Connected · 00:10", "Call — Maya Chen, Northwind Retail · Connected", "Duration 00:10");
+  check("Pending queue keeps the chosen sort and drops updated deals",
+    app.pendingDeals().map((d) => d.id).join(",") === "sofia,james,daniel,priya,aisha", app.pendingDeals().map((d) => d.id).join(","));
+  app.undoDeal("maya");
+  check("Undo restores the original position under the current sort", app.pendingDeals()[0].id === "maya");
 }
 
 console.log("\n" + passed + "/" + (passed + failed) + " passed");

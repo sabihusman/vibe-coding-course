@@ -68,47 +68,56 @@ const ok = (n, c, d) => { if (c) { passed++; console.log("PASS " + n); } else { 
   const page = await ctx.newPage();
   const errors = []; page.on("pageerror", (e) => errors.push(String(e)));
 
-  await page.goto(APP); await page.waitForSelector("#todoList article.deal");
+  await page.goto(APP); await page.waitForSelector("#todoList .qrow");
   ok("Signs in once, anonymously", db.users === 1);
   ok("Seeds the rep's sample data", db.deals.length === 6 && db.requests.some((r) => r.includes("rpc/seed_my_sample_data")));
   ok("Today shows the 6 deals from Supabase, biggest first",
-    (await page.locator("#todoList article.deal").count()) === 6 && (await page.locator("#todoList .deal-name").first().textContent()) === "James Whitfield");
+    (await page.locator("#todoList .qrow").count()) === 6 && (await page.locator("#todoList .deal-name").first().textContent()) === "James Whitfield");
+  ok("With Supabase, the one sample-data notice says work is saved for this browser",
+    /saved for this browser/.test(await page.textContent("#sampleNotice")) && (await page.locator(".sample-pill").count()) === 0);
   ok("Seeded activity from Supabase is in Activity History data", await page.evaluate(() => PAST.some((a) => /Maya Chen/.test(a.title))));
 
-  // Save a call
-  await page.locator("#todoList article.deal").first().locator("[data-call]").click();
-  await page.fill("#callNote", "Renewal confirmed"); await page.click("#saveCall"); await page.waitForTimeout(400);
+  // Save a call: start, outcome, note, save (double-click must still write once)
+  await page.locator("#todoList .qrow").first().locator("[data-call]").click();
+  await page.click("#startCall"); await page.selectOption("#callOutcome", "Connected");
+  await page.fill("#callNote", "Renewal confirmed"); await page.dblclick("#saveCall"); await page.waitForTimeout(400);
   const james = db.deals.find((d) => d.contact === "James Whitfield");
-  ok("Saved call is stored as an activity", db.activities.some((a) => a.deal_id === james.id && a.type === "call" && !a.attempted && /Renewal confirmed/.test(a.detail)));
+  ok("Saved call is stored as one activity", db.activities.filter((a) => a.deal_id === james.id && a.type === "call" && !a.attempted && /Renewal confirmed/.test(a.detail)).length === 1);
   ok("Follow-up marked updated_today", db.follow_ups.find((f) => f.deal_id === james.id).status === "updated_today");
 
-  // Attempted email
-  await page.locator("#todoList article.deal").first().locator("[data-email]").click();
-  await page.fill("#emailBody", (await page.inputValue("#emailBody")) + " edited"); await page.click("#emailOverlay [data-close]"); await page.waitForTimeout(400);
-  ok("Attempted email is stored with attempted = true", db.activities.some((a) => a.type === "email" && a.attempted));
+  // Cancelled email: nothing is written (the attempted-on-close rule is retired)
+  const rowsBefore = db.activities.length, writesBefore = db.requests.filter((r) => /^(POST|PATCH|DELETE) \/rest\/v1\/(activities|follow_ups)/.test(r)).length;
+  await page.locator("#todoList .qrow").first().locator("[data-email]").click();
+  await page.fill("#emailBody", (await page.inputValue("#emailBody")) + " edited"); await page.click("#emailOverlay .x"); await page.waitForTimeout(400);
+  ok("Cancelling a dialog writes nothing to Supabase", db.activities.length === rowsBefore &&
+    db.requests.filter((r) => /^(POST|PATCH|DELETE) \/rest\/v1\/(activities|follow_ups)/.test(r)).length === writesBefore);
+
+  // Log activity with a note
+  await page.locator("#todoList .qrow").first().locator("[data-log]").click();
+  await page.fill("#logNote", "Shared the pilot results."); await page.click("#saveLog"); await page.waitForTimeout(400);
+  ok("Logged note is stored as an activity", db.activities.some((a) => a.type === "log" && a.detail === "Shared the pilot results."));
 
   // Reload: the saved call persists
-  await page.reload(); await page.waitForSelector("#todoList article.deal");
+  await page.reload(); await page.waitForSelector("#todoList .qrow");
   ok("Reload reuses the same rep (no second sign-in)", db.users === 1);
   ok("After reload, James is in Updated today", /James Whitfield/.test(await page.textContent("#updatedList")));
-  ok("After reload, Today shows 5 follow-ups", (await page.locator("#todoList article.deal").count()) === 5);
-  ok("After reload, progress reads 1 of 6", /1 of 6/.test(await page.textContent("#viewToday")));
-  ok("After reload, the call and the attempt are in the Activity feed",
-    /Call — James Whitfield/.test(await page.textContent("#feedList")) && /Email attempted/.test(await page.textContent("#feedList")));
+  ok("After reload, Today shows 4 follow-ups", (await page.locator("#todoList .qrow").count()) === 4);
+  ok("After reload, progress reads 2 of 6", /2 of 6/.test(await page.textContent("#progressLabel")));
+  ok("After reload, the saved call is in Activity history data", await page.evaluate(() => feed.some((f) => /Call — James Whitfield/.test(f.title))));
 
   // Undo after reload
-  await page.locator("#updatedList [data-undo]").first().click(); await page.waitForTimeout(400);
+  await page.locator("#updatedList .updated-item", { hasText: "James Whitfield" }).locator("[data-undo]").click(); await page.waitForTimeout(400);
   ok("Undo deletes the saved call and reopens the follow-up",
     !db.activities.some((a) => a.deal_id === james.id && a.type === "call" && !a.attempted) && db.follow_ups.find((f) => f.deal_id === james.id).status === "open");
-  ok("Undo keeps the attempt", db.activities.some((a) => a.type === "email" && a.attempted));
+  ok("Undo keeps the other update", db.activities.some((a) => a.type === "log" && a.detail === "Shared the pilot results."));
 
   // Error + Retry
   await ctx.unroute(FAKE + "/**"); await ctx.route(FAKE + "/**", (r) => r.fulfill({ status: 500, body: "down" }));
-  await page.click('#followupsDemo [data-fstate="loading"]'); await page.waitForTimeout(400);
+  await page.click("#todayTestArea summary"); await page.click('#followupsDemo [data-fstate="loading"]'); await page.waitForTimeout(400);
   ok("A failed load shows the exact error wording", /Couldn't load your follow-ups\. Check your connection and try again\./.test(await page.textContent("#viewToday")));
   await ctx.unroute(FAKE + "/**"); await ctx.route(FAKE + "/**", handle);
   await page.click("#followupsRetry"); await page.waitForTimeout(500);
-  ok("Retry reloads from Supabase", (await page.locator("#todoList article.deal").count()) === 6);
+  ok("Retry reloads from Supabase", (await page.locator("#todoList .qrow").count()) === 5);
 
   ok("No JavaScript errors", errors.length === 0, errors.join(" | "));
   await browser.close();

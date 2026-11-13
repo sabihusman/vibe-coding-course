@@ -20,11 +20,11 @@ function renderOrbit(){
   NODES.forEach(function(n){ if(n.ring>0) rings[n.ring].push(n); });
   Object.keys(rings).forEach(function(r){
     var list = rings[r];
-    var rx = r==="1" ? 27 : (r==="2" ? 34 : 40);
-    var ry = r==="1" ? 30 : (r==="2" ? 37 : 44);
+    var rx = r==="1" ? 22 : (r==="2" ? 32 : 40);
+    var ry = r==="1" ? 22 : (r==="2" ? 34 : 44);
     list.forEach(function(n, i){
       var ang;
-      if(r==="1"){ ang = [-90, 30, 150][i] || 0; }
+      if(r==="1"){ ang = [-45, 45, 135, 225][i] || 0; }  /* four screens on the diagonals, clear of the rings' axis nodes */
       else { ang = -90 + (360/list.length)*i + (r==="3" ? 360/list.length/2 : 0); }
       var rad = ang * Math.PI/180;
       var b = document.createElement("button");

@@ -7,10 +7,11 @@
 <link rel="icon" href="data:," />
 <title>CRM Companion Today View v3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
 <!-- Styles, grouped by feature. Order matters: base first, responsive last. -->
 <link rel="stylesheet" href="src/app/base.css">
 <link rel="stylesheet" href="src/pages/today/today.css">
+<link rel="stylesheet" href="src/pages/problem-statement/problem-statement.css">
 <link rel="stylesheet" href="src/shared/components/panels.css">
 <link rel="stylesheet" href="src/shared/components/screen-parts.css">
 <link rel="stylesheet" href="src/pages/admin/admin.css">
@@ -23,37 +24,38 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">C</div>
-      <div class="brand-text"><b>CRM Companion</b><span>Today view · v3</span></div>
-      <button type="button" class="nav-toggle" id="hideNavBtn" aria-label="Hide sidebar" title="Hide sidebar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <div class="brand-mark" aria-hidden="true">C</div>
+      <div class="brand-text"><b>CRM Companion</b><span>Workspace</span></div>
+      <button type="button" class="nav-toggle" id="hideNavBtn" aria-label="Hide sidebar" title="Hide sidebar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
     </div>
-    <div class="navlabel">Work</div>
-    <a class="navitem active" id="navTodayLink" href="#" onclick="showView('today');return false">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>
-      Today <span class="count" id="navCount">6</span>
-    </a>
-    <span class="navitem dim">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Deals
-    </span>
-    <span class="navitem dim">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-      Activity
-    </span>
-    <p class="nav-note">Nav is off for this test — only the follow-ups on this screen are in scope.</p>
-    <div class="navlabel">Admin</div>
-    <a class="navitem" id="navAdminLink" href="#" onclick="showView('admin');return false">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      Admin — Code Explorer
-    </a>
+    <nav class="sidenav" aria-label="Main">
+      <p class="navlabel" id="navWorkspaceLabel">Workspace</p>
+      <ul class="navlist" aria-labelledby="navWorkspaceLabel">
+        <li><a class="navitem active" id="navTodayLink" href="#today" data-nav="today" aria-current="page">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>
+          Today <span class="count" id="navCount" aria-label="follow-ups left">6</span></a></li>
+        <li><a class="navitem" id="navHistoryLink" href="#history" data-nav="history">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Activity history</a></li>
+        <li><a class="navitem" id="navProblemLink" href="#problem" data-nav="problem">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+          Problem statement</a></li>
+      </ul>
+      <p class="navlabel" id="navAdminLabel">Admin</p>
+      <ul class="navlist" aria-labelledby="navAdminLabel">
+        <li><a class="navitem" id="navAdminLink" href="#admin" data-nav="admin">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin — Code Explorer</a></li>
+      </ul>
+    </nav>
     <div class="sidefoot">
       <div class="samplebox">
-        <b>Sample data only</b>
-        <p>All names, deals and amounts on this page are sample data. Nothing is saved — it resets on reload.</p>
+        <b>Prototype workspace</b>
+        <p id="sampleNotice">Sample data · resets on reload. Calls and emails are simulated.</p>
       </div>
       <div class="userrow">
-        <div class="avatar">AR</div>
-        <div><b>Alex Rivera</b><span>Sales rep · sample user</span></div>
+        <div class="avatar" aria-hidden="true">AR</div>
+        <div><b>Alex Rivera</b><span>Sales representative</span></div>
       </div>
     </div>
   </aside>
@@ -65,11 +67,13 @@
 
 <!-- Screen markup first, then data, model, components, pages, and app start-up last. -->
 <script src="src/pages/today/today-view.js"></script>
+<script src="src/pages/problem-statement/problem-statement-view.js"></script>
 <script src="src/pages/deal-detail/deal-detail-view.js"></script>
 <script src="src/pages/activity-history/activity-history-view.js"></script>
 <script src="src/pages/admin/admin-view.js"></script>
 <script src="src/shared/components/call-panel-view.js"></script>
 <script src="src/shared/components/email-panel-view.js"></script>
+<script src="src/shared/components/log-panel-view.js"></script>
 <script src="src/shared/components/toast-view.js"></script>
 <script src="src/shared/data/sample-deals.js"></script>
 <script src="src/shared/data/sample-activities.js"></script>
@@ -77,6 +81,9 @@
 <script src="src/shared/components/icons.js"></script>
 <script src="src/shared/components/dom-helpers.js"></script>
 <script src="src/shared/model/deals-model.js"></script>
+<script src="src/shared/model/queue-sort.js"></script>
+<script src="src/shared/components/announcer.js"></script>
+<script src="src/shared/components/dialog.js"></script>
 <script src="src/shared/components/list-states.js"></script>
 <script src="src/app/render.js"></script>
 <script src="src/pages/today/today.js"></script>
@@ -88,7 +95,6 @@
 <script src="src/shared/components/toast.js"></script>
 <script src="src/shared/components/call-panel.js"></script>
 <script src="src/shared/components/email-panel.js"></script>
-<script src="src/shared/components/panel-close.js"></script>
 <script src="src/pages/admin/orbit-data.js"></script>
 <script src="src/pages/admin/orbit-explorer.js"></script>
 <script src="src/app/sidebar.js"></script>

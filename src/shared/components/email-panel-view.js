@@ -1,32 +1,32 @@
-/* Email panel markup.
-   Injects this screen's markup. Loaded before the logic files, so their
-   getElementById lookups find these elements. */
+/* Email dialog markup. Injected before the logic files, so their getElementById lookups find it. */
 document.body.insertAdjacentHTML("beforeend", `
-<!-- Email composer -->
-<div class="overlay" id="emailOverlay" role="dialog" aria-modal="true" aria-labelledby="emailTitle">
-  <div class="sheet">
-    <div class="sheet-head">
-      <div>
-        <h3 id="emailTitle">Email</h3>
-        <p id="emailSub"></p>
+<!-- Email dialog -->
+<div class="overlay" id="emailOverlay">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="emailTitle" aria-describedby="emailSim">
+    <form id="emailForm" novalidate>
+      <div class="sheet-head">
+        <div>
+          <p class="sheet-eyebrow">Simulated email</p>
+          <h2 id="emailTitle">Email</h2>
+          <p id="emailSub"></p>
+        </div>
+        <button type="button" class="x" data-close aria-label="Close email dialog without sending">✕</button>
       </div>
-      <button class="x" data-close aria-label="Close email composer">✕</button>
-    </div>
-    <div class="ctx">
-      <div class="row"><span>To</span><b id="emailTo"></b></div>
-      <div class="row"><span>Company</span><b id="emailCompany"></b></div>
-      <div class="row"><span>Next step</span><b id="emailNext"></b></div>
-    </div>
-    <label class="fieldlabel" for="emailSubject">Subject</label>
-    <input type="text" id="emailSubject" />
-    <label class="fieldlabel" for="emailBody">Draft</label>
-    <textarea id="emailBody" rows="6"></textarea>
-    <p class="sim">Simulated email — no real email is sent from this prototype. Sending logs the activity in the CRM only.</p>
-    <div class="sheet-actions">
-      <button class="btn btn-cancel" data-close>Cancel</button>
-      <button class="btn btn-save email" id="sendEmail">Send &amp; log email</button>
-    </div>
+      <div class="sheet-body">
+        <div class="ctx"><p class="ctx-label">Follow-up</p><p id="emailNext"></p></div>
+        <label class="fieldlabel" for="emailSubject">Subject</label>
+        <input type="text" id="emailSubject" aria-describedby="emailSubjectErr" autocomplete="off" />
+        <p class="field-error" id="emailSubjectErr" hidden></p>
+        <label class="fieldlabel" for="emailBody">Message</label>
+        <textarea id="emailBody" rows="7" aria-describedby="emailBodyErr"></textarea>
+        <p class="field-error" id="emailBodyErr" hidden></p>
+        <p class="sim" id="emailSim">Simulated email. Nothing is sent; sending records it in the CRM only.</p>
+      </div>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-cancel" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary" id="sendEmail">Send simulated email &amp; update follow-up</button>
+      </div>
+    </form>
   </div>
 </div>
-
 `);

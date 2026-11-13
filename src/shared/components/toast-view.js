@@ -1,11 +1,9 @@
-/* Toast markup.
-   Injects this screen's markup. Loaded before the logic files, so their
-   getElementById lookups find these elements. */
+/* Toast and screen-reader live region markup. */
 document.body.insertAdjacentHTML("beforeend", `
 <!-- Toast -->
-<div class="toast" id="toast" role="status" aria-hidden="true">
+<div class="toast" id="toast" aria-hidden="true">
   <span id="toastText"></span>
-  <button id="toastUndo">Undo</button>
+  <button type="button" id="toastUndo">Undo</button>
 </div>
-
+<div id="liveRegion" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 `);

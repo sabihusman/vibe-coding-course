@@ -40,7 +40,6 @@ function renderHistory(){
 }
 byId("historySearch").addEventListener("input", renderHistory);
 byId("historyBack").addEventListener("click", function(){ showView("today"); });
-byId("feedHistoryLink").addEventListener("click", function(){ openHistory(""); });
 document.querySelectorAll("#historyDemo button").forEach(function(b){
   b.addEventListener("click", function(){ setHistoryState(b.getAttribute("data-hstate")); });
 });

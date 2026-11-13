@@ -10,25 +10,27 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
     </button>
     <div class="pagehead">
       <div>
-        <h1>Activity History</h1>
-        <div class="sub">Every call, email, and log, newest first. Select a row to open that deal.</div>
+        <h1 id="historyTitle" tabindex="-1">Activity history</h1>
+        <div class="sub">A clear record of your conversations and next steps — every call, email and note, newest first. Select a row to open that deal.</div>
       </div>
-      <span class="sample-pill"><i></i> Sample data only — resets on reload</span>
     </div>
     <div class="searchwrap">
       <label class="fieldlabel" for="historySearch" style="margin-top:0">Find a deal</label>
       <input type="text" id="historySearch" placeholder="Search by contact name or company…" autocomplete="off" />
     </div>
-    <div class="state-demo" id="historyDemo" aria-label="Preview activity history list states" style="margin-top:14px">
-      <span>List state</span>
-      <button type="button" data-hstate="ready" class="active">Data</button>
-      <button type="button" data-hstate="loading">Loading</button>
-      <button type="button" data-hstate="empty">Empty</button>
-      <button type="button" data-hstate="error">Error</button>
-    </div>
-    <p class="hist-count" id="historyCount"></p>
-    <section class="panelcard" style="margin-top:10px" aria-label="All activity">
-      <div id="historyList" aria-live="polite"></div>
+    <p class="hist-count" id="historyCount" aria-live="polite"></p>
+    <section class="panelcard hist-panel" aria-label="All activity">
+      <div id="historyList"></div>
     </section>
+    <details class="test-area" id="historyTestArea">
+      <summary>Test controls</summary>
+      <p>For reviewers: force the activity list into each state. Reps see the real state, with Retry when a load fails.</p>
+      <div class="state-demo" id="historyDemo" role="group" aria-label="Force activity list state">
+        <button type="button" data-hstate="ready" class="active">Data</button>
+        <button type="button" data-hstate="loading">Loading</button>
+        <button type="button" data-hstate="empty">Empty</button>
+        <button type="button" data-hstate="error">Error</button>
+      </div>
+    </details>
    </div><!-- /viewHistory -->
 `);

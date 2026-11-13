@@ -7,6 +7,9 @@ var HO_SECTIONS = { "ho-summary":"What this is", "ho-frontend":"Frontend", "ho-b
 var NODE_DOCS = {
   app:         { prd:["prd-01","prd-05"], ho:["ho-summary","ho-frontend"] },
   today:       { prd:["prd-03","prd-07"], ho:["ho-flows"] },
+  problem:     { prd:["prd-02","prd-03"], ho:["ho-frontend","ho-flows"] },
+  context:     { prd:["prd-03"],          ho:["ho-frontend","ho-flows"] },
+  sort:        { prd:["prd-03","prd-06"], ho:["ho-flows"] },
   detail:      { prd:["prd-03"],          ho:["ho-flows"] },
   history:     { prd:["prd-03"],          ho:["ho-flows"] },
   followups:   { prd:["prd-03","prd-06"], ho:["ho-flows","ho-solid"] },

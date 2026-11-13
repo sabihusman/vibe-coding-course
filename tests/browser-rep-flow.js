@@ -24,9 +24,9 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('Admin opens with Orbit Code Explorer in the first tab', await vis('#viewAdmin') && (await txt('#viewAdmin h1')).trim()==='Admin' && /Orbit Code Explorer/.test(await txt('#adminTabOrbit .tab-head h2')));
   const nodeCount = await page.locator('#orbitStage .onode').count();
   const centre = await page.locator('#orbitStage .onode.centre').count();
-  ok('Orbit renders 27 nodes incl. CRM Companion centre', nodeCount === 27 && centre === 1, 'onode count ' + nodeCount + ', centre ' + centre);
+  ok('Orbit renders 30 nodes incl. CRM Companion centre', nodeCount === 30 && centre === 1, 'onode count ' + nodeCount + ', centre ' + centre);
   ok('Admin only badge present', /Admin only/.test(await txt('#viewAdmin')));
-  ok('Sample data only badge present', /Sample data only/.test(await txt('#viewAdmin')));
+  ok('One persistent sample-data notice, in the sidebar', /Sample data/.test(await txt('#sampleNotice')) && (await page.locator('.sample-pill').count()) === 0);
   await page.locator('#orbitStage .onode', { hasText: 'Today' }).first().click();
   const detailText = await txt('#orbitDetail');
   ok('Clicking a node shows detail panel', detailText.length > 100 && /connect|Connects/i.test(detailText), detailText.slice(0, 80));
@@ -61,7 +61,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('PRD blocks link to Orbit nodes', prdLinks >= 8, 'links ' + prdLinks);
   await page.locator('#prd-03 [data-orbit-link="call"]').click();
   await page.waitForTimeout(300);
-  ok('PRD link opens Orbit tab and selects Call panel', await vis('#adminTabOrbit') && /^Call panel/.test((await txt('#orbitDetail h2')).trim()) && (await page.locator('#orbitStage .onode.selected').textContent()).trim() === 'Call panel');
+  ok('PRD link opens Orbit tab and selects Call dialog', await vis('#adminTabOrbit') && /^Call dialog/.test((await txt('#orbitDetail h2')).trim()) && (await page.locator('#orbitStage .onode.selected').textContent()).trim() === 'Call dialog');
   const backLinks = await page.locator('#orbitDetail [data-prdlink]').allTextContents();
   ok('Orbit node links back to PRD block', backLinks.length >= 1 && /03 · User Flow/.test(backLinks.join(' ')), backLinks.join(' | '));
   await page.locator('#orbitDetail [data-prdlink]').first().click();
@@ -74,7 +74,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   const hoText = await txt('#adminTabHandoff');
   ok('Backend section states Supabase is live', /Live since 2026-11-13\./.test(hoText) && await vis('#ho-backend .doc-note'));
   ok('Handoff keeps the honest limits', /Call and Email panels stay simulated in v1/.test(hoText) && /sample data/.test(hoText) && /anonymous/.test(hoText));
-  ok('Handoff describes the src/ code layout', /Lab 2 refactor split the single file by feature/.test(hoText) && /src\/pages/.test(hoText));
+  ok('Handoff describes the src/ code layout', /one folder per screen/.test(hoText) && /src\/pages/.test(hoText));
   ok('Solid/duct-tape table has 11 rows', (await page.locator('#ho-solid tbody tr').count()) === 11);
   await page.locator('#ho-backend [data-orbit-link="dealsdata"]').click();
   await page.waitForTimeout(300);
@@ -89,7 +89,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   await page.screenshot({ path: SHOTS + '/prd.png' });
   await page.click('[data-atab="orbit"]');
   await page.waitForTimeout(200);
-  ok('Orbit still renders after tab switching', (await page.locator('#orbitStage .onode').count()) === 27);
+  ok('Orbit still renders after tab switching', (await page.locator('#orbitStage .onode').count()) === 30);
 
   // --- Sidebar hide / show ---
   const sbBefore = await page.locator('.sidebar').boundingBox();
@@ -99,7 +99,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('Main content uses full width when collapsed', mainBox.x < 60 && mainBox.width > 1000, 'main x=' + Math.trunc(mainBox.x) + ' w=' + Math.trunc(mainBox.width));
   await page.click('#showNavBtn');
   ok('Show sidebar restores it', await vis('.sidebar') && !(await vis('#showNavBtn')));
-  ok('Rep-flow sidebar text unchanged', /Nav is off for this test/.test(await txt('.sidebar')) && /Admin — Code Explorer/.test(await txt('.sidebar')));
+  ok('Sidebar keeps its destinations and notice', /Problem statement/.test(await txt('.sidebar')) && /Admin — Code Explorer/.test(await txt('.sidebar')) && /Prototype workspace/.test(await txt('.sidebar')));
 
   // --- Phone reflow ---
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -109,7 +109,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   const t1 = await phone.locator('[data-atab="orbit"]').boundingBox();
   const t2 = await phone.locator('[data-atab="prd"]').boundingBox();
   ok('Phone: tabs stack vertically', t2.y > t1.y + t1.height - 1 && tabBox.width <= 390, `tab1 y=${Math.trunc(t1.y)} tab2 y=${Math.trunc(t2.y)}`);
-  ok('Phone: orbit stage hidden, list shown', !(await phone.isVisible('#orbitStage')) && (await phone.locator('#orbitList .lnode').count()) === 27);
+  ok('Phone: orbit stage hidden, list shown', !(await phone.isVisible('#orbitStage')) && (await phone.locator('#orbitList .lnode').count()) === 30);
   ok('Phone: no horizontal overflow', await phone.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   await phone.click('[data-atab="prd"]');
   ok('Phone: PRD tab works', await phone.isVisible('#adminTabPrd'));
@@ -124,61 +124,73 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   // --- Rep flow ---
   await page.click('#navTodayLink');
   ok('Back to Today', await vis('#viewToday') && !(await vis('#viewAdmin')));
-  await page.waitForSelector('#todoList article.deal', { timeout: 5000 });
-  const cards = await page.locator('#todoList article.deal').count();
-  ok('Today shows 6 follow-ups', cards === 6, 'cards ' + cards);
-  const firstName = (await txt('#todoList article.deal:first-child .deal-name')).trim();
-  ok('First card is James Whitfield', firstName === 'James Whitfield', firstName);
-  ok('Neutral instruction on screen', /Work this follow-up as you normally would\./.test(await txt('#viewToday')));
+  await page.waitForSelector('#todoList .qrow', { timeout: 5000 });
+  const rows = await page.locator('#todoList .qrow').count();
+  ok('Today shows 6 follow-ups in the queue', rows === 6, 'rows ' + rows);
+  const firstName = (await txt('#todoList .qrow:first-child .deal-name')).trim();
+  ok('First row is James Whitfield', firstName === 'James Whitfield', firstName);
+  ok('Research block is not on Today', !/Hypothesis B/.test(await txt('#viewToday')) && !/What reps told us/.test(await txt('#viewToday')));
   ok('No kill-switch text anywhere', !/Test it yourself/.test(await page.content()));
-  ok('Nav out-of-scope label', /Nav is off for this test/.test(await page.content()));
+  ok('Deals is not shown as a broken link', (await page.locator('.sidebar .navitem', { hasText: 'Deals' }).count()) === 0);
 
-  // 1. Deal Detail and back
-  await page.locator('#todoList article.deal').first().click();
-  ok('Card opens Deal Detail', await vis('#viewDetail') && (await txt('#detailName')).trim() === 'James Whitfield', (await txt('#detailName')).trim());
+  // Problem statement keeps the neutral instruction and the research
+  await page.click('#navProblemLink');
+  ok('Problem statement holds the neutral instruction', /Work this follow-up as you normally would\./.test(await txt('#viewProblem')));
+  await page.click('#navTodayLink');
+
+  // Select, then Open deal reaches Deal Detail
+  await page.locator('#todoList [data-select]').first().click();
+  ok('Selecting a contact fills the context panel', (await txt('#dealContext .ctx-company')).trim() === 'Meridian Legal');
+  await page.click('#contextOpenDeal');
+  ok('Open deal opens Deal Detail', await vis('#viewDetail') && (await txt('#detailName')).trim() === 'James Whitfield', (await txt('#detailName')).trim());
   await page.click('#detailBack');
   ok('Back returns to Today', await vis('#viewToday'));
 
-  // 2. Call + save
-  await page.locator('#todoList article.deal').first().locator('[data-call]').click();
-  ok('Call panel opens', await vis('#callOverlay'));
+  // Call: start, outcome, save
+  await page.locator('#todoList .qrow').first().locator('[data-call]').click();
+  ok('Call dialog opens ready, timer not running', await vis('#callOverlay') && !(await vis('#timerBox')));
+  await page.click('#startCall');
+  await page.selectOption('#callOutcome', 'Connected');
   await page.fill('#callNote', 'Test note');
   await page.click('#saveCall');
   await page.waitForTimeout(300);
-  ok('Save & log moves deal to Updated today', (await page.locator('#updatedList .updated-item').count()) === 1 && /James Whitfield/.test(await txt('#updatedList')));
-  ok('Progress 1 of 6', /1 of 6/.test(await txt('#viewToday')));
-  ok('Feed shows the call', /James Whitfield/.test(await txt('#feedList')));
+  ok('Saved call moves the deal to Updated today', (await page.locator('#updatedList .updated-item').count()) === 1 && /James Whitfield/.test(await txt('#updatedList')));
+  ok('Progress 1 of 6', /1 of 6/.test(await txt('#progressLabel')));
+  ok('Context panel shows the next deal', (await txt('#dealContext .ctx-company')).trim() === 'BluePeak Logistics');
 
-  // 3. Email + send
-  await page.locator('#todoList article.deal', { hasText: 'Daniel Ortiz' }).locator('[data-email]').click();
-  ok('Email panel opens', await vis('#emailOverlay'));
-  ok('Email draft pre-filled', (await page.inputValue('#emailBody')).length > 20);
+  // Email: send the pre-filled draft
+  await page.locator('#todoList .qrow', { hasText: 'Daniel Ortiz' }).locator('[data-email]').click();
+  ok('Email dialog opens with a pre-filled draft', await vis('#emailOverlay') && (await page.inputValue('#emailBody')).length > 20);
   await page.click('#sendEmail');
   await page.waitForTimeout(300);
-  ok('Send & log -> 2 of 6', /2 of 6/.test(await txt('#viewToday')) && (await page.locator('#updatedList .updated-item').count()) === 2);
+  ok('Send -> 2 of 6', /2 of 6/.test(await txt('#progressLabel')) && (await page.locator('#updatedList .updated-item').count()) === 2);
 
-  // 4. Attempted: call closed after timer, email closed after typing
-  const todoBefore = await page.locator('#todoList article.deal').count();
-  await page.locator('#todoList article.deal').first().locator('[data-call]').click();
-  await page.waitForTimeout(1600);
-  await page.click('#callOverlay [data-close]');
-  await page.waitForTimeout(300);
-  ok('Call attempted logged', /Call attempted/.test(await txt('#feedList')));
-  await page.locator('#todoList article.deal').first().locator('[data-email]').click();
+  // Cancel records nothing (the attempted-on-close rule is retired)
+  const before = await page.evaluate(() => ({ f: feed.length, d: Object.keys(done).length }));
+  await page.locator('#todoList .qrow').first().locator('[data-call]').click();
+  await page.click('#startCall'); await page.waitForTimeout(1200);
+  await page.click('#callOverlay .x');
+  await page.locator('#todoList .qrow').first().locator('[data-email]').click();
   await page.fill('#emailBody', (await page.inputValue('#emailBody')) + ' edited');
-  await page.click('#emailOverlay [data-close]');
-  await page.waitForTimeout(300);
-  ok('Email attempted logged', /Email attempted/.test(await txt('#feedList')));
-  ok('Attempted deals stay in Follow-ups', (await page.locator('#todoList article.deal').count()) === todoBefore && /2 of 6/.test(await txt('#viewToday')));
+  await page.keyboard.press('Escape');
+  const after = await page.evaluate(() => ({ f: feed.length, d: Object.keys(done).length }));
+  ok('Closing Call or Email without saving records nothing', before.f === after.f && before.d === after.d && !/attempted/i.test(await txt('#viewToday')));
 
-  // Log activity
-  await page.locator('#todoList article.deal').first().locator('[data-log]').click();
-  await page.waitForTimeout(300);
-  ok('Log activity -> 3 of 6', /3 of 6/.test(await txt('#viewToday')));
+  // Log activity: note required
+  await page.locator('#todoList .qrow').first().locator('[data-log]').click();
+  await page.click('#saveLog');
+  ok('Log activity needs a note', await vis('#logNoteErr') && /2 of 6/.test(await txt('#progressLabel')));
+  await page.fill('#logNote', 'Confirmed the decision-maker meeting.');
+  await page.click('#saveLog'); await page.waitForTimeout(300);
+  ok('Log activity -> 3 of 6', /3 of 6/.test(await txt('#progressLabel')));
 
-  // 5. Activity History + search + row -> detail
-  await page.click('#feedHistoryLink');
-  ok('Activity History opens', await vis('#viewHistory'));
+  // Undo
+  await page.locator('#updatedList [data-undo]').last().click(); await page.waitForTimeout(200);
+  ok('Undo -> 2 of 6', /2 of 6/.test(await txt('#progressLabel')));
+
+  // Activity history from the sidebar
+  await page.click('#navHistoryLink');
+  ok('Activity history opens from the sidebar', await vis('#viewHistory'));
   await page.waitForSelector('#historyList .hist-row', { timeout: 5000 });
   const rowsAll = await page.locator('#historyList .hist-row').count();
   await page.fill('#historySearch', 'James Whitfield');
@@ -189,7 +201,8 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('History row opens Deal Detail', await vis('#viewDetail') && (await txt('#detailName')).trim() === 'James Whitfield');
   await page.click('#detailBack');
 
-  // 6. State controls
+  // State controls, now in the test area
+  await page.click('#todayTestArea summary');
   await page.click('#followupsDemo [data-fstate="empty"]');
   await page.waitForTimeout(200);
   ok('Empty state wording', /All caught up\. No follow-ups today\./.test(await txt('#viewToday')));
@@ -198,7 +211,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('Error state wording + Retry', /Couldn't load your follow-ups\. Check your connection and try again\./.test(await txt('#viewToday')) && await vis('#followupsRetry'));
   await page.click('#followupsRetry');
   await page.waitForTimeout(1200);
-  ok('Retry restores list', (await page.locator('#todoList article.deal').count()) > 0);
+  ok('Retry restores list', (await page.locator('#todoList .qrow').count()) > 0);
 
   ok('No JS page errors', errors.length === 0, errors.join(' | ').slice(0, 200));
   await browser.close();

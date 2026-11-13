@@ -2,6 +2,10 @@
 renderOrbit(); renderOrbitList(); renderOrbitDetail();
 
 render();
+/* Open the view named in the address (#today, #history, #problem, #admin), so views are
+   directly addressable and browser Back works. */
+routeFromHash({ fromHistory: true });
+try { history.replaceState(null, "", location.hash || "#today"); } catch(e){}
 /* Initial fetch: follow-ups start as a skeleton, then load.
    With Supabase configured, the load reads the rep's data; otherwise the in-page sample data appears after 750 ms, as before. */
 function loadSampleFollowups(){

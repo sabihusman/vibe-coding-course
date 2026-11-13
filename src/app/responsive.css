@@ -1,38 +1,47 @@
-/* Breakpoints for every screen. Loaded last so it wins over the screen styles. */
+/* Breakpoints for every screen. Loaded last so it wins over the screen styles.
+   Checked at 320, 390, 768, 1024 and 1366px, and at 200% zoom. */
 
+  @media(max-width:1100px){
+    .main{padding:var(--sp-5) var(--sp-5) 48px}
+  }
   @media(max-width:900px){
-    .hypo{grid-template-columns:1fr;gap:14px}
-    .grid{grid-template-columns:1fr}
-    .metrics{grid-template-columns:repeat(2,1fr)}
-    .quotes-grid{grid-template-columns:1fr}
+    .today-grid{grid-template-columns:1fr}
+    .context{position:static}
+    .ps-hypothesis{grid-template-columns:1fr;gap:var(--sp-3)}
+    .ps-signal{display:flex;align-items:baseline;gap:10px}
+    .ps-signal span{margin-top:0}
     .orbit-layout{grid-template-columns:1fr}
     .orbit-detail{position:static}
     .orbit-list{grid-template-columns:repeat(2,1fr)}
     .faq-grid{grid-template-columns:1fr}
   }
-  @media(max-width:480px){
-    .metrics{grid-template-columns:1fr}
-  }
   @media(max-width:720px){
     .app{flex-direction:column}
-    .sidebar{width:100%;flex:none;height:auto;position:static;flex-direction:row;align-items:center;flex-wrap:wrap;padding:12px 14px;gap:6px}
-    .brand{border:0;margin:0;padding:0 10px 0 0}
-    .brand span{display:none}
-    .navlabel,.sidefoot .samplebox,.userrow span{display:none}
-    .navitem{padding:8px 10px;font-size:13px}
-    .nav-note{flex:1 1 100%;margin:4px 0 0}
-    .brand{padding-right:0}
-    .nav-toggle{position:static;margin-left:4px}
-    .sidefoot{margin:0 0 0 auto}
-    .userrow{padding:0}
-    .userrow b{display:none}
-    .main{padding:20px 16px 90px}
+    .sidebar{width:100%;flex:none;height:auto;position:static;padding:var(--sp-3) var(--sp-4);overflow:visible}
+    .brand{padding:0 48px 0 0;margin-bottom:var(--sp-2)}
+    .nav-toggle{top:-2px}
+    .sidenav{flex-direction:row;flex-wrap:wrap;gap:var(--sp-1) var(--sp-3)}
+    .navlabel{display:none}
+    .navlist{flex-direction:row;flex-wrap:wrap;margin:0;gap:var(--sp-1)}
+    .navitem{padding:8px 10px;font-size:13.5px}
+    .sidefoot{margin:var(--sp-2) 0 0;padding-top:0}
+    .samplebox{border-top:0;padding:0 4px;display:flex;flex-wrap:wrap;gap:0 6px;align-items:baseline}
+    .samplebox b,.samplebox p{font-size:12px;margin:0}
+    .userrow{display:none}
+    .main{padding:var(--sp-5) var(--sp-4) 90px}
+    .page-head h1,.pagehead h1{font-size:26px}
     .orbit-stage{display:none}
     .orbit-list{grid-template-columns:1fr}
   }
-    .pagehead h1{font-size:26px}
-    .actions .btn-log{flex:1}
-    .step .slabel{display:none}
-    .step{width:36px}
+  @media(max-width:480px){
+    .ps-metrics{grid-template-columns:1fr}
+    .summary-line{flex-direction:column;align-items:flex-start}
+    .qactions{margin-left:0;width:100%}
+    .qfoot{flex-direction:column;align-items:flex-start}
+    .queue-head{align-items:flex-start}
+    .sheet-head,.sheet-body,.sheet-actions{padding-left:var(--sp-4);padding-right:var(--sp-4)}
+    .sheet-actions .btn{flex:1 1 100%}
+    .ps-hypothesis{padding:var(--sp-4)}
+    .ps-quote-list{padding:0 var(--sp-4)}
   }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

@@ -1,32 +1,36 @@
-/* Call and Email panels (modal sheets). */
-  /* Modal */
-  .overlay{position:fixed;inset:0;background:rgba(10,15,26,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+/* Call, Email and Log activity dialogs. */
+  .overlay{position:fixed;inset:0;background:rgba(19,31,50,.5);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
   .overlay.open{display:flex}
-  .sheet{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:22px 22px 26px;animation:up .22s ease}
-  @keyframes up{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
-  @media(min-width:640px){.overlay{align-items:center;padding:20px}.sheet{border-radius:18px}}
-  .sheet-head{display:flex;align-items:flex-start;gap:12px}
-  .sheet-head h3{margin:0;font-size:19px;letter-spacing:-.01em}
-  .sheet-head p{margin:3px 0 0;color:var(--muted);font-size:13.5px;font-weight:600}
-  .x{margin-left:auto;background:var(--due-bg);border:0;width:34px;height:34px;border-radius:50%;font-size:16px;color:var(--ink-2);flex:0 0 auto}
-  .ctx{background:#f7f8fa;border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-top:16px}
-  .ctx .row{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:3px 0}
-  .ctx .row span{color:var(--muted);font-weight:700}
-  .ctx .row b{font-weight:800;text-align:right}
-  .sim{font-size:12px;color:var(--muted);font-weight:600;background:#fffbe8;border:1px solid #eee3ae;border-radius:8px;padding:8px 11px;margin-top:14px;line-height:1.45}
-  .fieldlabel{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;display:block}
-  .timerbox{display:flex;align-items:center;gap:14px;background:var(--ink);color:#fff;border-radius:11px;padding:14px 16px}
-  .timer{font-family:"JetBrains Mono",monospace;font-size:30px;font-weight:600;letter-spacing:.02em}
+  .overlay.closing{display:block;background:transparent}
+  .overlay.closing .sheet{display:none}
+  .sheet{background:var(--surface);width:100%;max-width:480px;max-height:94vh;display:flex;flex-direction:column;border-radius:var(--radius) var(--radius) 0 0;animation:up .2s ease;box-shadow:0 20px 50px rgba(19,31,50,.25)}
+  .sheet form{display:flex;flex-direction:column;min-height:0;max-height:94vh}
+  @keyframes up{from{transform:translateY(12px);opacity:.6}to{transform:none;opacity:1}}
+  @media(min-width:640px){.overlay{align-items:center;padding:var(--sp-5)}.sheet{border-radius:var(--radius)}}
+  .sheet-head{display:flex;align-items:flex-start;gap:12px;padding:var(--sp-5) var(--sp-5) var(--sp-4);border-bottom:1px solid var(--divider)}
+  .sheet-eyebrow{margin:0 0 4px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-2);font-weight:600}
+  .sheet-head h2{margin:0;font-size:20px;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+  .sheet-head p:not(.sheet-eyebrow){margin:4px 0 0;color:var(--text-2);font-size:13px}
+  .x{margin-left:auto;background:var(--surface);border:1px solid var(--divider);width:44px;height:44px;border-radius:var(--radius-sm);font-size:16px;color:var(--ink-2);flex:0 0 auto}
+  .x:hover{background:#F3F5F8}
+  .sheet-body{padding:var(--sp-4) var(--sp-5);overflow-y:auto}
+  .ctx{background:#F7F8FB;border:1px solid var(--divider);border-radius:var(--radius-sm);padding:var(--sp-3) var(--sp-4)}
+  .ctx .ctx-label{margin:0 0 4px}
+  .ctx p:not(.ctx-label){margin:0;font-size:14px;color:var(--text)}
+  .callstart{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2);margin-top:var(--sp-4)}
+  .callstart p{margin:0;font-size:13px;color:var(--text-2)}
+  .sim{font-size:12.5px;color:var(--text-2);margin:var(--sp-4) 0 0;line-height:1.5}
+  .fieldlabel{font-size:14px;font-weight:600;color:var(--text);margin:var(--sp-4) 0 6px;display:block}
+  .fieldlabel .optional{font-weight:400;color:var(--text-2)}
+  .field-error{margin:6px 0 0;font-size:13px;color:var(--overdue);font-weight:500}
+  [aria-invalid="true"]{border-color:var(--overdue) !important}
+  .timerbox{display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:var(--nav);color:#fff;border-radius:var(--radius-sm);padding:12px 14px;margin-top:var(--sp-3)}
+  .timer{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:26px;font-weight:600;letter-spacing:.02em}
   .timerbox .tbtns{margin-left:auto;display:flex;gap:8px}
-  .tbtn{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:8px;padding:9px 13px;font-weight:800;font-size:13px;min-height:40px}
+  .tbtn{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:var(--radius-sm);padding:9px 13px;font-weight:600;font-size:13px;min-height:44px}
   .tbtn:hover{background:rgba(255,255,255,.24)}
-  textarea,input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px;font:inherit;font-size:14px;color:var(--ink);background:#fff;resize:vertical}
-  textarea:focus,input[type=text]:focus{border-color:var(--email);outline:none;box-shadow:0 0 0 3px rgba(31,79,216,.15)}
-  .outcomes{display:flex;gap:8px}
-  .outcome{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 6px;font-weight:800;font-size:13.5px;color:var(--ink-2);min-height:44px}
-  .outcome.sel{border-color:var(--success);background:var(--green-bg);color:var(--green)}
-  .sheet-actions{display:flex;gap:10px;margin-top:22px}
-  .btn-cancel{background:#fff;border:1.5px solid var(--line);color:var(--ink-2);flex:0 0 auto;padding:12px 18px}
-  .btn-save{flex:1;padding:12px 18px;color:#fff}
-  .btn-save.call{background:var(--primary)} .btn-save.call:hover{background:var(--primary-hover)}
-  .btn-save.email{background:var(--email)} .btn-save.email:hover{background:var(--email-hover)}
+  textarea,input[type=text],.sheet select{width:100%;border:1px solid #CBD2DE;border-radius:var(--radius-sm);padding:11px 12px;font-size:16px;color:var(--text);background:var(--surface);resize:vertical}
+  .sheet select{min-height:44px}
+  textarea:focus,input[type=text]:focus,.sheet select:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(49,92,232,.18)}
+  .sheet-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:var(--sp-2);padding:var(--sp-4) var(--sp-5);border-top:1px solid var(--divider);background:#FAFBFC;border-radius:0 0 var(--radius) var(--radius)}
+  .sheet-actions .btn-primary{flex:0 1 auto}

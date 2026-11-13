@@ -100,6 +100,7 @@ function sbLoadAll(){
       });
       undoStack = Object.keys(done);
       SB.connected = true;
+      sbShowSavedNotice();
     });
 }
 
@@ -116,27 +117,32 @@ function sbSetStatus(dealId, status){
     body: { status: status, updated_at: new Date().toISOString() } });
 }
 
-/* Wrap the model functions so each change is also saved. The screens are unchanged. */
+/* Wrap the model functions so each change is also saved. The screens are unchanged.
+   completeDeal returns false for a repeated submit; nothing is saved then. */
 function sbWireWrites(){
-  var baseComplete = completeDeal, baseAttempt = addAttempt, baseUndo = undoDeal;
+  var baseComplete = completeDeal, baseUndo = undoDeal;
   completeDeal = function(id){
-    baseComplete.apply(null, arguments);
-    if(!SB.connected) return;
+    var saved = baseComplete.apply(null, arguments);
+    if(!saved || !SB.connected) return saved;
     var entry = feed[0];
-    sbSaveActivity(entry, false).then(function(){ return sbSetStatus(id, "updated_today"); }).catch(function(e){ sbWarn("the activity", e); });
-  };
-  addAttempt = function(){
-    baseAttempt.apply(null, arguments);
-    if(!SB.connected) return;
-    sbSaveActivity(feed[0], true).catch(function(e){ sbWarn("the attempt", e); });
+    sbSaveActivity(entry, false).then(function(){ return sbSetStatus(id, "updated_today"); }).catch(function(e){ sbWarn("the activity", e); announce("Couldn't save that update to the server. It is kept on this page until you reload."); });
+    return saved;
   };
   undoDeal = function(id){
     var entry = feed.find(function(f){ return f.dealId === id && !f.attempt; });
-    baseUndo.apply(null, arguments);
-    if(!SB.connected) return;
+    var undone = baseUndo.apply(null, arguments);
+    if(!undone || !SB.connected) return undone;
     var del = entry && entry.rowId ? sbRest("activities?id=eq." + entry.rowId, { method: "DELETE", prefer: "return=minimal" }) : Promise.resolve();
-    del.then(function(){ return sbSetStatus(id, "open"); }).catch(function(e){ sbWarn("the undo", e); });
+    del.then(function(){ return sbSetStatus(id, "open"); }).catch(function(e){ sbWarn("the undo", e); announce("Couldn't save the undo to the server."); });
+    return undone;
   };
+}
+
+/* One persistent sample-data notice: once the rep's data has loaded from Supabase, say that
+   work is saved for this browser (without Supabase it still resets on reload). */
+function sbShowSavedNotice(){
+  var n = byId("sampleNotice");
+  if(n) n.textContent = "Sample data · saved for this browser. Calls and emails are simulated.";
 }
 
 /* In Supabase mode, Loading (and Retry) re-reads the data instead of waiting on a timer. */
@@ -148,9 +154,11 @@ function sbWireLoading(){
     clearTimeout(followupsTimer);
     sbLoadAll().then(function(){
       followupsState = "ready"; syncDemo("followupsDemo", "data-fstate", "ready"); render();
+      if(currentView === "detail" && !dealById(detailId)) showView("today", { fromHistory: true });
     }).catch(function(e){
       if(window.console) console.warn("CRM Companion: could not load from Supabase.", e);
       baseSetFollowups("error");
+      announce("Couldn't load your follow-ups. Retry is available.");
     });
   };
 }
