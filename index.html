@@ -240,6 +240,74 @@
   .hist-when .t{display:block;font-size:11px;color:#97a1b3;font-weight:700;white-space:nowrap;margin-top:2px}
   .hist-count{font-size:12.5px;color:var(--muted);font-weight:700;margin:10px 2px 0}
 
+  /* ---------- Admin · Orbit Code Explorer ---------- */
+  .admin-badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .admin-badge{display:inline-flex;align-items:center;gap:7px;background:#1e1e2d;color:#fff;font-size:12px;font-weight:800;padding:7px 11px;border-radius:999px;white-space:nowrap}
+  .admin-badge svg{opacity:.9}
+  .admin-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:var(--shadow);padding:18px;margin-top:14px}
+  .admin-card h2{font-size:17px;margin:0 0 6px;letter-spacing:-.01em}
+  .admin-card p{font-size:14px;line-height:1.6;color:var(--ink-2);margin:0}
+  .orbit-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .orbit-controls .searchbox{flex:1 1 240px}
+  .orbit-controls .searchbox input{border-color:#e5e7eb;border-radius:8px}
+  .ofilter{border:1.5px solid #e5e7eb;background:#fff;color:var(--ink-2);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800;min-height:38px}
+  .ofilter:hover{border-color:#b9c0cf}
+  .ofilter.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
+  .orbit-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+  .orbit-chips .chips-label{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .ochip{border:1.5px solid #3b82f6;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:800;min-height:32px}
+  .ochip:hover{background:#dbeafe}
+  .orbit-chips .no-match{font-size:13px;color:var(--muted);font-weight:600}
+  .orbit-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,1fr);gap:18px;margin-top:14px;align-items:start}
+  .orbit-stage{position:relative;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;min-height:720px;overflow:hidden}
+  .orbit-ring{position:absolute;border:1.5px dashed #d4d9e2;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+  .orbit-ring.r1{width:54%;height:60%}
+  .orbit-ring.r2{width:76%;height:84%}
+  .orbit-ring.r3{width:94%;height:96%}
+  .onode{position:absolute;transform:translate(-50%,-50%);border:1.5px solid #e5e7eb;background:#fff;color:var(--ink);border-radius:999px;padding:7px 11px;font-size:11.5px;font-weight:800;line-height:1.2;text-align:center;max-width:132px;box-shadow:0 1px 2px rgba(16,24,40,.06);z-index:2}
+  .onode:hover{border-color:#3b82f6;color:#1d4ed8}
+  .onode.selected{border-color:#3b82f6;background:#3b82f6;color:#fff}
+  .onode.dimmed{opacity:.22}
+  .onode.screen{border-color:#3b82f6;color:#1d4ed8;font-size:13.5px;padding:12px 16px;max-width:170px;background:#eff6ff}
+  .onode.screen.selected{background:#3b82f6;color:#fff}
+  .onode.centre{width:168px;height:168px;border-radius:50%;background:#1e1e2d;color:#fff;border-color:#1e1e2d;font-size:15px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;max-width:none;z-index:3}
+  .onode.centre small{font-size:11px;font-weight:700;color:#aeb8cc;line-height:1.35}
+  .onode.centre.selected{background:#3b82f6;border-color:#3b82f6;color:#fff}
+  .onode.centre.selected small{color:#dbeafe}
+  .orbit-detail{position:sticky;top:16px}
+  .orbit-detail .catrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .catpill{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--due-bg);color:var(--due);padding:5px 9px;border-radius:999px}
+  .verdict{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px}
+  .verdict i{width:8px;height:8px;border-radius:50%;display:block}
+  .verdict.real{background:var(--green-bg);color:var(--green)} .verdict.real i{background:#22c55e}
+  .verdict.mocked{background:var(--amber-bg);color:var(--amber)} .verdict.mocked i{background:#b98a0a}
+  .verdict.mixed{background:#eff6ff;color:#1d4ed8} .verdict.mixed i{background:#3b82f6}
+  .orbit-detail h2{font-size:20px;margin:0 0 8px;letter-spacing:-.01em}
+  .orbit-detail p{font-size:14px;line-height:1.6;color:var(--ink-2);margin:0 0 12px}
+  .orbit-detail .exact{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:11px 13px;font-size:14px;font-weight:700;color:var(--ink);line-height:1.5;margin:0 0 12px}
+  .connect-label{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+  .connects{display:flex;gap:8px;flex-wrap:wrap}
+  .cbtn{border:1.5px solid #3b82f6;background:#fff;color:#1d4ed8;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:800;min-height:38px}
+  .cbtn:hover{background:#eff6ff}
+  .orbit-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .lnode{display:flex;align-items:center;gap:9px;text-align:left;border:1.5px solid #e5e7eb;background:#fff;border-radius:8px;padding:11px 12px;font-size:13.5px;font-weight:800;color:var(--ink);min-height:44px}
+  .lnode:hover{border-color:#3b82f6}
+  .lnode.selected{border-color:#3b82f6;background:#eff6ff;color:#1d4ed8}
+  .lnode .cdot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .faq-item{border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;background:#f9fafb}
+  .faq-item h3{font-size:14.5px;margin:0 0 6px}
+  .faq-item p{font-size:13.5px}
+  .tips-list{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+  .tips-list li{display:flex;gap:11px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+  .tips-list .tnum{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#3b82f6;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;margin-top:1px}
+  .codebox{margin-top:16px;border-top:1px solid #e5e7eb;padding-top:14px}
+  .code-toggle{border:1.5px solid #3b82f6;background:#fff;color:#1d4ed8;border-radius:8px;padding:9px 13px;font-size:13px;font-weight:800;min-height:40px;width:100%;text-align:left}
+  .code-toggle:hover{background:#eff6ff}
+  .code-panel{margin-top:12px}
+  .code-meta{font-size:13px!important;line-height:1.55!important;margin:0 0 8px!important}
+  .code-pre{background:#1e1e2d;color:#e5e7eb;border-radius:8px;padding:13px 14px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:0;overflow:hidden}
+
   /* Toast */
   .toast{position:fixed;left:50%;transform:translate(-50%,24px);bottom:18px;background:var(--ink);color:#fff;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:14px;z-index:60;box-shadow:0 10px 32px rgba(0,0,0,.28);font-size:14px;font-weight:700;max-width:calc(100vw - 32px);transition:transform .3s ease,opacity .25s ease,visibility .25s;opacity:0;visibility:hidden;pointer-events:none}
   .toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;pointer-events:auto}
@@ -250,6 +318,10 @@
     .grid{grid-template-columns:1fr}
     .metrics{grid-template-columns:repeat(2,1fr)}
     .quotes-grid{grid-template-columns:1fr}
+    .orbit-layout{grid-template-columns:1fr}
+    .orbit-detail{position:static}
+    .orbit-list{grid-template-columns:repeat(2,1fr)}
+    .faq-grid{grid-template-columns:1fr}
   }
   @media(max-width:480px){
     .metrics{grid-template-columns:1fr}
@@ -266,6 +338,9 @@
     .userrow{padding:0}
     .userrow b{display:none}
     .main{padding:20px 16px 90px}
+    .orbit-stage{display:none}
+    .orbit-list{grid-template-columns:1fr}
+  }
     .pagehead h1{font-size:26px}
     .actions .btn-log{flex:1}
     .step .slabel{display:none}
@@ -284,7 +359,7 @@
       <div><b>CRM Companion</b><span>Today view · v3</span></div>
     </div>
     <div class="navlabel">Work</div>
-    <a class="navitem active" href="#" onclick="showView('today');return false">
+    <a class="navitem active" id="navTodayLink" href="#" onclick="showView('today');return false">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>
       Today <span class="count" id="navCount">6</span>
     </a>
@@ -297,6 +372,11 @@
       Activity
     </span>
     <p class="nav-note">Nav is off for this test — only the follow-ups on this screen are in scope.</p>
+    <div class="navlabel">Admin</div>
+    <a class="navitem" id="navAdminLink" href="#" onclick="showView('admin');return false">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Admin — Code Explorer
+    </a>
     <div class="sidefoot">
       <div class="samplebox">
         <b>Sample data only</b>
@@ -498,6 +578,94 @@
       <div id="historyList" aria-live="polite"></div>
     </section>
    </div><!-- /viewHistory -->
+
+   <!-- ============ Admin: Orbit Code Explorer ============ -->
+   <div id="viewAdmin" hidden>
+    <div class="pagehead">
+      <div>
+        <h1>Orbit Code Explorer</h1>
+        <div class="sub">How CRM Companion is put together — every part of the app, in plain language. Select any part to see what it does, what it connects to, and whether it is real or mocked.</div>
+      </div>
+      <div class="admin-badges">
+        <span class="admin-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Admin only</span>
+        <span class="sample-pill"><i></i> Sample data only — resets on reload</span>
+      </div>
+    </div>
+
+    <section class="admin-card" aria-label="How to read this">
+      <h2>How to read this</h2>
+      <p>The whole app sits in the centre — CRM Companion is one single file (index.html, main 8f12b0f), and everything else orbits it. The three screens sit on the inner orbit, and the panels, data, and states they use sit on the outer orbits. Select any node to see, in plain language, what it does, what it connects to, and whether it is real or mocked.</p>
+    </section>
+
+    <div class="orbit-controls">
+      <div class="searchbox">
+        <label class="fieldlabel" for="orbitSearch" style="margin:0 0 6px">Find a part of the app</label>
+        <input type="text" id="orbitSearch" placeholder="Search by name — try “error”, “call”, or “data”…" autocomplete="off" />
+      </div>
+      <div role="group" aria-label="Filter nodes by type" style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" class="ofilter active" data-ofilter="all">All</button>
+        <button type="button" class="ofilter" data-ofilter="screen">Screens</button>
+        <button type="button" class="ofilter" data-ofilter="panel">Panels</button>
+        <button type="button" class="ofilter" data-ofilter="data">Data</button>
+        <button type="button" class="ofilter" data-ofilter="state">States</button>
+      </div>
+    </div>
+    <div class="orbit-chips" id="orbitChips" aria-live="polite"></div>
+
+    <div class="orbit-layout">
+      <div class="orbit-stage" id="orbitStage" aria-label="Orbit diagram of the app">
+        <div class="orbit-ring r1"></div>
+        <div class="orbit-ring r2"></div>
+        <div class="orbit-ring r3"></div>
+      </div>
+      <aside class="admin-card orbit-detail" id="orbitDetail" aria-label="Selected part, explained" style="margin-top:0"></aside>
+    </div>
+
+    <section class="admin-card" aria-label="All parts of the app">
+      <h2>All 27 parts</h2>
+      <p>The full map, as a list — the same nodes as the orbit. Select any part to open its explanation.</p>
+      <div class="orbit-list" id="orbitList"></div>
+    </section>
+
+    <section class="admin-card" aria-label="Questions and answers">
+      <h2>Questions people ask about this app</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>Where do I start reading the app?</h3>
+          <p>Start in the centre with CRM Companion itself, then follow the orbit clockwise: Today, then Deal Detail, then Activity History, then back to Today. That is the same path a rep takes — a follow-up card opens Deal Detail, and Deal Detail links into Activity History for that deal.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Where does the data live?</h3>
+          <p>All of it lives inside the single index.html file, in memory — the 6 sample deals and the 12 seeded activities are written into the file itself. Nothing is sent to a server or a database, and anything you do in a session is lost when the page reloads.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Where is the Call and Email logic?</h3>
+          <p>In the Call panel and Email panel, which open from the follow-up cards on Today and from Deal Detail. Saving a call or sending an email moves the deal to Updated today and adds it to the Activity feed and Activity History. Closing a panel without saving counts as attempted instead — for a call once the timer has run or a note is typed, and for an email once the draft is typed or edited.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why are Deals and Activity greyed out in the sidebar?</h3>
+          <p>By design, for this test. The note under them says so: nav is off, and only the follow-ups on Today are in scope. Deal Detail and Activity History still exist — you reach them from a follow-up card, a row, or a link, not from the sidebar.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is real, and what is mocked?</h3>
+          <p>The behaviour is real: the screens, panels, timers, search, and states all work in the browser exactly as you see them. The content is mocked: the names, companies, amounts, and past activities are sample data, no real call is placed, no real email is sent, and nothing is saved anywhere.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Where does the loading, empty, and error wording live?</h3>
+          <p>In the states of the two lists — the follow-ups list on Today and the activity list in Activity History. Each list can be loading (skeleton cards), empty, or failed, and the exact wording is shown in the state nodes on the orbit. Testers can force each state with the Data / Loading / Empty / Error controls above each list.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-card" aria-label="Tips for finding your way around">
+      <h2>Tips for finding your way around</h2>
+      <ol class="tips-list">
+        <li><span class="tnum">1</span><span><b>Search, don’t scroll.</b> Type a name in the search box — “error”, “email”, “data” — and use the result chips to jump straight to that part instead of scanning the whole orbit.</span></li>
+        <li><span class="tnum">2</span><span><b>Click a node for its connections.</b> Every node’s panel has “Connects to” buttons. Follow them to walk from a screen to its panels, its data, and its states without getting lost.</span></li>
+        <li><span class="tnum">3</span><span><b>Follow the orbit clockwise.</b> Today → Deal Detail → Activity History → back to Today is the rep’s real path through the app, so it is the safest order to review the build in.</span></li>
+      </ol>
+    </section>
+   </div><!-- /viewAdmin -->
   </main>
 </div>
 
@@ -801,6 +969,9 @@ function showView(v){
   byId("viewToday").hidden = v!=="today";
   byId("viewDetail").hidden = v!=="detail";
   byId("viewHistory").hidden = v!=="history";
+  byId("viewAdmin").hidden = v!=="admin";
+  byId("navTodayLink").classList.toggle("active", v!=="admin");
+  byId("navAdminLink").classList.toggle("active", v==="admin");
   window.scrollTo(0,0);
 }
 function openDeal(id){
@@ -1028,6 +1199,560 @@ document.querySelectorAll("[data-close]").forEach(function(b){
 document.addEventListener("keydown", function(e){
   if(e.key==="Escape"){ closePanel(byId("callOverlay")); closePanel(byId("emailOverlay")); }
 });
+
+/* ---------- Admin · Orbit Code Explorer ---------- */
+var NODES = [
+  { id:"app", name:"CRM Companion", cat:"app", catLabel:"The whole app", ring:0, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
+    about:"The whole app in one place. CRM Companion is a single file — index.html, on main at 8f12b0f — with no separate pages, no server, and no database behind it. Every screen, panel, and piece of sample data on this orbit lives inside that one file.",
+    connects:["today","detail","history","design"] },
+  { id:"today", name:"Today", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The rep's home screen and the start of every path through the app. It shows the day's follow-ups, the progress stepper, Updated today, and the Activity feed. Nothing else in the app opens first — Deal Detail and Activity History are both reached from here.",
+    connects:["app","followups","stepper","updated","feed","detail"] },
+  { id:"detail", name:"Deal Detail", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"One deal on its own screen: who it is, how much it is worth, what is due, and the next step. It is the anchor screen — it opens from a follow-up card, and it links onward into Activity History filtered to this one deal.",
+    connects:["app","header","past","seehist","backlinks","call","email","log"] },
+  { id:"history", name:"Activity History", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"Every call, email, and log in one list, newest first — the 12 seeded past activities plus anything done in this session. It can be opened on its own from Today's Activity feed, or pre-filtered to one deal from Deal Detail.",
+    connects:["app","actlist","search","rowopen","backlinks"] },
+  { id:"followups", name:"Follow-ups list", cat:"panel", catLabel:"Panel · Today", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
+    about:"The working list on Today: 6 deals, $663k of sample ARR in total, ordered biggest first. Each card carries the due badge, the next step, and the Call, Email, and Log activity actions. When a deal is updated it leaves this list and moves to Updated today.",
+    connects:["today","call","email","log","dealsdata","loading","emptytoday","errortoday"] },
+  { id:"call", name:"Call panel", cat:"panel", catLabel:"Panel", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked call",
+    about:"Opens from a follow-up card or from Deal Detail. It shows the deal's context, runs a call timer, and takes a short note and an outcome (Called, No answer, or Met). Save & log moves the deal to Updated today; closing the panel without saving counts as a Call attempted once the timer has run or a note is typed. No real call is placed.",
+    connects:["followups","detail","updated","feed","actdata"] },
+  { id:"email", name:"Email panel", cat:"panel", catLabel:"Panel", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked email",
+    about:"A small composer that opens from a follow-up card or from Deal Detail, pre-filled with a subject and a draft built from the deal's next step. Send & log email moves the deal to Updated today; closing the panel without sending counts as an Email attempted once the subject or draft has been typed or edited. No real email is sent.",
+    connects:["followups","detail","updated","feed","actdata"] },
+  { id:"log", name:"Log activity", cat:"panel", catLabel:"Action", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The quick action on every follow-up card and on Deal Detail. It logs the deal's next step as done straight away, with no panel or form, and moves the deal to Updated today with a matching entry in the Activity feed and Activity History.",
+    connects:["followups","detail","updated","feed"] },
+  { id:"stepper", name:"Progress stepper", cat:"panel", catLabel:"Panel · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The progress strip at the top of Today. It counts the follow-ups — “0 of 6 updated” at the start — and fills in a step for each deal as it is called, emailed, or logged, ending with an “All caught up” banner at 6 of 6.",
+    connects:["today","followups","updated"] },
+  { id:"updated", name:"Updated today", cat:"panel", catLabel:"Panel · Today", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The right-hand panel on Today where finished deals collect. Each entry shows how the deal was updated — call, email, or log, with its note or subject — and has an Undo that sends the deal back to the follow-ups list. Selecting an entry opens that deal's Deal Detail.",
+    connects:["today","call","email","log","detail"] },
+  { id:"feed", name:"Activity feed", cat:"panel", catLabel:"Panel · Today", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The live feed on Today. Every call, email, log, and attempted panel close from this session appears here as it happens, newest first. Its “View all in Activity History” link opens the full Activity History screen.",
+    connects:["today","history","session","actlist"] },
+  { id:"header", name:"Deal header", cat:"panel", catLabel:"Panel · Deal Detail", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
+    about:"The top block of Deal Detail: the contact, the company, the sample ARR, the due badge, and the next step, with Call, Email, and Log activity in the same order as Today — Call first. If the deal was already updated today, it says so here.",
+    connects:["detail","dealsdata","call","email","log"] },
+  { id:"past", name:"Past activity", cat:"panel", catLabel:"Panel · Deal Detail", ring:3, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
+    about:"The activity list inside Deal Detail, showing only this deal's history — its seeded past activities plus anything logged for it in this session, newest first. The same activities appear in full on the Activity History screen.",
+    connects:["detail","actdata","history","seehist"] },
+  { id:"backlinks", name:"Back to Today links", cat:"panel", catLabel:"Navigation", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The way back. Both Deal Detail and Activity History open with a “Back to Today” link at the top, because Today is the home screen for this test — the sidebar nav is off, so these links are how a rep returns. Saving a call or email from Deal Detail also returns to Today on its own.",
+    connects:["today","detail","history"] },
+  { id:"seehist", name:"“See this deal in Activity History”", cat:"panel", catLabel:"Navigation link", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The link on Deal Detail, above Past activity, that carries the deal into Activity History. It opens Activity History with the search already set to this deal's contact, so only that deal's activities show. This is the link that makes Deal Detail the anchor for Activity History.",
+    connects:["detail","history","search","past"] },
+  { id:"actlist", name:"Activity list", cat:"panel", catLabel:"Panel · Activity History", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
+    about:"The list itself on Activity History: 12 seeded activities to start with, plus this session's activity added on top, newest first, with a count line above it. Each row shows the kind of activity, the deal, the detail, and the day and time.",
+    connects:["history","actdata","session","rowopen","loading","emptyhistory","errorhistory"] },
+  { id:"search", name:"Search by name / company", cat:"panel", catLabel:"Panel · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The “Find a deal” box at the top of Activity History. Typing a contact name or a company filters the activity list to matching deals and updates the count line — for example, one contact's name shows just their activities. It is also how the Deal Detail link arrives pre-filtered.",
+    connects:["history","actlist","seehist"] },
+  { id:"rowopen", name:"Row opens Deal Detail", cat:"panel", catLabel:"Navigation", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"Every row in the Activity History list is a button. Selecting a row opens that row's deal on Deal Detail, so a rep can go from something that happened to the deal it belongs to in one tap — and back again with Back to Today.",
+    connects:["history","detail","actlist"] },
+  { id:"dealsdata", name:"Deals data — 6 deals", cat:"data", catLabel:"Data", ring:2, verdict:"mocked", verdictLabel:"Mocked — sample data only",
+    about:"The sample deals written into the file: James Whitfield at Meridian Legal ($312k), Daniel Ortiz ($148k), Priya Nair ($92k), Maya Chen ($54k), Sofia Reyes ($38k), and Aisha Bello ($19k) — 6 deals, $663k in total. Each carries a due label and a next step. None of it comes from a real CRM.",
+    connects:["followups","header","session"] },
+  { id:"actdata", name:"Activities data — 12 activities", cat:"data", catLabel:"Data", ring:3, verdict:"mocked", verdictLabel:"Mocked — sample data only",
+    about:"The seeded past history written into the file: 12 activities dated Tue, Oct 28 to Tue, Nov 4, covering all 6 deals with a mix of calls, emails, and logs. Activity History and Deal Detail's Past activity both read from this same set.",
+    connects:["actlist","past","call","email"] },
+  { id:"session", name:"Session state — in memory only", cat:"data", catLabel:"Data", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"Where this session's work is kept: which deals are done, the Activity feed entries, and the Undo history. It all lives in the page's memory only — there is no account, no saving, and no database, so a reload wipes it and the app starts again from the sample data.",
+    connects:["feed","updated","dealsdata","app"] },
+  { id:"design", name:"Design system", cat:"panel", catLabel:"Design", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"The shared look every screen uses: a dark sidebar (#1e1e2d), light content (#f9fafb), white cards with 8px radius and #e5e7eb borders, blue (#3b82f6) as the primary colour, and green (#22c55e) kept for success only — a deal updated, a step completed. This Admin portal follows the same system.",
+    connects:["app","today","detail","history"] },
+  { id:"loading", name:"Loading state — skeletons", cat:"state", catLabel:"State", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"While a list loads, it shows skeleton cards — grey placeholder bars in the shape of the real content — instead of a blank screen. Today shows three skeleton follow-up cards; Activity History shows skeleton rows. On load, the follow-ups sit in this state briefly before the deals appear.",
+    connects:["followups","actlist","emptytoday","errortoday"] },
+  { id:"emptytoday", name:"Empty state — Today", cat:"state", catLabel:"State · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"What the follow-ups list shows when there is nothing left to work. The exact wording from the build is shown below. Testers can force it with the Empty control above the follow-ups list; it also appears on its own when all 6 deals are updated and the list is empty.",
+    exact:"All caught up. No follow-ups today.",
+    connects:["followups","loading","errortoday"] },
+  { id:"errortoday", name:"Error state — Today", cat:"state", catLabel:"State · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"What the follow-ups list shows when loading fails, with a Retry button that loads the list again. The exact wording from the build is shown below. Testers can force it with the Error control above the follow-ups list.",
+    exact:"Couldn't load your follow-ups. Check your connection and try again.",
+    connects:["followups","loading","emptytoday"] },
+  { id:"emptyhistory", name:"Empty state — Activity History", cat:"state", catLabel:"State · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"What the activity list shows when there is no activity to list. The exact wording from the build is shown below. Testers can force it with the Empty control above the list; a search that matches nothing shows a separate “No activity found” message instead.",
+    exact:"No activity yet. Call or email a follow-up to see it here.",
+    connects:["actlist","loading","errorhistory","search"] },
+  { id:"errorhistory", name:"Error state — Activity History", cat:"state", catLabel:"State · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"What the activity list shows when loading fails, with a Retry button that loads the list again — the same pattern as Today's error state. The exact wording from the build is shown below. Testers can force it with the Error control above the list.",
+    exact:"Couldn't load your activity. Check your connection and try again.",
+    connects:["actlist","loading","emptyhistory"] }
+];
+/* Short, real code excerpts — one per node, for the "Show code" toggle.
+   Each is a trimmed excerpt of the actual code in this file, not the whole file. */
+var SNIPPETS = {
+  app: { fn:"showView(v)", does:"The file's only router — it shows one view and hides the other three, and moves the sidebar highlight.",
+    where:"The script at the end of index.html — the “Views & navigation” section. The file itself is the whole app: markup in the body, styles in the <style> block in the head, data and logic in this one script (main 8f12b0f).",
+    code:`function showView(v){
+  currentView = v;
+  byId("viewToday").hidden = v!=="today";
+  byId("viewDetail").hidden = v!=="detail";
+  byId("viewHistory").hidden = v!=="history";
+  byId("viewAdmin").hidden = v!=="admin";
+  …
+}` },
+  today: { fn:"render()", does:"Redraws everything on Today at once — stepper, follow-ups list, Updated today, and the Activity feed.",
+    where:"The script at the end of index.html — render(). The screen it fills is the <div id='viewToday'> markup in the body.",
+    code:`<div id='viewToday'> … follow-ups, stepper,
+  Updated today, Activity feed … </div>
+
+function render(){
+  renderStepper(); renderTodo();
+  renderUpdated(); renderFeed(); renderHistory();
+  …
+}` },
+  detail: { fn:"openDeal(id)", does:"Opens one deal — remembers which deal it is, fills the Deal Detail screen, and switches to it.",
+    where:"The script at the end of index.html — the “Views & navigation” section. The screen it fills is the <div id='viewDetail'> markup in the body.",
+    code:`function openDeal(id){
+  if(!dealById(id)) return;
+  detailId = id;
+  renderDetail();
+  showView("detail");
+}` },
+  history: { fn:"openHistory(preset)", does:"Opens Activity History, with the search box pre-filled if a deal was passed in, and plays the loading state.",
+    where:"The script at the end of index.html — the “Views & navigation” section. The screen it fills is the <div id='viewHistory'> markup in the body.",
+    code:`function openHistory(preset){
+  if(typeof preset==="string")
+    byId("historySearch").value = preset;
+  showView("history");
+  setHistoryState("loading");
+}` },
+  followups: { fn:"renderTodo()", does:"Turns the DEALS data into follow-up cards — one card per deal that is not done yet, with Call, Email, and Log activity buttons.",
+    where:"The script at the end of index.html — renderTodo(), reading the DEALS array at the top of the script. It fills the <div id='todoList'> on Today.",
+    code:`var pending = DEALS.filter(function(d){
+  return !done[d.id]; });
+wrap.innerHTML = pending.map(function(d){
+  return '<article class="deal clickable" …>'
+    + '<div class="deal-name">'
+    + esc(d.contact) + '</div> …'
+    + '<button class="btn btn-call" '
+    + 'data-call="' + d.id + '">Call</button> …'
+}).join("");` },
+  call: { fn:"openCall(id) — and maybeLogAttempt(\"call\")", does:"openCall fills the panel with the deal's details, resets and starts the timer; if the panel is closed without Save & log, maybeLogAttempt logs the attempt instead.",
+    where:"The script at the end of index.html — the “Call panel + timer” section, and maybeLogAttempt() in the “Close handling” section below it.",
+    code:`function openCall(id){
+  currentId = id; var d = dealById(id);
+  byId("callTitle").textContent =
+    "Call " + d.contact;
+  …
+  timerSec = 0;
+  byId("callOverlay").classList.add("open");
+  startTimer();
+}
+function startTimer(){
+  timerInt = setInterval(function(){
+    timerSec++;
+    byId("timerDisplay").textContent =
+      fmtTimer();
+  }, 1000);
+}
+// closed without Save & log:
+addAttempt(currentId, "call",
+  "Call attempted — " + d.contact,
+  "Panel closed without Save & log · Duration "
+    + fmtTimer());` },
+  email: { fn:"openEmail(id) — and maybeLogAttempt(\"email\")", does:"openEmail pre-fills the subject and draft from the deal's next step and remembers them; if either is edited and the panel is closed without sending, the close counts as an Email attempted.",
+    where:"The script at the end of index.html — the “Email composer” section, and maybeLogAttempt() in the “Close handling” section below it.",
+    code:`function openEmail(id){
+  currentId = id; var d = dealById(id);
+  byId("emailSubject").value =
+    "Following up — "
+    + d.next.charAt(0).toLowerCase()
+    + d.next.slice(1);
+  byId("emailBody").value = "Hi "
+    + d.contact.split(" ")[0] + ", …";
+  emailInitialSubject =
+    byId("emailSubject").value;
+  emailInitialBody = byId("emailBody").value;
+  byId("emailOverlay").classList.add("open");
+}
+// closed without Send & log:
+var draftTyped =
+  byId("emailSubject").value
+    !== emailInitialSubject
+  || byId("emailBody").value
+    !== emailInitialBody;
+if(draftTyped){ addAttempt(…,
+  "Email attempted — " + d.contact, …); }` },
+  log: { fn:"logActivity(id)", does:"The whole Log flow in four lines — it completes the deal straight away, using the deal's next step as the logged detail.",
+    where:"The script at the end of index.html — logActivity(), just above the “Views & navigation” section. The button is wired by bindCardButtons().",
+    code:`function logActivity(id){
+  var d = dealById(id);
+  completeDeal(id, "log", "Logged activity",
+    "Logged activity — " + d.contact
+    + ", " + d.company, d.next);
+}` },
+  stepper: { fn:"renderStepper()", does:"Counts the deals marked done, writes the “n of 6 updated” label, and shows the All caught up banner only at 6 of 6.",
+    where:"The script at the end of index.html — renderStepper(). It fills the <div id='stepper'> strip near the top of Today.",
+    code:`function renderStepper(){
+  var n = doneCount();
+  byId("progressLabel").textContent =
+    n + " of 6 updated";
+  …
+  byId("caughtBanner").className =
+    "caught" + (n===6 ? " show" : "");
+}` },
+  updated: { fn:"renderUpdated()", does:"Lists the deals in the done set, each with how it was updated and an Undo button; before any are done it shows the starter line instead.",
+    where:"The script at the end of index.html — renderUpdated(). It fills the <div id='updatedList'> panel on Today.",
+    code:`var list = DEALS.filter(function(d){
+  return done[d.id]; });
+if(list.length===0){ wrap.innerHTML =
+  '<p class="none">Nothing updated yet. '
+  + 'Start at the top — James Whitfield, '
+  + '$312k.</p>'; return; }
+… each row ends with:
+'<button class="undo-link" data-undo="'
+  + d.id + '">Undo</button>'` },
+  feed: { fn:"renderFeed()", does:"Rebuilds the Activity feed from the session feed array, newest first, with an icon per kind of activity.",
+    where:"The script at the end of index.html — renderFeed(). It fills the <div id='feedList'> panel on Today.",
+    code:`function renderFeed(){
+  var wrap = byId("feedList");
+  if(feed.length===0){ wrap.innerHTML =
+    '<p class="none">No activity yet '
+    + 'today.</p>'; return; }
+  wrap.innerHTML = feed.map(function(f){
+    …
+    return '<div class="feed-item">…'
+      + '<b>' + esc(f.title) + '</b>…'
+      + '<time>' + esc(f.time)
+      + '</time></div>';
+  }).join("");
+}` },
+  header: { fn:"renderDetail()", does:"Fills the Deal Detail header from the selected deal — name, company, ARR, due badge — and flags it if the deal was already updated today.",
+    where:"The script at the end of index.html — the “Deal Detail” section. It fills the header markup inside <div id='viewDetail'>.",
+    code:`function renderDetail(){
+  var d = dealById(detailId);
+  if(!d) return;
+  byId("detailName").textContent = d.contact;
+  byId("detailCompany").textContent =
+    d.company + " · " + d.due;
+  byId("detailArr").textContent = d.arrLabel;
+  due.className = "badge "
+    + (d.overdue ? "over" : "due");
+  …
+}` },
+  past: { fn:"renderDetailActivity()", does:"Takes the full activity list and keeps only the rows for this deal, newest first.",
+    where:"The script at the end of index.html — the “Deal Detail” section. It fills the <div id='detailActivity'> panel.",
+    code:`function renderDetailActivity(){
+  var items = allActivity().filter(
+    function(f){
+      return f.dealId===detailId; });
+  if(items.length===0){ wrap.innerHTML =
+    '<p class="none">No activity yet '
+    + 'for this deal.</p>'; return; }
+  wrap.innerHTML = items.map(function(f){
+    return activityRowHtml(f, false);
+  }).join("");
+}` },
+  backlinks: { fn:"detailBack / historyBack click handlers", does:"Both Back buttons do exactly one thing — call showView(\"today\"). Saving from Deal Detail returns the same way, inside completeDeal().",
+    where:"The wiring is in the script at the end of index.html — the “Deal Detail” and “Activity History” sections. The buttons themselves are the <button class='view-back'> at the top of each screen's markup.",
+    code:`<button class="view-back" id="detailBack">
+  ← Back to Today</button>
+
+byId("detailBack").addEventListener(
+  "click", function(){
+    showView("today"); });
+byId("historyBack").addEventListener(
+  "click", function(){
+    showView("today"); });` },
+  seehist: { fn:"detailHistoryLink click handler", does:"Passes the deal's contact name into Activity History as its search, so the history opens already filtered to this deal.",
+    where:"The script at the end of index.html — the “Deal Detail” section, right after the Back button wiring.",
+    code:`byId("detailHistoryLink").addEventListener(
+  "click", function(){
+    var d = dealById(detailId);
+    openHistory(d ? d.contact : "");
+    /* Deal Detail anchors into Activity
+       History, filtered to this deal */
+});` },
+  actlist: { fn:"renderHistory()", does:"Builds the Activity History rows from the full activity list and makes each row a button that opens its deal.",
+    where:"The script at the end of index.html — the “Activity History” section. It fills the <div id='historyList'> panel.",
+    code:`wrap.innerHTML = items.map(function(f){
+  return activityRowHtml(f, true);
+}).join("");
+wrap.querySelectorAll("[data-deal]")
+  .forEach(function(b){
+    b.addEventListener("click", function(){
+      openDeal(b.getAttribute("data-deal"));
+    });
+  });` },
+  search: { fn:"The filter at the top of renderHistory()", does:"Reads the search box, lower-cases it, and keeps only activities whose deal's contact or company contains it. The box re-runs this on every keystroke.",
+    where:"The script at the end of index.html — the “Activity History” section. The box itself is the <input id='historySearch'> in the Activity History markup.",
+    code:`var q = byId("historySearch").value
+  .trim().toLowerCase();
+var items = allActivity().filter(
+  function(f){
+    if(!q) return true;
+    var d = dealById(f.dealId);
+    return d && (d.contact.toLowerCase()
+        .indexOf(q)>=0
+      || d.company.toLowerCase()
+        .indexOf(q)>=0);
+  });
+byId("historySearch").addEventListener(
+  "input", renderHistory);` },
+  rowopen: { fn:"activityRowHtml(f, clickable)", does:"When clickable is true, the row is built as a <button> carrying the deal's id — and renderHistory wires that button to openDeal().",
+    where:"The script at the end of index.html — activityRowHtml(), at the top of the “Deal Detail” section, shared by both activity lists.",
+    code:`function activityRowHtml(f, clickable){
+  …
+  if(clickable) return
+    '<button type="button" '
+    + 'class="hist-row" data-deal="'
+    + f.dealId + '" '
+    + 'aria-label="Open deal: …">'
+    + inner + '</button>';
+  return '<div class="feed-item">'
+    + inner + '</div>';
+}` },
+  dealsdata: { fn:"var DEALS = [ … ]", does:"The 6 sample deals as plain data — each with an id, contact, company, ARR, due label, and next step. Every list and header in the app reads from this one array.",
+    where:"The top of the script at the end of index.html — the first thing in the script, above PAST.",
+    code:`var DEALS = [
+  { id:"james", contact:"James Whitfield",
+    company:"Meridian Legal", arr:312,
+    arrLabel:"$312k", due:"Due today",
+    overdue:false,
+    next:"Confirm renewal terms before legal review" },
+  { id:"daniel", contact:"Daniel Ortiz",
+    … arrLabel:"$148k" … },
+  … Priya $92k · Maya $54k · Sofia $38k …
+  { id:"aisha", contact:"Aisha Bello",
+    company:"GreenLeaf Grocers", arr:19,
+    arrLabel:"$19k", … }
+];   // 6 deals · $663k in total` },
+  actdata: { fn:"var PAST = [ … ]", does:"The 12 seeded past activities as plain data. allActivity() is the one place session activity and this seed data are joined, newest first.",
+    where:"The top of the script at the end of index.html — directly under DEALS, with the allActivity() helper further down the script.",
+    code:`var PAST = [
+  { dealId:"james", via:"email",
+    title:"Email — James Whitfield, Meridian Legal",
+    detail:"Subject: Renewal terms — draft for legal review",
+    date:"Tue, Nov 4", time:"9:41 AM" },
+  { dealId:"james", via:"call",
+    title:"Call — James Whitfield, Meridian Legal · Called",
+    detail:"Walked through renewal timeline · Duration 09:37",
+    date:"Mon, Nov 3", time:"2:15 PM" },
+  … 10 more · Tue, Oct 28 – Tue, Nov 4 …
+];
+function allActivity(){
+  return feed.concat(PAST); }` },
+  session: { fn:"done / feed / undoStack", does:"Three plain variables hold the whole session — which deals are done, the feed entries, and the Undo stack. Nothing writes them anywhere, so a reload starts over.",
+    where:"The top of the script at the end of index.html — the state block under PAST. There is deliberately no storage code anywhere in the file.",
+    code:`var done = {};       // id -> {via, detail}
+var feed = [];       // newest first:
+        // {dealId, via, title, detail, time}
+var undoStack = [];  // action stack for Undo
+var currentView = "today";
+var detailId = null; // deal on Deal Detail
+
+// No localStorage, no database, no server —
+// a reload resets all of this.` },
+  design: { fn:":root { … } — the design tokens", does:"Every colour, radius, and shadow in the app comes from these CSS variables; components reference the variables, never raw colours.",
+    where:"The <style> block in the <head> of index.html — the very first rule in the stylesheet.",
+    code:`:root{
+  --bg:#f4f5f7; --panel:#ffffff;
+  --ink:#131a26; --ink-2:#3d4759;
+  --muted:#6b7688; --line:#e3e6ec;
+  --sidebar:#121a2a; --sidebar-2:#1b2740;
+  --primary:#1f4fd8;
+  --success:#22c55e;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(16,24,40,.05),
+    0 4px 16px rgba(16,24,40,.04);
+}` },
+  loading: { fn:"followupsSkeletonHtml() + setFollowupsState(\"loading\")", does:"The skeleton builder makes three grey placeholder cards in the shape of a follow-up card; the state setter shows them, then swaps to the real list after 750 ms.",
+    where:"The script at the end of index.html — the “List states” section, above render(). The .sk skeleton styles are in the <style> block.",
+    code:`function followupsSkeletonHtml(){
+  var card =
+    '<div class="skeleton-card" …>'
+    + '<div class="sk sk-line w55"></div>'
+    + ' … </div>';
+  return '<div role="status" '
+    + 'aria-label="Loading follow-ups">'
+    + card + card + card + '</div>';
+}
+if(state==="loading"){
+  renderTodo();
+  followupsTimer = setTimeout(function(){
+    followupsState="ready"; renderTodo();
+  }, 750);
+}` },
+  emptytoday: { fn:"renderTodo() — the empty branch", does:"When the list is forced empty, or every deal is done, the list is replaced with this one line — the exact string is written into the code, not loaded from anywhere.",
+    where:"The script at the end of index.html — inside renderTodo().",
+    code:`if(followupsState==="empty"
+    || pending.length===0){
+  wrap.innerHTML = '<div class="empty"><span class="empty-plain">All caught up. No follow-ups today.</span></div>';
+  return;
+}` },
+  errortoday: { fn:"renderTodo() — the error branch", does:"When the list state is error, it renders the exact failure string and a Retry button whose click sends the list back through the loading state.",
+    where:"The script at the end of index.html — inside renderTodo(), above the empty branch.",
+    code:`if(followupsState==="error"){
+  wrap.innerHTML = '<div class="state-error" role="alert"><p>Couldn't load your follow-ups. Check your connection and try again.</p><button type="button" class="btn-retry" id="followupsRetry">Retry</button></div>';
+  byId("followupsRetry").addEventListener(
+    "click", function(){
+      setFollowupsState("loading"); });
+  return;
+}` },
+  emptyhistory: { fn:"renderHistory() — the empty branch", does:"When the history state is empty, the count line is set to zero and the list is replaced with the exact empty string from the build.",
+    where:"The script at the end of index.html — inside renderHistory(), in the “Activity History” section.",
+    code:`if(historyState==="empty"){
+  byId("historyCount").textContent =
+    "0 activities · newest first";
+  wrap.innerHTML = '<div class="empty" style="border:0"><span class="empty-plain">No activity yet. Call or email a follow-up to see it here.</span></div>';
+  return;
+}` },
+  errorhistory: { fn:"renderHistory() — the error branch", does:"When the history state is error, it renders the exact failure string and a Retry button whose click sends the list back through the loading state — the same pattern as Today.",
+    where:"The script at the end of index.html — inside renderHistory(), near the top of the function.",
+    code:`if(historyState==="error"){
+  byId("historyCount").textContent = "";
+  wrap.innerHTML = '<div class="state-error" role="alert" …><p>Couldn't load your activity. Check your connection and try again.</p><button type="button" class="btn-retry" id="historyRetry">Retry</button></div>';
+  byId("historyRetry").addEventListener(
+    "click", function(){
+      setHistoryState("loading"); });
+  return;
+}` }
+};
+var nodeByIdMap = {};
+NODES.forEach(function(n){ nodeByIdMap[n.id] = n; });
+var orbitSelected = "app";
+var orbitFilter = "all";
+
+function nodeMatches(n){
+  var q = byId("orbitSearch").value.trim().toLowerCase();
+  var catOk = orbitFilter==="all" || n.cat===orbitFilter || n.id==="app";
+  var qOk = !q || n.name.toLowerCase().indexOf(q)>=0 || n.about.toLowerCase().indexOf(q)>=0 || n.catLabel.toLowerCase().indexOf(q)>=0;
+  return catOk && qOk;
+}
+function catColor(cat){
+  return cat==="screen" ? "#3b82f6" : cat==="data" ? "#b98a0a" : cat==="state" ? "#7c5cd6" : cat==="app" ? "#1e1e2d" : "#64748b";
+}
+function renderOrbit(){
+  var stage = byId("orbitStage");
+  stage.querySelectorAll(".onode").forEach(function(el){ el.remove(); });
+  var rings = {1:[], 2:[], 3:[]};
+  NODES.forEach(function(n){ if(n.ring>0) rings[n.ring].push(n); });
+  Object.keys(rings).forEach(function(r){
+    var list = rings[r];
+    var rx = r==="1" ? 27 : (r==="2" ? 34 : 40);
+    var ry = r==="1" ? 30 : (r==="2" ? 37 : 44);
+    list.forEach(function(n, i){
+      var ang;
+      if(r==="1"){ ang = [-90, 30, 150][i] || 0; }
+      else { ang = -90 + (360/list.length)*i + (r==="3" ? 360/list.length/2 : 0); }
+      var rad = ang * Math.PI/180;
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "onode" + (n.cat==="screen" ? " screen" : "") + (n.id===orbitSelected ? " selected" : "") + (nodeMatches(n) ? "" : " dimmed");
+      b.style.left = (50 + rx*Math.cos(rad)) + "%";
+      b.style.top = (50 + ry*Math.sin(rad)) + "%";
+      b.textContent = n.name;
+      b.setAttribute("aria-label", "About: " + n.name);
+      b.addEventListener("click", function(){ selectNode(n.id, false); });
+      stage.appendChild(b);
+    });
+  });
+  var c = document.createElement("button");
+  c.type = "button";
+  c.className = "onode centre" + (orbitSelected==="app" ? " selected" : "");
+  c.style.left = "50%"; c.style.top = "50%";
+  c.innerHTML = "CRM Companion<small>index.html · single file<br>main 8f12b0f</small>";
+  c.setAttribute("aria-label", "About: CRM Companion, the whole app");
+  c.addEventListener("click", function(){ selectNode("app", false); });
+  stage.appendChild(c);
+}
+function renderOrbitList(){
+  var wrap = byId("orbitList");
+  wrap.innerHTML = "";
+  var shown = 0;
+  NODES.forEach(function(n){
+    if(!nodeMatches(n)) return;
+    shown++;
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "lnode" + (n.id===orbitSelected ? " selected" : "");
+    b.innerHTML = '<span class="cdot" style="background:' + catColor(n.cat) + '"></span><span>' + esc(n.name) + '</span>';
+    b.addEventListener("click", function(){ selectNode(n.id, true); });
+    wrap.appendChild(b);
+  });
+  if(shown===0){
+    wrap.innerHTML = '<p class="none">Nothing matches. Clear the search or pick a different filter.</p>';
+  }
+}
+function renderOrbitChips(){
+  var q = byId("orbitSearch").value.trim();
+  var wrap = byId("orbitChips");
+  if(!q){ wrap.innerHTML = ""; return; }
+  var hits = NODES.filter(function(n){ return nodeMatches(n); });
+  if(hits.length===0){ wrap.innerHTML = '<span class="no-match">No parts match “' + esc(q) + '”.</span>'; return; }
+  wrap.innerHTML = '<span class="chips-label">Jump to</span>' + hits.map(function(n){
+    return '<button type="button" class="ochip" data-jump="' + n.id + '">' + esc(n.name) + '</button>';
+  }).join("");
+  wrap.querySelectorAll("[data-jump]").forEach(function(b){
+    b.addEventListener("click", function(){ selectNode(b.getAttribute("data-jump"), true); });
+  });
+}
+function renderOrbitDetail(){
+  var n = nodeByIdMap[orbitSelected]; if(!n) return;
+  var sn = SNIPPETS[n.id];
+  var vClass = n.verdict==="real" ? "real" : (n.verdict==="mocked" ? "mocked" : "mixed");
+  byId("orbitDetail").innerHTML =
+    '<div class="catrow"><span class="catpill">' + esc(n.catLabel) + '</span>'
+    + '<span class="verdict ' + vClass + '"><i></i>' + esc(n.verdictLabel) + '</span></div>'
+    + '<h2>' + esc(n.name) + '</h2>'
+    + '<p>' + esc(n.about) + '</p>'
+    + (n.exact ? '<p class="exact">“' + esc(n.exact) + '”</p>' : '')
+    + '<div class="connect-label">Connects to</div>'
+    + '<div class="connects">' + n.connects.map(function(cid){
+        var t = nodeByIdMap[cid];
+        return t ? '<button type="button" class="cbtn" data-connect="' + cid + '">' + esc(t.name) + '</button>' : '';
+      }).join("") + '</div>'
+    + (sn ? '<div class="codebox"><button type="button" class="code-toggle" data-codetoggle aria-expanded="false">Show code — ' + esc(sn.fn) + '</button>'
+      + '<div class="code-panel" data-codepanel hidden>'
+      + '<p class="code-meta"><b>Where it lives:</b> ' + esc(sn.where) + '</p>'
+      + '<p class="code-meta">' + esc(sn.does) + '</p>'
+      + '<pre class="code-pre">' + esc(sn.code) + '</pre></div></div>' : '');
+  byId("orbitDetail").querySelectorAll("[data-connect]").forEach(function(b){
+    b.addEventListener("click", function(){ selectNode(b.getAttribute("data-connect"), true); });
+  });
+  var ct = byId("orbitDetail").querySelector("[data-codetoggle]");
+  if(ct && sn){
+    ct.addEventListener("click", function(){
+      var p = byId("orbitDetail").querySelector("[data-codepanel]");
+      var open = p.hidden;
+      p.hidden = !open;
+      ct.setAttribute("aria-expanded", open ? "true" : "false");
+      ct.textContent = (open ? "Hide code — " : "Show code — ") + sn.fn;
+    });
+  }
+}
+function selectNode(id, scroll){
+  if(!nodeByIdMap[id]) return;
+  orbitSelected = id;
+  renderOrbit(); renderOrbitList(); renderOrbitDetail();
+  if(scroll){
+    var d = byId("orbitDetail");
+    if(d && d.scrollIntoView) d.scrollIntoView({ block:"nearest", behavior:"smooth" });
+  }
+}
+function applyOrbitFilter(){
+  renderOrbit(); renderOrbitList(); renderOrbitChips();
+}
+byId("orbitSearch").addEventListener("input", applyOrbitFilter);
+document.querySelectorAll("[data-ofilter]").forEach(function(b){
+  b.addEventListener("click", function(){
+    orbitFilter = b.getAttribute("data-ofilter");
+    document.querySelectorAll("[data-ofilter]").forEach(function(x){ x.classList.toggle("active", x===b); });
+    applyOrbitFilter();
+  });
+});
+renderOrbit(); renderOrbitList(); renderOrbitDetail();
 
 render();
 /* Initial fetch: follow-ups start as a skeleton, then load. */
