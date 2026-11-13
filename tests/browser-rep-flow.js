@@ -94,9 +94,9 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   // --- Sidebar hide / show ---
   const sbBefore = await page.locator('.sidebar').boundingBox();
   await page.click('#hideNavBtn');
-  ok('Hide sidebar collapses it', !(await vis('.sidebar')) && await vis('#showNavBtn'), 'sidebar width before ' + (sbBefore.width|0));
+  ok('Hide sidebar collapses it', !(await vis('.sidebar')) && await vis('#showNavBtn'), 'sidebar width before ' + Math.trunc(sbBefore.width));
   const mainBox = await page.locator('.main').boundingBox();
-  ok('Main content uses full width when collapsed', mainBox.x < 60 && mainBox.width > 1000, 'main x=' + (mainBox.x|0) + ' w=' + (mainBox.width|0));
+  ok('Main content uses full width when collapsed', mainBox.x < 60 && mainBox.width > 1000, 'main x=' + Math.trunc(mainBox.x) + ' w=' + Math.trunc(mainBox.width));
   await page.click('#showNavBtn');
   ok('Show sidebar restores it', await vis('.sidebar') && !(await vis('#showNavBtn')));
   ok('Rep-flow sidebar text unchanged', /Nav is off for this test/.test(await txt('.sidebar')) && /Admin — Code Explorer/.test(await txt('.sidebar')));
@@ -108,7 +108,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   const tabBox = await phone.locator('.admin-tabs').boundingBox();
   const t1 = await phone.locator('[data-atab="orbit"]').boundingBox();
   const t2 = await phone.locator('[data-atab="prd"]').boundingBox();
-  ok('Phone: tabs stack vertically', t2.y > t1.y + t1.height - 1 && tabBox.width <= 390, `tab1 y=${t1.y|0} tab2 y=${t2.y|0}`);
+  ok('Phone: tabs stack vertically', t2.y > t1.y + t1.height - 1 && tabBox.width <= 390, `tab1 y=${Math.trunc(t1.y)} tab2 y=${Math.trunc(t2.y)}`);
   ok('Phone: orbit stage hidden, list shown', !(await phone.isVisible('#orbitStage')) && (await phone.locator('#orbitList .lnode').count()) === 27);
   ok('Phone: no horizontal overflow', await phone.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   await phone.click('[data-atab="prd"]');

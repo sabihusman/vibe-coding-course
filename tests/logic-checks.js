@@ -1,10 +1,10 @@
 /* Logic checks for CRM Companion's data and model.
    Run with:  node tests/logic-checks.js
-   No dependencies. Loads the real data and model files into a sandbox,
-   with the screen-drawing functions replaced by no-op stubs. */
-const fs = require("fs");
-const path = require("path");
-const vm = require("vm");
+   No dependencies. Loads the real data and model files, with the
+   screen-drawing functions replaced by no-op stubs. */
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
 const root = path.join(__dirname, "..");
 const files = [
@@ -16,21 +16,25 @@ const files = [
   "src/shared/components/log-activity.js",
 ];
 
+/* The app files are classic browser scripts that share globals. To test them in Node
+   without evaluating strings, this writes them, unchanged, into the body of one
+   factory function in a temporary CommonJS module, then loads it with require.
+   Each call to the factory gives a fresh app, with the screen functions stubbed. */
+const bundle = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "crm-logic-")), "app-bundle.js");
+fs.writeFileSync(bundle,
+  "module.exports = function createApp(render, renderFeed, renderHistory, renderDetail, renderDetailActivity, syncDemo, hideToast, showView, showToast) {\n" +
+  files.map((f) => fs.readFileSync(path.join(root, f), "utf8")).join("\n;\n") +
+  "\nreturn { DEALS, PAST, done, feed, get undoStack(){ return undoStack; }, dealById, doneCount, allActivity, completeDeal, undoDeal, addAttempt, logActivity };\n};\n");
+const createApp = require(bundle);
+
 function freshApp() {
   const calls = { render: 0, toast: [], view: [] };
-  const ctx = {
-    console,
-    render: () => { calls.render++; },
-    renderFeed() {}, renderHistory() {}, renderDetail() {}, renderDetailActivity() {},
-    syncDemo() {}, hideToast() {},
-    showView: (v) => { calls.view.push(v); },
-    showToast: (t) => { calls.toast.push(t); },
-  };
-  vm.createContext(ctx);
-  // Classic scripts share one global scope; run them in the page's load order.
-  const source = files.map((f) => fs.readFileSync(path.join(root, f), "utf8")).join("\n;\n");
-  vm.runInContext(source + "\n;this.__app = { DEALS, PAST, done, feed, get undoStack(){ return undoStack; }, dealById, doneCount, allActivity, completeDeal, undoDeal, addAttempt, logActivity };", ctx);
-  return { app: ctx.__app, calls };
+  const noop = () => {};
+  const app = createApp(
+    () => { calls.render++; }, noop, noop, noop, noop, noop, noop,
+    (v) => { calls.view.push(v); },
+    (t) => { calls.toast.push(t); });
+  return { app, calls };
 }
 
 let passed = 0, failed = 0;
