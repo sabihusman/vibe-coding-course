@@ -1,0 +1,32 @@
+/* Call and Email panels (modal sheets). */
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(10,15,26,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+  .overlay.open{display:flex}
+  .sheet{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:22px 22px 26px;animation:up .22s ease}
+  @keyframes up{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
+  @media(min-width:640px){.overlay{align-items:center;padding:20px}.sheet{border-radius:18px}}
+  .sheet-head{display:flex;align-items:flex-start;gap:12px}
+  .sheet-head h3{margin:0;font-size:19px;letter-spacing:-.01em}
+  .sheet-head p{margin:3px 0 0;color:var(--muted);font-size:13.5px;font-weight:600}
+  .x{margin-left:auto;background:var(--due-bg);border:0;width:34px;height:34px;border-radius:50%;font-size:16px;color:var(--ink-2);flex:0 0 auto}
+  .ctx{background:#f7f8fa;border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-top:16px}
+  .ctx .row{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:3px 0}
+  .ctx .row span{color:var(--muted);font-weight:700}
+  .ctx .row b{font-weight:800;text-align:right}
+  .sim{font-size:12px;color:var(--muted);font-weight:600;background:#fffbe8;border:1px solid #eee3ae;border-radius:8px;padding:8px 11px;margin-top:14px;line-height:1.45}
+  .fieldlabel{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;display:block}
+  .timerbox{display:flex;align-items:center;gap:14px;background:var(--ink);color:#fff;border-radius:11px;padding:14px 16px}
+  .timer{font-family:"JetBrains Mono",monospace;font-size:30px;font-weight:600;letter-spacing:.02em}
+  .timerbox .tbtns{margin-left:auto;display:flex;gap:8px}
+  .tbtn{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:8px;padding:9px 13px;font-weight:800;font-size:13px;min-height:40px}
+  .tbtn:hover{background:rgba(255,255,255,.24)}
+  textarea,input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px;font:inherit;font-size:14px;color:var(--ink);background:#fff;resize:vertical}
+  textarea:focus,input[type=text]:focus{border-color:var(--email);outline:none;box-shadow:0 0 0 3px rgba(31,79,216,.15)}
+  .outcomes{display:flex;gap:8px}
+  .outcome{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 6px;font-weight:800;font-size:13.5px;color:var(--ink-2);min-height:44px}
+  .outcome.sel{border-color:var(--success);background:var(--green-bg);color:var(--green)}
+  .sheet-actions{display:flex;gap:10px;margin-top:22px}
+  .btn-cancel{background:#fff;border:1.5px solid var(--line);color:var(--ink-2);flex:0 0 auto;padding:12px 18px}
+  .btn-save{flex:1;padding:12px 18px;color:#fff}
+  .btn-save.call{background:var(--primary)} .btn-save.call:hover{background:var(--primary-hover)}
+  .btn-save.email{background:var(--email)} .btn-save.email:hover{background:var(--email-hover)}

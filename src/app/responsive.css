@@ -1,0 +1,38 @@
+/* Breakpoints for every screen. Loaded last so it wins over the screen styles. */
+
+  @media(max-width:900px){
+    .hypo{grid-template-columns:1fr;gap:14px}
+    .grid{grid-template-columns:1fr}
+    .metrics{grid-template-columns:repeat(2,1fr)}
+    .quotes-grid{grid-template-columns:1fr}
+    .orbit-layout{grid-template-columns:1fr}
+    .orbit-detail{position:static}
+    .orbit-list{grid-template-columns:repeat(2,1fr)}
+    .faq-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:480px){
+    .metrics{grid-template-columns:1fr}
+  }
+  @media(max-width:720px){
+    .app{flex-direction:column}
+    .sidebar{width:100%;flex:none;height:auto;position:static;flex-direction:row;align-items:center;flex-wrap:wrap;padding:12px 14px;gap:6px}
+    .brand{border:0;margin:0;padding:0 10px 0 0}
+    .brand span{display:none}
+    .navlabel,.sidefoot .samplebox,.userrow span{display:none}
+    .navitem{padding:8px 10px;font-size:13px}
+    .nav-note{flex:1 1 100%;margin:4px 0 0}
+    .brand{padding-right:0}
+    .nav-toggle{position:static;margin-left:4px}
+    .sidefoot{margin:0 0 0 auto}
+    .userrow{padding:0}
+    .userrow b{display:none}
+    .main{padding:20px 16px 90px}
+    .orbit-stage{display:none}
+    .orbit-list{grid-template-columns:1fr}
+  }
+    .pagehead h1{font-size:26px}
+    .actions .btn-log{flex:1}
+    .step .slabel{display:none}
+    .step{width:36px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
