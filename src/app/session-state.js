@@ -1,4 +1,4 @@
-/* Session state: current view, list states, done set, feed, Undo stack, panel state. In memory only. */
+/* Session state: current view, list states, done set, feed, Undo stack, panel state. Held in memory; with Supabase configured, supabase-source.js loads it on start and saves each change. */
 var currentView = "today";  // "today" | "detail" | "history"
 var detailId = null;        // deal shown on Deal Detail
 var followupsState = "loading"; // loading | ready | empty | error

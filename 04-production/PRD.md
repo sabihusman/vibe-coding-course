@@ -59,7 +59,7 @@ Extracted from the prototype, what was actually built.
 - **Screens:** Today, Deal Detail, and Activity History, switched in place in one page. Admin Orbit is a fourth view, in the same file.
 - **Call / Email:** simulated panels only. No real call is made. No real email is sent.
 - **Data:** 6 sample deals and 12 seeded sample activities, Oct 28–Nov 4, in data arrays in the file. Anything logged in the session is added on top, newest first.
-- **State:** in memory only. Nothing is saved to a server, a file, or a database. It resets on reload.
+- **State:** saved in Supabase for each browser's anonymous rep, so it survives a reload. Without the Supabase settings, the app falls back to in-page sample data that resets on reload.
 - **Naming:** screens and functions are named for what they do — Today, Deal Detail, Activity History, `showView`, `openDeal`, `openHistory`, `renderTodo`, `renderUpdated`, `completeDeal`, `addAttempt`. An engineer can tell what each does from its name. It is not `Component_1.tsx` naming.
 - **Separation:** the sample data sits in data arrays, separate from the functions that draw the screen. But everything lives in one file. Data and display are not in separate files. There is no data service layer yet.
 - **Documentation:** there is no README inside the project itself. The build summary is on the computer only, per the Module 3 lab guide. The prompt chain is in `03-chaining/PROMPTS.md`.
@@ -87,7 +87,7 @@ Extracted from the prototype, what was actually built.
 **Out of scope (this build):**
 - Real calls or emails. Both panels are simulated. Nothing is sent.
 - Real CRM data or a CRM link. All names, deals, and amounts are sample data.
-- Saving data. Everything is in memory only. It resets on reload.
+- Real accounts. Each browser is an anonymous rep; there is no sign-in screen.
 - Sign-in, accounts, or multi-user support. There is no sign-in.
 - Sidebar Deals and Activity tabs. They are plain text, not links. They do nothing by design in this test.
 - Version B, the dispatch-board layout. It is a separate Muse artifact, kept apart for later A/B testing. It is not in this build, not in the repo, and not on the live site.

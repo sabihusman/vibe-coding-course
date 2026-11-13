@@ -61,8 +61,8 @@ var NODES = [
   { id:"actdata", name:"Activities data — 12 activities", cat:"data", catLabel:"Data", ring:3, verdict:"mocked", verdictLabel:"Mocked — sample data only",
     about:"The seeded past history written into the file: 12 activities dated Tue, Oct 28 to Tue, Nov 4, covering all 6 deals with a mix of calls, emails, and logs. Activity History and Deal Detail's Past activity both read from this same set.",
     connects:["actlist","past","call","email"] },
-  { id:"session", name:"Session state — in memory only", cat:"data", catLabel:"Data", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
-    about:"Where this session's work is kept: which deals are done, the Activity feed entries, and the Undo history. It all lives in the page's memory only — there is no account, no saving, and no database, so a reload wipes it and the app starts again from the sample data.",
+  { id:"session", name:"Session state — saved per browser", cat:"data", catLabel:"Data", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
+    about:"Where the rep's work is kept: which deals are done, the Activity feed entries, and the Undo history. The page holds it in memory while you work, and on the live site each change is also saved to Supabase under this browser's anonymous rep, so a reload brings it back. Without the Supabase settings, for example opening index.html from disk, nothing is saved and a reload starts again from the sample data.",
     connects:["feed","updated","dealsdata","app"] },
   { id:"design", name:"Design system", cat:"panel", catLabel:"Design", ring:3, verdict:"real", verdictLabel:"Real — works in this build",
     about:"The shared look every screen uses: a dark sidebar (#1e1e2d), light content (#f9fafb), white cards with 8px radius and #e5e7eb borders, blue (#3b82f6) as the primary colour, and green (#22c55e) kept for success only — a deal updated, a step completed. This Admin portal follows the same system.",
@@ -342,8 +342,8 @@ byId("historySearch").addEventListener(
 ];
 function allActivity(){
   return feed.concat(PAST); }` },
-  session: { fn:"done / feed / undoStack", does:"Three plain variables hold the whole session — which deals are done, the feed entries, and the Undo stack. Nothing writes them anywhere, so a reload starts over.",
-    where:"src/app/session-state.js — the state block. There is deliberately no storage code anywhere in the app.",
+  session: { fn:"done / feed / undoStack", does:"Three plain variables hold the session — which deals are done, the feed entries, and the Undo stack. supabase-source.js fills them from Supabase on start and saves every change, so on the live site a reload brings them back.",
+    where:"src/app/session-state.js — the state block. Loading and saving it is in src/shared/data/supabase-source.js.",
     code:`var done = {};       // id -> {via, detail}
 var feed = [];       // newest first:
         // {dealId, via, title, detail, time}

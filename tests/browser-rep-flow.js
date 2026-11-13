@@ -131,6 +131,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('First card is James Whitfield', firstName === 'James Whitfield', firstName);
   ok('Neutral instruction on screen', /Work this follow-up as you normally would\./.test(await txt('#viewToday')));
   ok('No kill-switch text anywhere', !/Test it yourself/.test(await page.content()));
+  ok('Without Supabase settings, labels say sample data resets on reload', await page.evaluate(() => !SB.connected) ? /resets on reload/.test(await txt('.samplebox p')) : /saved for this browser/.test(await txt('.samplebox p')));
   ok('Nav out-of-scope label', /Nav is off for this test/.test(await page.content()));
 
   // 1. Deal Detail and back

@@ -100,7 +100,19 @@ function sbLoadAll(){
       });
       undoStack = Object.keys(done);
       SB.connected = true;
+      sbShowSavedLabels();
     });
+}
+
+/* The page's labels say "resets on reload", which is true without Supabase.
+   Once the rep's data has loaded from Supabase, say what really happens instead. */
+function sbShowSavedLabels(){
+  document.querySelectorAll(".sample-pill").forEach(function(pill){
+    var text = pill.lastChild;
+    if(text && text.nodeType === 3) text.textContent = " Sample data only — saved for this browser";
+  });
+  var box = document.querySelector(".samplebox p");
+  if(box) box.textContent = "All names, deals and amounts on this page are sample data. Your changes are saved for this browser, so they survive a reload.";
 }
 
 function sbWarn(what, err){ if(window.console) console.warn("CRM Companion: could not save " + what + " to Supabase.", err); }

@@ -73,6 +73,9 @@ const ok = (n, c, d) => { if (c) { passed++; console.log("PASS " + n); } else { 
   ok("Seeds the rep's sample data", db.deals.length === 6 && db.requests.some((r) => r.includes("rpc/seed_my_sample_data")));
   ok("Today shows the 6 deals from Supabase, biggest first",
     (await page.locator("#todoList article.deal").count()) === 6 && (await page.locator("#todoList .deal-name").first().textContent()) === "James Whitfield");
+  ok("With Supabase, every sample-data label says work is saved for this browser",
+    (await page.$$eval(".sample-pill", (els) => els.every((e) => /saved for this browser/.test(e.textContent) && !/resets on reload/.test(e.textContent)))) &&
+    /saved for this browser, so they survive a reload/.test(await page.textContent(".samplebox p")));
   ok("Seeded activity from Supabase is in Activity History data", await page.evaluate(() => PAST.some((a) => /Maya Chen/.test(a.title))));
 
   // Save a call

@@ -81,7 +81,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         </div>
         <div class="faq-item">
           <h3>Where does the data live?</h3>
-          <p>The 6 sample deals are in src/shared/data/sample-deals.js and the 12 seeded activities are in src/shared/data/sample-activities.js, held in memory. Nothing is sent to a server or a database, and anything you do in a session is lost when the page reloads.</p>
+          <p>The 6 sample deals are in src/shared/data/sample-deals.js and the 12 seeded activities are in src/shared/data/sample-activities.js, and each browser’s copy is saved in Supabase (src/shared/data/supabase-source.js), so work survives a reload. Without the Supabase settings, for example opening index.html from disk, the app uses that in-page data and a reload starts over.</p>
         </div>
         <div class="faq-item">
           <h3>Where is the Call and Email logic?</h3>
@@ -93,7 +93,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         </div>
         <div class="faq-item">
           <h3>What is real, and what is mocked?</h3>
-          <p>The behaviour is real: the screens, panels, timers, search, and states all work in the browser exactly as you see them. The content is mocked: the names, companies, amounts, and past activities are sample data, no real call is placed, no real email is sent, and nothing is saved anywhere.</p>
+          <p>The behaviour is real: the screens, panels, timers, search, and states all work in the browser exactly as you see them. The content is mocked: the names, companies, amounts, and past activities are sample data, no real call is placed, and no real email is sent. What you do in the tool is saved in Supabase for this browser.</p>
         </div>
         <div class="faq-item">
           <h3>Where does the loading, empty, and error wording live?</h3>
@@ -194,7 +194,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         <li><b>Screens:</b> Today, Deal Detail, and Activity History, switched in place in one page. Admin Orbit is a fourth view, in the same file.</li>
         <li><b>Call / Email:</b> simulated panels only. No real call is made. No real email is sent.</li>
         <li><b>Data:</b> 6 sample deals and 12 seeded sample activities, Oct 28–Nov 4, in data arrays in the file. Anything logged in the session is added on top, newest first.</li>
-        <li><b>State:</b> in memory only. Nothing is saved to a server, a file, or a database. It resets on reload.</li>
+        <li><b>State:</b> saved in Supabase for each browser’s anonymous rep, so it survives a reload. Without the Supabase settings, the app falls back to in-page sample data that resets on reload.</li>
         <li><b>Naming:</b> screens and functions are named for what they do — Today, Deal Detail, Activity History, <code>showView</code>, <code>openDeal</code>, <code>openHistory</code>, <code>renderTodo</code>, <code>renderUpdated</code>, <code>completeDeal</code>, <code>addAttempt</code>. An engineer can tell what each does from its name. It is not <code>Component_1.tsx</code> naming.</li>
         <li><b>Separation:</b> the sample data sits in data arrays, separate from the functions that draw the screen. But everything lives in one file. Data and display are not in separate files. There is no data service layer yet.</li>
         <li><b>Documentation:</b> there is no README inside the project itself. The build summary is on the computer only, per the Module 3 lab guide. The prompt chain is in <code>03-chaining/PROMPTS.md</code>.</li>
@@ -235,7 +235,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
           <ul>
             <li>Real calls or emails. Both panels are simulated. Nothing is sent.</li>
             <li>Real CRM data or a CRM link. All names, deals, and amounts are sample data.</li>
-            <li>Saving data. Everything is in memory only. It resets on reload.</li>
+            <li>Real accounts. Each browser is an anonymous rep; there is no sign-in screen.</li>
             <li>Sign-in, accounts, or multi-user support. There is no sign-in.</li>
             <li>Sidebar Deals and Activity tabs. They are plain text, not links. They do nothing by design in this test.</li>
             <li>Version B, the dispatch-board layout. It is a separate Muse artifact, kept apart for later A/B testing. It is not in this build, not in the repo, and not on the live site.</li>
@@ -315,7 +315,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         <li>The Call and Email panels stay simulated in v1. The backend only stores what was attempted, saved, or sent in the tool.</li>
         <li>Version B, the dispatch-board layout, is a separate Muse artifact, not in this codebase. Do not merge it into this build without a product decision.</li>
       </ul>
-      <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="dealsdata">Deals data — 6 deals</button><button type="button" class="olink" data-orbit-link="actdata">Activities data — 12 activities</button><button type="button" class="olink" data-orbit-link="session">Session state — in memory only</button></div></div>
+      <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="dealsdata">Deals data — 6 deals</button><button type="button" class="olink" data-orbit-link="actdata">Activities data — 12 activities</button><button type="button" class="olink" data-orbit-link="session">Session state — saved per browser</button></div></div>
     </section>
 
     <section class="admin-card doc-block" id="ho-flows" aria-label="Key flows">
