@@ -32,6 +32,16 @@
   .brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:16px}
   .brand-mark{width:34px;height:34px;border-radius:9px;background:#fff;color:var(--sidebar);display:grid;place-items:center;font-weight:800;font-size:15px;letter-spacing:-.02em}
   .brand b{color:#fff;font-size:15px;display:block;line-height:1.1}
+  .brand .brand-text{flex:1;min-width:0}
+  .brand .brand-text b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+  .brand{gap:8px;padding-left:4px;padding-right:36px;position:relative}
+  .nav-toggle{position:absolute;top:2px;right:2px;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;display:grid;place-items:center}
+  .nav-toggle:hover{background:rgba(255,255,255,.16)}
+  .app.nav-collapsed .sidebar{display:none}
+  .show-nav{display:none;position:fixed;left:14px;top:14px;z-index:40;background:#1e1e2d;color:#fff;border:0;border-radius:8px;padding:9px 13px;font-size:13px;font-weight:800;min-height:40px;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(16,24,40,.18)}
+  .show-nav:hover{background:#2a2a3d}
+  .app.nav-collapsed .show-nav{display:inline-flex}
+  .app.nav-collapsed .main{padding-top:68px}
   .brand span{font-size:11px;color:var(--sidebar-dim);font-weight:600}
   .navlabel{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--sidebar-dim);font-weight:700;padding:0 10px;margin:10px 0 6px}
   .navitem{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;color:var(--sidebar-text);font-weight:600;font-size:14px;text-decoration:none}
@@ -411,6 +421,8 @@
     .navlabel,.sidefoot .samplebox,.userrow span{display:none}
     .navitem{padding:8px 10px;font-size:13px}
     .nav-note{flex:1 1 100%;margin:4px 0 0}
+    .brand{padding-right:0}
+    .nav-toggle{position:static;margin-left:4px}
     .sidefoot{margin:0 0 0 auto}
     .userrow{padding:0}
     .userrow b{display:none}
@@ -433,7 +445,8 @@
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark">C</div>
-      <div><b>CRM Companion</b><span>Today view · v3</span></div>
+      <div class="brand-text"><b>CRM Companion</b><span>Today view · v3</span></div>
+      <button type="button" class="nav-toggle" id="hideNavBtn" aria-label="Hide sidebar" title="Hide sidebar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
     </div>
     <div class="navlabel">Work</div>
     <a class="navitem active" id="navTodayLink" href="#" onclick="showView('today');return false">
@@ -467,6 +480,7 @@
   </aside>
 
   <!-- Main -->
+  <button type="button" class="show-nav" id="showNavBtn" aria-label="Show sidebar" title="Show sidebar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg> Menu</button>
   <main class="main">
    <div id="viewToday">
     <div class="pagehead">
@@ -693,7 +707,7 @@
 
     <section class="admin-card" aria-label="How to read this">
       <h2>How to read this</h2>
-      <p>The whole app sits in the centre — CRM Companion is one single file (index.html, main 8f12b0f), and everything else orbits it. The three screens sit on the inner orbit, and the panels, data, and states they use sit on the outer orbits. Select any node to see, in plain language, what it does, what it connects to, and whether it is real or mocked.</p>
+      <p>The whole app sits in the centre — CRM Companion is one single file (index.html, main 6d44ccf), and everything else orbits it. The three screens sit on the inner orbit, and the panels, data, and states they use sit on the outer orbits. Select any node to see, in plain language, what it does, what it connects to, and whether it is real or mocked.</p>
     </section>
 
     <div class="orbit-controls">
@@ -780,7 +794,7 @@
         <div><b>Owner:</b> Sabih Usman</div>
         <div><b>Last updated:</b> 2026-11-12</div>
         <div><b>Live prototype:</b> https://vibe-coding-course-weld-omega.vercel.app</div>
-        <div><b>Repo main:</b> 8f12b0f</div>
+        <div><b>Repo main:</b> 6d44ccf</div>
       </div>
       <p class="doc-note"><b>Source of truth:</b> the live prototype above. This PRD is extracted from what that build actually does, in the eight blocks below. Where the build is mocked, this PRD says so.</p>
     </section>
@@ -924,7 +938,7 @@
       <div class="doc-meta">
         <div><b>Product:</b> CRM Companion, Module 3 prototype → production transition (Module 4)</div>
         <div><b>Live prototype:</b> https://vibe-coding-course-weld-omega.vercel.app</div>
-        <div><b>Repo main baseline:</b> 8f12b0f (merge of PR #1, Module 3 completed PROMPTS.md + Email attempted fix)</div>
+        <div><b>Repo main baseline:</b> 6d44ccf (Module 4: Admin panel with Orbit, Living PRD and Handoff tabs)</div>
         <div><b>Last updated:</b> 2026-11-12</div>
       </div>
       <p class="doc-note"><b>Living PRD:</b> <code>04-production/PRD.md</code> — read it first. This note is the engineer-ready summary of that PRD. The <button type="button" class="olink doc" data-prdlink="prd-01">Living PRD tab</button> renders it.</p>
@@ -1018,7 +1032,7 @@
       <div class="doc-head"><span class="doc-num">▶</span><h2>How to run it</h2></div>
       <ul>
         <li>Open the live URL: https://vibe-coding-course-weld-omega.vercel.app — no sign-in, no setup. It is sample data only and resets on reload.</li>
-        <li>Or open the repo: https://github.com/sabihusman/vibe-coding-course — the live site is the root <code>index.html</code> on main (8f12b0f). Vercel deploys main automatically, so a push to main is the go-live decision.</li>
+        <li>Or open the repo: https://github.com/sabihusman/vibe-coding-course — the live site is the root <code>index.html</code> on main (6d44ccf). Vercel deploys main automatically, so a push to main is the go-live decision.</li>
         <li>To run the prompts again, read <code>03-chaining/PROMPTS.md</code> in the repo. The chain is Expand, then Behavior, then Refine. The build README (<code>module3-build-readme.md</code>) is not in the repo, per the Module 3 lab guide.</li>
         <li>To set up the backend, create a Supabase project, create the three tables above, turn on Auth and row-level security, and replace the in-page data arrays with reads from those tables. Do not claim it is live until the tables, auth, and a persisted activity have been checked on the live site.</li>
       </ul>
@@ -1570,7 +1584,7 @@ document.addEventListener("keydown", function(e){
 /* ---------- Admin · Orbit Code Explorer ---------- */
 var NODES = [
   { id:"app", name:"CRM Companion", cat:"app", catLabel:"The whole app", ring:0, verdict:"mixed", verdictLabel:"Real behaviour · mocked data",
-    about:"The whole app in one place. CRM Companion is a single file — index.html, on main at 8f12b0f — with no separate pages, no server, and no database behind it. Every screen, panel, and piece of sample data on this orbit lives inside that one file.",
+    about:"The whole app in one place. CRM Companion is a single file — index.html, on main at 6d44ccf — with no separate pages, no server, and no database behind it. Every screen, panel, and piece of sample data on this orbit lives inside that one file.",
     connects:["today","detail","history","design"] },
   { id:"today", name:"Today", cat:"screen", catLabel:"Screen", ring:1, verdict:"real", verdictLabel:"Real — works in this build",
     about:"The rep's home screen and the start of every path through the app. It shows the day's follow-ups, the progress stepper, Updated today, and the Activity feed. Nothing else in the app opens first — Deal Detail and Activity History are both reached from here.",
@@ -1659,7 +1673,7 @@ var NODES = [
    Each is a trimmed excerpt of the actual code in this file, not the whole file. */
 var SNIPPETS = {
   app: { fn:"showView(v)", does:"The file's only router — it shows one view and hides the other three, and moves the sidebar highlight.",
-    where:"The script at the end of index.html — the “Views & navigation” section. The file itself is the whole app: markup in the body, styles in the <style> block in the head, data and logic in this one script (main 8f12b0f).",
+    where:"The script at the end of index.html — the “Views & navigation” section. The file itself is the whole app: markup in the body, styles in the <style> block in the head, data and logic in this one script (main 6d44ccf).",
     code:`function showView(v){
   currentView = v;
   byId("viewToday").hidden = v!=="today";
@@ -2029,7 +2043,7 @@ function renderOrbit(){
   c.type = "button";
   c.className = "onode centre" + (orbitSelected==="app" ? " selected" : "");
   c.style.left = "50%"; c.style.top = "50%";
-  c.innerHTML = "CRM Companion<small>index.html · single file<br>main 8f12b0f</small>";
+  c.innerHTML = "CRM Companion<small>index.html · single file<br>main 6d44ccf</small>";
   c.setAttribute("aria-label", "About: CRM Companion, the whole app");
   c.addEventListener("click", function(){ selectNode("app", false); });
   stage.appendChild(c);
@@ -2120,6 +2134,15 @@ document.querySelectorAll("[data-ofilter]").forEach(function(b){
     applyOrbitFilter();
   });
 });
+
+/* ---------- Sidebar hide / show (session only, resets on reload) ---------- */
+function setNavCollapsed(collapsed){
+  document.querySelector(".app").classList.toggle("nav-collapsed", !!collapsed);
+  var target = byId(collapsed ? "showNavBtn" : "hideNavBtn");
+  if(target && target.focus) target.focus({ preventScroll:true });
+}
+byId("hideNavBtn").addEventListener("click", function(){ setNavCollapsed(true); });
+byId("showNavBtn").addEventListener("click", function(){ setNavCollapsed(false); });
 
 /* ---------- Admin tabs: Orbit / Living PRD / Handoff ---------- */
 var adminTab = "orbit";
