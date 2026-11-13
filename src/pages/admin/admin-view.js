@@ -270,15 +270,15 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
       <div class="doc-meta">
         <div><b>Product:</b> CRM Companion, Module 3 prototype → production transition (Module 4)</div>
         <div><b>Live prototype:</b> https://vibe-coding-course-weld-omega.vercel.app</div>
-        <div><b>Repo main baseline:</b> 6d44ccf (Module 4: Admin panel with Orbit, Living PRD and Handoff tabs)</div>
-        <div><b>Last updated:</b> 2026-11-13 (Lab 2: refactor done; Supabase written, not yet applied)</div>
+        <div><b>Repo main baseline:</b> 872016c (merge of PR #2: Lab 2 refactor, Supabase backend, SonarCloud fixes)</div>
+        <div><b>Last updated:</b> 2026-11-13 (Supabase backend verified live)</div>
       </div>
       <p class="doc-note"><b>Living PRD:</b> <code>04-production/PRD.md</code> — read it first. This note is the engineer-ready summary of that PRD. The <button type="button" class="olink doc" data-prdlink="prd-01">Living PRD tab</button> renders it.</p>
     </section>
 
     <section class="admin-card doc-block" id="ho-summary" aria-label="What this is">
       <div class="doc-head"><span class="doc-num">60s</span><h2>What this is</h2></div>
-      <p>CRM Companion is a rep’s Today view for a CRM at 18% adoption. A rep opens one screen, sees 6 follow-ups in ARR order, and calls or emails right from the task, so the work and the log happen in the same place. Saving or sending logs the activity and moves the deal to Updated today. Closing a Call or Email panel without saving counts as attempted, if the timer ran or a draft was typed. There are two more screens, Deal Detail and Activity History, and loading, empty, and error states for both lists, with exact wording. Everything is sample data, in memory only, and resets on reload. No real call is placed, no real email is sent, and nothing is saved to a server.</p>
+      <p>CRM Companion is a rep’s Today view for a CRM at 18% adoption. A rep opens one screen, sees 6 follow-ups in ARR order, and calls or emails right from the task, so the work and the log happen in the same place. Saving or sending logs the activity and moves the deal to Updated today. Closing a Call or Email panel without saving counts as attempted, if the timer ran or a draft was typed. There are two more screens, Deal Detail and Activity History, and loading, empty, and error states for both lists, with exact wording. Everything is sample data. Each browser signs in anonymously as its own rep, and its deals and activities are saved in Supabase, so work survives a reload. No real call is placed and no real email is sent.</p>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="app">CRM Companion</button><button type="button" class="olink" data-orbit-link="today">Today</button><button type="button" class="olink" data-orbit-link="call">Call panel</button><button type="button" class="olink" data-orbit-link="email">Email panel</button><button type="button" class="olink" data-orbit-link="updated">Updated today</button></div></div>
     </section>
 
@@ -297,20 +297,21 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
 
     <section class="admin-card doc-block" id="ho-backend" aria-label="Backend and data">
       <div class="doc-head"><span class="doc-num">BE</span><h2>Backend / data</h2></div>
-      <p class="doc-warn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Not live yet. Do not trust any backend claim about this prototype. The schema and app code are written and tested, but not applied to the Supabase project; the live site still runs on in-page sample data.</span></p>
+      <p class="doc-note"><b>Live since 2026-11-13.</b> The live site reads and saves through Supabase, verified the same day: tables, row-level security, anonymous auth, and a saved activity that persisted after a reload. The data is still sample data.</p>
       <ul>
-        <li>Supabase project <code>toctukiccnirfkkoaqog</code> (us-west-2): reachable and healthy on 2026-11-13, database still empty.</li>
-        <li>Schema in <code>supabase/migrations/20261113000000_crm_companion.sql</code>:
+        <li>Supabase project <code>toctukiccnirfkkoaqog</code> (us-west-2): Postgres with Supabase Auth. Storage is not used.</li>
+        <li>Schema, applied from <code>supabase/migrations/20261113000000_crm_companion.sql</code>:
           <ul>
             <li><code>deals</code> — id, contact, company, arr, due, next_step, owner_id.</li>
             <li><code>activities</code> — id, deal_id, type, title, detail, date, time, attempted.</li>
             <li><code>follow_ups</code> — id, deal_id, status (open / updated_today), updated_at.</li>
-            <li>Row-level security on all three: a rep sees only their own deals and the activities and follow-ups for them. Tested on a local Postgres; not yet on the real project.</li>
+            <li>Row-level security is on for all three tables, with one policy each: a rep sees only their own deals and the activities and follow-ups for them. The anon role has no table access.</li>
             <li><code>seed_my_sample_data()</code> gives each rep their own copy of the 6 deals and 12 seeded activities, once.</li>
           </ul>
         </li>
-        <li>Auth: anonymous sign-in, so each browser is its own rep with no sign-in screen. It must be switched on in the project; it is currently off.</li>
-        <li>App side: <code>src/shared/data/supabase-source.js</code> loads and saves through Supabase when <code>/api/supabase-config</code> returns the project URL and anon key from Vercel environment variables. Without them, the app uses the in-page sample data, as before. No key is in the repo.</li>
+        <li>Auth: Supabase Auth with anonymous sign-in, switched on. Each browser is its own rep with no sign-in screen, and a reload returns to the same rep.</li>
+        <li>Keys: the browser gets the project URL and public anon key from <code>/api/supabase-config</code>, which reads <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> from Vercel environment variables. Neither is in the repo. Row-level security protects the data; the service_role key is never used in the app.</li>
+        <li>Live check, 2026-11-13: a fresh browser signed in, got its own 6 deals, saved a call on James Whitfield, and reloaded. James stayed in Updated today, the note stayed in the feed, and the database held the call under that rep. The 70-check browser suite also passed on the live site.</li>
         <li>The Call and Email panels stay simulated in v1. The backend only stores what was attempted, saved, or sent in the tool.</li>
         <li>Version B, the dispatch-board layout, is a separate Muse artifact, not in this codebase. Do not merge it into this build without a product decision.</li>
       </ul>
@@ -345,7 +346,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
           <tr><td>No README inside the project</td><td><span class="stag rough">Rough</span></td><td>The build summary is on the computer only; PROMPTS.md is the only in-repo record of how the build was made</td></tr>
           <tr><td>Log activity</td><td><span class="stag rough">Rough</span></td><td>Logs instantly with no panel or form; not specified in the prompts, and not tested against a form-based flow</td></tr>
           <tr><td>Sample data</td><td><span class="stag rough">Rough</span></td><td>All 6 deals and 12 activities are invented; the history dates are Oct 28–Nov 4 and will go stale</td></tr>
-          <tr><td>Backend, auth, persistence</td><td><span class="stag duct">Duct tape</span></td><td>Schema, row-level security and app code written and tested locally, not applied to the Supabase project. The live site is still in-memory only</td></tr>
+          <tr><td>Backend, auth, persistence</td><td><span class="stag rough">Rough</span></td><td>Live in Supabase with row-level security, verified 2026-11-13. Rough because auth is anonymous (one rep per browser, no real accounts) and nothing beyond Supabase defaults is set up for backups or monitoring</td></tr>
           <tr><td>Tests</td><td><span class="stag rough">Rough</span></td><td>tests/logic-checks.js, tests/browser-rep-flow.js, tests/supabase-mode-mock.js. Run by hand; no CI yet</td></tr>
         </tbody>
       </table></div>
@@ -368,11 +369,12 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
     <section class="admin-card doc-block" id="ho-run" aria-label="How to run it">
       <div class="doc-head"><span class="doc-num">▶</span><h2>How to run it</h2></div>
       <ul>
-        <li>Open the live URL: https://vibe-coding-course-weld-omega.vercel.app — no sign-in, no setup. It is sample data only and resets on reload.</li>
+        <li>Open the live URL: https://vibe-coding-course-weld-omega.vercel.app — no sign-in, no setup. It is sample data only. Your browser becomes an anonymous rep and your changes persist across reloads; clearing site data starts a new rep.</li>
         <li>Or open the repo: https://github.com/sabihusman/vibe-coding-course — the live site is the root <code>index.html</code> on main (6d44ccf). Vercel deploys main automatically, so a push to main is the go-live decision.</li>
         <li>To run the prompts again, read <code>03-chaining/PROMPTS.md</code> in the repo. The chain is Expand, then Behavior, then Refine. The build README (<code>module3-build-readme.md</code>) is not in the repo, per the Module 3 lab guide.</li>
         <li>To run the checks: <code>node tests/logic-checks.js</code>, and with Playwright, <code>node tests/browser-rep-flow.js</code> and <code>node tests/supabase-mode-mock.js</code>.</li>
-        <li>To turn on the backend: run the migration in the Supabase SQL editor, switch on anonymous sign-in, and add <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in Vercel’s environment variables, then redeploy. Do not claim it is live until the tables, auth, and a persisted activity have been checked on the live site.</li>
+        <li>To rebuild the backend in a new Supabase project: run the migration in its SQL editor, switch on anonymous sign-in, then set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in Vercel and redeploy.</li>
+        <li>Test reps add up: every browser, including each automated test run, creates an anonymous user with its own sample rows. Delete old anonymous users in Supabase under Authentication.</li>
       </ul>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="app">CRM Companion</button><button type="button" class="olink" data-orbit-link="session">Session state</button></div></div>
     </section>
@@ -380,7 +382,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
     <section class="admin-card doc-block" id="ho-admin" aria-label="Admin portal">
       <div class="doc-head"><span class="doc-num">A</span><h2>Admin portal</h2></div>
       <p>Orbit Code Explorer, built 2026-11-12 in the Muse artifact after Module 4 Lab 1. An “Admin” entry in the sidebar opens an orbit map of the app: CRM Companion in the centre, Today, Deal Detail, and Activity History orbiting it, with 27 nodes for the panels, data, states, and design system. Clicking a node shows a plain-language explanation, what it connects to, and whether it is real or mocked, plus a “Show code” toggle with a short excerpt of that node’s actual code and the src/ file it lives in. Search with jump-to chips, All / Screens / Panels / Data / States filters, a “How to read this” intro, and FAQ and tips are on the same page. The rep flow is untouched.</p>
-      <p class="doc-note"><b>Code layout:</b> the Lab 2 refactor split the single file by feature: one folder per screen in <code>src/pages</code>, data, model and components in <code>src/shared</code>, navigation and start-up in <code>src/app</code>, and logic checks in <code>tests</code>. Each Orbit node’s Show code names the file it lives in. Supabase is written but not live; see Backend / data above.</p>
+      <p class="doc-note"><b>Code layout:</b> the Lab 2 refactor split the single file by feature: one folder per screen in <code>src/pages</code>, data, model and components in <code>src/shared</code>, navigation and start-up in <code>src/app</code>, and logic checks in <code>tests</code>. Each Orbit node’s Show code names the file it lives in. Supabase is live; see Backend / data above.</p>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="app">CRM Companion</button><button type="button" class="olink" data-orbit-link="today">Today</button><button type="button" class="olink" data-orbit-link="detail">Deal Detail</button><button type="button" class="olink" data-orbit-link="history">Activity History</button></div></div>
     </section>
     </div><!-- /adminTabHandoff -->

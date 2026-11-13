@@ -72,8 +72,8 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   const hoHeads = await page.locator('#adminTabHandoff .doc-head h2').allTextContents();
   ok('Handoff shows all sections incl. Admin portal', hoHeads.length === 8 && hoHeads[0] === 'What this is' && hoHeads[2] === 'Backend / data' && hoHeads[7] === 'Admin portal', hoHeads.join(' | '));
   const hoText = await txt('#adminTabHandoff');
-  ok('Backend warning present', /Not live yet\. Do not trust any backend claim about this prototype\./.test(hoText) && await vis('#ho-backend .doc-warn'));
-  ok('Supabase marked written, not live', /not applied to the Supabase project/.test(hoText) && /Supabase is written but not live/.test(hoText));
+  ok('Backend section states Supabase is live', /Live since 2026-11-13\./.test(hoText) && await vis('#ho-backend .doc-note'));
+  ok('Handoff keeps the honest limits', /Call and Email panels stay simulated in v1/.test(hoText) && /sample data/.test(hoText) && /anonymous/.test(hoText));
   ok('Handoff describes the src/ code layout', /Lab 2 refactor split the single file by feature/.test(hoText) && /src\/pages/.test(hoText));
   ok('Solid/duct-tape table has 11 rows', (await page.locator('#ho-solid tbody tr').count()) === 11);
   await page.locator('#ho-backend [data-orbit-link="dealsdata"]').click();

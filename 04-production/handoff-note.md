@@ -2,13 +2,13 @@
 
 **Product:** CRM Companion, Module 3 prototype → production transition (Module 4)
 **Live prototype:** https://vibe-coding-course-weld-omega.vercel.app
-**Repo main baseline:** 2144688 (Update main SHA references to 6d44ccf; add sidebar hide/show toggle)
+**Repo main baseline:** 872016c (merge of PR #2: Lab 2 refactor into `src/`, Supabase backend, SonarCloud fixes)
 **Living PRD:** `04-production/PRD.md` — read it first. This note is the engineer-ready summary of that PRD.
-**Last updated:** 2026-11-13 (Module 4 Lab 2: refactor done; Supabase backend written but not yet applied — see Backend / data)
+**Last updated:** 2026-11-13 (Supabase backend verified live)
 
 ## What this is
 
-CRM Companion is a rep's Today view for a CRM at 18% adoption. A rep opens one screen, sees 6 follow-ups in ARR order, and calls or emails right from the task, so the work and the log happen in the same place. Saving or sending logs the activity and moves the deal to Updated today. Closing a Call or Email panel without saving counts as attempted, if the timer ran or a draft was typed. There are two more screens, Deal Detail and Activity History, and loading, empty, and error states for both lists, with exact wording. Everything is sample data, in memory only, and resets on reload. No real call is placed, no real email is sent, and nothing is saved to a server.
+CRM Companion is a rep's Today view for a CRM at 18% adoption. A rep opens one screen, sees 6 follow-ups in ARR order, and calls or emails right from the task, so the work and the log happen in the same place. Saving or sending logs the activity and moves the deal to Updated today. Closing a Call or Email panel without saving counts as attempted, if the timer ran or a draft was typed. There are two more screens, Deal Detail and Activity History, and loading, empty, and error states for both lists, with exact wording. Everything is sample data. Each browser signs in anonymously as its own rep, and its deals and activities are saved in Supabase, so work survives a reload. No real call is placed and no real email is sent.
 
 ## Frontend
 
@@ -27,19 +27,19 @@ CRM Companion is a rep's Today view for a CRM at 18% adoption. A rep opens one s
 
 ## Backend / data
 
-**Not live yet. Do not trust any backend claim about this prototype.** The Supabase schema and the app's Supabase code are written and tested, but they have not been applied to the project, and the live site still runs on in-page sample data.
+**Live since 2026-11-13.** The live site reads and saves through Supabase. Verified on the live site the same day: tables, row-level security, anonymous auth, and a saved activity that persisted after a reload. The data is still sample data.
 
-- Supabase project: `toctukiccnirfkkoaqog` (region us-west-2). Reachable and healthy on 2026-11-13. Its database is still empty: the migration below has not been run against it.
-- Schema: `supabase/migrations/20261113000000_crm_companion.sql`. It creates:
+- Supabase project: `toctukiccnirfkkoaqog` (region us-west-2), Postgres with Supabase Auth. Storage is not used.
+- Schema: `supabase/migrations/20261113000000_crm_companion.sql`, applied to the project. It creates:
   - `deals` — id, contact, company, arr, due, next_step, owner_id.
   - `activities` — id, deal_id, type (call / email / log), title, detail, date, time, attempted (plus created_at for ordering).
   - `follow_ups` — id, deal_id, status (open / updated_today), updated_at.
-  - Row-level security on all three: a rep reads and writes only their own deals, and only activities and follow-ups for those deals. The anon role has no table access.
+  - Row-level security is on for all three tables, with one policy each: a rep reads and writes only their own deals, and only the activities and follow-ups for those deals. The anon role has no table access.
   - `seed_my_sample_data()` — gives a signed-in rep their own copy of the 6 sample deals ($663k) and the 12 seeded activities (Oct 28–Nov 4), once.
-  - Tested on a local Postgres 2026-11-13: seeding, a second rep seeing none of the first rep's rows, and a cross-rep write being refused all behaved as intended. Not yet tested on the real project.
-- Auth: anonymous sign-in. There is no sign-in screen (adding one would change the rep flow), so each browser becomes its own rep with a private copy of the sample data. Anonymous sign-in must be switched on in the project (Authentication → Sign In / Providers → Anonymous). It is currently off.
-- App side: `src/shared/data/supabase-source.js` signs in, seeds, loads deals and activities, and saves every save, send, Log activity, attempt and Undo. Tested against an in-memory stand-in (`tests/supabase-mode-mock.js`): a saved call persists after a reload. Not yet tested against the real project.
-- Keys: the browser gets the project URL and the public anon key from `/api/supabase-config`, a Vercel function that reads the `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment variables. No key is in the repo. Until those variables are set in Vercel, the app falls back to the in-page sample data, exactly as before. Never put the service_role key in the app or in Vercel's public settings.
+- Auth: Supabase Auth with anonymous sign-in, switched on in the project. There is no sign-in screen (adding one would change the rep flow), so each browser becomes its own rep with a private copy of the sample data. The session is kept in the browser, so a reload returns to the same rep.
+- App side: `src/shared/data/supabase-source.js` signs in, seeds, loads deals and activities, and saves every save, send, Log activity, attempt and Undo. If the load fails, Today shows the error state with Retry.
+- Keys: the browser gets the project URL and the public anon key from `/api/supabase-config`, a Vercel function that reads the `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment variables in the Vercel project. Neither is in the repo, and no key was shared in chat. The anon key is meant to be public; row-level security is what protects the data. Never put the service_role key in the app or in Vercel. If the variables are removed, the app falls back to its in-page sample data.
+- Live verification, 2026-11-13: a fresh browser signed in anonymously, received its own 6 deals, saved a call on James Whitfield with a unique note, and reloaded. After the reload James was in Updated today, the note was in the Activity feed, progress read 1 of 6, and the database held that call under that rep with the follow-up marked `updated_today`. The full browser suite (70 checks) also passed against the live site.
 - The Call and Email panels stay simulated in v1. No real call is made and no real email is sent; the backend only stores what was attempted, saved, or sent in the tool.
 - Version B, the dispatch-board layout, is a separate Muse artifact, not in this codebase. Do not merge it into this build without a product decision.
 
@@ -66,7 +66,7 @@ Walk these first, in this order:
 | No README inside the project | Rough | The build summary is on the computer only; PROMPTS.md is the only in-repo record of how the build was made |
 | Log activity | Rough | Logs instantly with no panel or form; not specified in the prompts, and not tested against a form-based flow |
 | Sample data | Rough | All 6 deals and 12 activities are invented; the history dates are Oct 28–Nov 4 and will go stale |
-| Backend, auth, persistence | Duct tape | Schema, row-level security and app code are written and tested locally, but not applied to the Supabase project. The live site is still in-memory only and resets on reload |
+| Backend, auth, persistence | Rough | Live in Supabase with row-level security, verified 2026-11-13. Rough because auth is anonymous (one rep per browser, no real accounts) and there are no backups, migrations tooling or monitoring set up beyond Supabase defaults |
 | Tests | Rough | `tests/logic-checks.js` (data and model), `tests/browser-rep-flow.js` (rep flow, Admin, phone), `tests/supabase-mode-mock.js` (Supabase path against a stand-in). Run by hand; no CI yet |
 
 ## Risks & assumptions for the team
@@ -80,8 +80,9 @@ Walk these first, in this order:
 
 ## How to run it
 
-- Open the live URL: https://vibe-coding-course-weld-omega.vercel.app — no sign-in, no setup. It is sample data only and resets on reload.
+- Open the live URL: https://vibe-coding-course-weld-omega.vercel.app — no sign-in, no setup. It is sample data only. Your browser becomes an anonymous rep, and your changes persist across reloads in that browser. Clearing site data starts a new rep.
 - Or open the repo: https://github.com/sabihusman/vibe-coding-course — the live site is the root `index.html` on main (2144688). Vercel deploys main automatically, so a push to main is the go-live decision.
 - To run the prompts again, read `03-chaining/PROMPTS.md` in the repo. The chain is Expand, then Behavior, then Refine. The build README (`module3-build-readme.md`) is not in the repo, per the Module 3 lab guide.
 - To run the checks: `node tests/logic-checks.js` (no dependencies), and with Playwright installed, `node tests/browser-rep-flow.js` and `node tests/supabase-mode-mock.js`.
-- To turn on the backend: (1) run `supabase/migrations/20261113000000_crm_companion.sql` in the Supabase SQL editor for project `toctukiccnirfkkoaqog`; (2) switch on anonymous sign-in under Authentication; (3) in Vercel, under Project → Settings → Environment Variables, add `SUPABASE_URL` (the project URL) and `SUPABASE_ANON_KEY` (the anon public key from Supabase Project Settings → API), then redeploy. Do not claim it is live until the tables, auth, and a persisted activity have been checked on the live site.
+- To rebuild the backend in a new Supabase project: run `supabase/migrations/20261113000000_crm_companion.sql` in its SQL editor, switch on anonymous sign-in under Authentication, then set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in Vercel and redeploy.
+- Test reps add up: every browser, including each automated test run, creates an anonymous user with its own sample rows. Delete old anonymous users in Supabase under Authentication; their deals and activities are removed with them.
