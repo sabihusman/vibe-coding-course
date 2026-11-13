@@ -2,7 +2,7 @@
 
 **Product:** CRM Companion, Module 3 prototype → production transition (Module 4)
 **Live prototype:** https://vibe-coding-course-weld-omega.vercel.app
-**Repo main baseline:** 8f12b0f (merge of PR #1, Module 3 completed PROMPTS.md + Email attempted fix)
+**Repo main baseline:** 2144688 (Update main SHA references to 6d44ccf; add sidebar hide/show toggle)
 **Living PRD:** `04-production/PRD.md` — read it first. This note is the engineer-ready summary of that PRD.
 **Last updated:** 2026-11-12
 
@@ -68,6 +68,6 @@ Walk these first, in this order:
 ## How to run it
 
 - Open the live URL: https://vibe-coding-course-weld-omega.vercel.app — no sign-in, no setup. It is sample data only and resets on reload.
-- Or open the repo: https://github.com/sabihusman/vibe-coding-course — the live site is the root `index.html` on main (8f12b0f). Vercel deploys main automatically, so a push to main is the go-live decision.
+- Or open the repo: https://github.com/sabihusman/vibe-coding-course — the live site is the root `index.html` on main (2144688). Vercel deploys main automatically, so a push to main is the go-live decision.
 - To run the prompts again, read `03-chaining/PROMPTS.md` in the repo. The chain is Expand, then Behavior, then Refine. The build README (`module3-build-readme.md`) is not in the repo, per the Module 3 lab guide.
 - To set up the backend, create a Supabase project, create the three tables above, turn on Auth and row-level security, and replace the in-page data arrays with reads from those tables. Do not claim it is live until the tables, auth, and a persisted activity have been checked on the live site.

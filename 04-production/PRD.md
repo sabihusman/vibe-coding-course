@@ -5,7 +5,7 @@
 **Owner:** Sabih Usman
 **Last updated:** 2026-11-12
 **Live prototype:** https://vibe-coding-course-weld-omega.vercel.app
-**Repo main:** 8f12b0f
+**Repo main:** 2144688
 **Source of truth:** the live prototype above. This PRD is extracted from what that build actually does, in the eight blocks below. Where the build is mocked, this PRD says so.
 
 ---
