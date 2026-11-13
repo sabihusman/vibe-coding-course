@@ -271,7 +271,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         <div><b>Product:</b> CRM Companion, Module 3 prototype → production transition (Module 4)</div>
         <div><b>Live prototype:</b> https://vibe-coding-course-weld-omega.vercel.app</div>
         <div><b>Repo main baseline:</b> 6d44ccf (Module 4: Admin panel with Orbit, Living PRD and Handoff tabs)</div>
-        <div><b>Last updated:</b> 2026-11-12</div>
+        <div><b>Last updated:</b> 2026-11-13 (Lab 2: refactor done; Supabase written, not yet applied)</div>
       </div>
       <p class="doc-note"><b>Living PRD:</b> <code>04-production/PRD.md</code> — read it first. This note is the engineer-ready summary of that PRD. The <button type="button" class="olink doc" data-prdlink="prd-01">Living PRD tab</button> renders it.</p>
     </section>
@@ -285,7 +285,7 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
     <section class="admin-card doc-block" id="ho-frontend" aria-label="Frontend">
       <div class="doc-head"><span class="doc-num">FE</span><h2>Frontend</h2></div>
       <ul>
-        <li>A single self-contained HTML file: the Muse artifact <code>crm-companion-today-view-v3</code>, exported as the repo’s root <code>index.html</code> (61,707 bytes at main 19fc70b; Email attempted fix in 4f68201). It is not a Vite / React project, so there is no <code>src/pages</code> folder.</li>
+        <li>Plain HTML, CSS and JavaScript, with no build step. <code>index.html</code> is a short shell; the code lives in <code>src/</code>, grouped by feature (Lab 2 refactor): <code>src/pages/</code> has one folder per screen, <code>src/shared/</code> holds data, model and components, and <code>src/app/</code> holds navigation, state and start-up. Scripts load in a fixed order and share globals. Every screen renders pixel-identical to the single-file version.</li>
         <li>Three screens in one page, switched in place: Today, Deal Detail, Activity History. Navigation is by clicking a follow-up card, a row in Activity History, the Activity feed card, or Back.</li>
         <li>Call and Email open simulated panels over the page. Log activity currently logs instantly, with no panel — see Open questions in the PRD.</li>
         <li>Design system: dark sidebar #1e1e2d, light content #f9fafb, white cards, 8px radius, borders #e5e7eb, blue primary #3b82f6, green success #22c55e for success only. ARR numbers use tabular figures.</li>
@@ -297,18 +297,21 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
 
     <section class="admin-card doc-block" id="ho-backend" aria-label="Backend and data">
       <div class="doc-head"><span class="doc-num">BE</span><h2>Backend / data</h2></div>
-      <p class="doc-warn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Not built yet. Do not trust any backend claim about this prototype.</span></p>
+      <p class="doc-warn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Not live yet. Do not trust any backend claim about this prototype. The schema and app code are written and tested, but not applied to the Supabase project; the live site still runs on in-page sample data.</span></p>
       <ul>
-        <li>There is no backend, no database, and no auth in the live build. All data is hard-coded sample data in the page: 6 deals and 12 seeded activities, Oct 28–Nov 4, plus anything logged in the session, held in memory only.</li>
-        <li>Proposed Supabase backend, to be set up as the next step, <b>not claimed as live</b>:
+        <li>Supabase project <code>toctukiccnirfkkoaqog</code> (us-west-2): reachable and healthy on 2026-11-13, database still empty.</li>
+        <li>Schema in <code>supabase/migrations/20261113000000_crm_companion.sql</code>:
           <ul>
-            <li><code>deals</code> — id, contact_name, company, email, phone, sample_arr, due_date, next_step, owner_id.</li>
-            <li><code>activities</code> — id, deal_id, type (call / email / log / attempt), outcome, detail, duration_seconds, created_at, owner_id.</li>
-            <li><code>follow_ups</code> — id, deal_id, status (open / updated_today), updated_at, owner_id. Or derive this from activities; do not build both unless the query needs it.</li>
-            <li>Auth: Supabase Auth, one account per rep, with row-level security so a rep sees only their own deals and activities.</li>
-            <li>The Call and Email panels stay simulated in v1. Do not wire them to a real phone or email service until the product decision is made. The backend only needs to store what was attempted, saved, or sent in the tool.</li>
+            <li><code>deals</code> — id, contact, company, arr, due, next_step, owner_id.</li>
+            <li><code>activities</code> — id, deal_id, type, title, detail, date, time, attempted.</li>
+            <li><code>follow_ups</code> — id, deal_id, status (open / updated_today), updated_at.</li>
+            <li>Row-level security on all three: a rep sees only their own deals and the activities and follow-ups for them. Tested on a local Postgres; not yet on the real project.</li>
+            <li><code>seed_my_sample_data()</code> gives each rep their own copy of the 6 deals and 12 seeded activities, once.</li>
           </ul>
         </li>
+        <li>Auth: anonymous sign-in, so each browser is its own rep with no sign-in screen. It must be switched on in the project; it is currently off.</li>
+        <li>App side: <code>src/shared/data/supabase-source.js</code> loads and saves through Supabase when <code>/api/supabase-config</code> returns the project URL and anon key from Vercel environment variables. Without them, the app uses the in-page sample data, as before. No key is in the repo.</li>
+        <li>The Call and Email panels stay simulated in v1. The backend only stores what was attempted, saved, or sent in the tool.</li>
         <li>Version B, the dispatch-board layout, is a separate Muse artifact, not in this codebase. Do not merge it into this build without a product decision.</li>
       </ul>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="dealsdata">Deals data — 6 deals</button><button type="button" class="olink" data-orbit-link="actdata">Activities data — 12 activities</button><button type="button" class="olink" data-orbit-link="session">Session state — in memory only</button></div></div>
@@ -338,11 +341,12 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
           <tr><td>Deal Detail and Activity History navigation</td><td><span class="stag solid">Solid</span></td><td>Verified live, including pre-filtered Activity History from Deal Detail and search by name and company</td></tr>
           <tr><td>Loading / empty / error states</td><td><span class="stag solid">Solid</span></td><td>Exact wording verified live on both screens, Retry restores the list</td></tr>
           <tr><td>Kill-switch line removed, neutral instruction, nav labelled out of scope</td><td><span class="stag solid">Solid</span></td><td>Verified live; the old kill-switch test line is gone from every screen</td></tr>
-          <tr><td>Single-file structure</td><td><span class="stag rough">Rough</span></td><td>Everything in one HTML file; data arrays are separate from rendering, but there are no separate files for screens, components, or data</td></tr>
+          <tr><td>Code structure</td><td><span class="stag solid">Solid</span></td><td>Split by feature into src/ in Lab 2; pixel-identical to the single-file version. Still classic scripts with a fixed load order, no modules or build step</td></tr>
           <tr><td>No README inside the project</td><td><span class="stag rough">Rough</span></td><td>The build summary is on the computer only; PROMPTS.md is the only in-repo record of how the build was made</td></tr>
           <tr><td>Log activity</td><td><span class="stag rough">Rough</span></td><td>Logs instantly with no panel or form; not specified in the prompts, and not tested against a form-based flow</td></tr>
           <tr><td>Sample data</td><td><span class="stag rough">Rough</span></td><td>All 6 deals and 12 activities are invented; the history dates are Oct 28–Nov 4 and will go stale</td></tr>
-          <tr><td>Backend, auth, persistence</td><td><span class="stag duct">Duct tape</span></td><td>None exists. In-memory only, resets on reload. The Supabase tables above are proposed, not built</td></tr>
+          <tr><td>Backend, auth, persistence</td><td><span class="stag duct">Duct tape</span></td><td>Schema, row-level security and app code written and tested locally, not applied to the Supabase project. The live site is still in-memory only</td></tr>
+          <tr><td>Tests</td><td><span class="stag rough">Rough</span></td><td>tests/logic-checks.js, tests/browser-rep-flow.js, tests/supabase-mode-mock.js. Run by hand; no CI yet</td></tr>
         </tbody>
       </table></div>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="followups">Follow-ups list</button><button type="button" class="olink" data-orbit-link="call">Call panel</button><button type="button" class="olink" data-orbit-link="email">Email panel</button><button type="button" class="olink" data-orbit-link="log">Log activity</button><button type="button" class="olink" data-orbit-link="dealsdata">Deals data</button><button type="button" class="olink" data-orbit-link="actdata">Activities data</button><button type="button" class="olink" data-orbit-link="session">Session state</button></div></div>
@@ -354,7 +358,8 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         <li>Do not trust the sample history as real rep behaviour. It was seeded to make the screens look real.</li>
         <li>Do not trust that Call and Email are symmetric. The live test found Email attempted did not log while Call attempted did; it was fixed in 4f68201, but Pause/Reset and the No answer / Met outcomes were not clicked in that test.</li>
         <li>Do not trust the sidebar. Deals and Activity are plain text and do nothing by design in this test version. Wiring them up is a product decision, not a bug fix.</li>
-        <li>Do not assume the single file will scale. The next refactor should split it by feature before adding a backend, or the data and display logic will tangle further.</li>
+        <li>Do not assume the load order is optional. The src/ files are classic scripts that share globals; moving one in index.html can break the app.</li>
+        <li>Do not trust anonymous sign-in for real reps. It suits a prototype test; real reps need a sign-in screen.</li>
         <li>The hypothesis is still unproven. A partner understood it exactly right in Module 2, but no A/B session has run yet. Version B exists for that test, and the test plan is written, but no tester has tried either version against the other.</li>
       </ul>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="actdata">Activities data</button><button type="button" class="olink" data-orbit-link="call">Call panel</button><button type="button" class="olink" data-orbit-link="email">Email panel</button><button type="button" class="olink" data-orbit-link="backlinks">Back to Today links</button></div></div>
@@ -366,15 +371,16 @@ document.getElementById("appMain").insertAdjacentHTML("beforeend", `
         <li>Open the live URL: https://vibe-coding-course-weld-omega.vercel.app — no sign-in, no setup. It is sample data only and resets on reload.</li>
         <li>Or open the repo: https://github.com/sabihusman/vibe-coding-course — the live site is the root <code>index.html</code> on main (6d44ccf). Vercel deploys main automatically, so a push to main is the go-live decision.</li>
         <li>To run the prompts again, read <code>03-chaining/PROMPTS.md</code> in the repo. The chain is Expand, then Behavior, then Refine. The build README (<code>module3-build-readme.md</code>) is not in the repo, per the Module 3 lab guide.</li>
-        <li>To set up the backend, create a Supabase project, create the three tables above, turn on Auth and row-level security, and replace the in-page data arrays with reads from those tables. Do not claim it is live until the tables, auth, and a persisted activity have been checked on the live site.</li>
+        <li>To run the checks: <code>node tests/logic-checks.js</code>, and with Playwright, <code>node tests/browser-rep-flow.js</code> and <code>node tests/supabase-mode-mock.js</code>.</li>
+        <li>To turn on the backend: run the migration in the Supabase SQL editor, switch on anonymous sign-in, and add <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in Vercel’s environment variables, then redeploy. Do not claim it is live until the tables, auth, and a persisted activity have been checked on the live site.</li>
       </ul>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="app">CRM Companion</button><button type="button" class="olink" data-orbit-link="session">Session state</button></div></div>
     </section>
 
     <section class="admin-card doc-block" id="ho-admin" aria-label="Admin portal">
       <div class="doc-head"><span class="doc-num">A</span><h2>Admin portal</h2></div>
-      <p>Orbit Code Explorer, built 2026-11-12 in the Muse artifact after Module 4 Lab 1. An “Admin” entry in the sidebar opens an orbit map of the app: CRM Companion in the centre, Today, Deal Detail, and Activity History orbiting it, with 27 nodes for the panels, data, states, and design system. Clicking a node shows a plain-language explanation, what it connects to, and whether it is real or mocked, plus a “Show code” toggle with a short excerpt of that node’s actual code from the single index.html file. Search with jump-to chips, All / Screens / Panels / Data / States filters, a “How to read this” intro, and FAQ and tips are on the same page. The rep flow is untouched.</p>
-      <p class="doc-note"><b>Code layout:</b> the Lab 2 refactor split the single file by feature: one folder per screen in <code>src/pages</code>, data, model and components in <code>src/shared</code>, navigation and start-up in <code>src/app</code>, and logic checks in <code>tests</code>. Each Orbit node’s Show code names the file it lives in. Likewise, Supabase is proposed above, not live.</p>
+      <p>Orbit Code Explorer, built 2026-11-12 in the Muse artifact after Module 4 Lab 1. An “Admin” entry in the sidebar opens an orbit map of the app: CRM Companion in the centre, Today, Deal Detail, and Activity History orbiting it, with 27 nodes for the panels, data, states, and design system. Clicking a node shows a plain-language explanation, what it connects to, and whether it is real or mocked, plus a “Show code” toggle with a short excerpt of that node’s actual code and the src/ file it lives in. Search with jump-to chips, All / Screens / Panels / Data / States filters, a “How to read this” intro, and FAQ and tips are on the same page. The rep flow is untouched.</p>
+      <p class="doc-note"><b>Code layout:</b> the Lab 2 refactor split the single file by feature: one folder per screen in <code>src/pages</code>, data, model and components in <code>src/shared</code>, navigation and start-up in <code>src/app</code>, and logic checks in <code>tests</code>. Each Orbit node’s Show code names the file it lives in. Supabase is written but not live; see Backend / data above.</p>
       <div class="doc-links"><div class="connect-label">In the Orbit</div><div class="connects"><button type="button" class="olink" data-orbit-link="app">CRM Companion</button><button type="button" class="olink" data-orbit-link="today">Today</button><button type="button" class="olink" data-orbit-link="detail">Deal Detail</button><button type="button" class="olink" data-orbit-link="history">Activity History</button></div></div>
     </section>
     </div><!-- /adminTabHandoff -->
