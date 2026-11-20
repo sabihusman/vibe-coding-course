@@ -1,4 +1,4 @@
-/* Orbit Code Explorer content: the 30 nodes and their Show code excerpts.
+/* Orbit Code Explorer content: the 31 nodes and their Show code excerpts.
    Excerpts are cut from the real source files (see where:) and should be refreshed when that code changes. */
 /* ---------- Admin · Orbit Code Explorer ---------- */
 var NODES = [
@@ -23,9 +23,10 @@ var NODES = [
   { id:"actlist", name:"Activity list", cat:"panel", catLabel:"Panel · Activity History", ring:2, verdict:"mixed", verdictLabel:"Real behaviour · mocked data", about:"The list itself on Activity History: 12 seeded activities to start with, plus this session's activity added on top, newest first, with a count line above it. Each row shows the kind of activity, the deal, the detail, and the day and time.", connects:["history","actdata","session","rowopen","loading","emptyhistory","errorhistory"] },
   { id:"search", name:"Search by name / company", cat:"panel", catLabel:"Panel · Activity History", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The “Find a deal” box at the top of Activity History. Typing a contact name or a company filters the activity list to matching deals and updates the count line — for example, one contact's name shows just their activities. It is also how the Deal Detail link arrives pre-filtered.", connects:["history","actlist","seehist"] },
   { id:"rowopen", name:"Row opens Deal Detail", cat:"panel", catLabel:"Navigation", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"Every row in the Activity History list is a button. Selecting a row opens that row's deal on Deal Detail, so a rep can go from something that happened to the deal it belongs to in one tap — and back again with Back to Today.", connects:["history","detail","actlist"] },
-  { id:"dealsdata", name:"Deals data — 6 deals", cat:"data", catLabel:"Data", ring:2, verdict:"mocked", verdictLabel:"Mocked — sample data only", about:"The sample deals written into the file: James Whitfield at Meridian Legal ($312k), Daniel Ortiz ($148k), Priya Nair ($92k), Maya Chen ($54k), Sofia Reyes ($38k), and Aisha Bello ($19k) — 6 deals, $663k in total. Each carries a due label and a next step. None of it comes from a real CRM.", connects:["followups","header","session"] },
+  { id:"dealsdata", name:"Deals data — 6 deals", cat:"data", catLabel:"Data", ring:2, verdict:"mocked", verdictLabel:"Mocked — sample data, seeded in Supabase", about:"The 6 sample deals — James Whitfield at Meridian Legal ($312k), Daniel Ortiz ($148k), Priya Nair ($92k), Maya Chen ($54k), Sofia Reyes ($38k) and Aisha Bello ($19k), $663k in total. On the live site they are seeded in Supabase: the first time a rep signs in, seed_my_sample_data() gives that rep their own copy in the deals table, and the app loads them from there. The in-page copy in sample-deals.js is only the fallback when the Supabase settings are missing.", connects:["followups","header","session"] },
   { id:"actdata", name:"Activities data — 12 activities", cat:"data", catLabel:"Data", ring:3, verdict:"mocked", verdictLabel:"Mocked — sample data only", about:"The seeded past history written into the file: 12 activities dated Tue, Oct 28 to Tue, Nov 4, covering all 6 deals with a mix of calls, emails, and logs. Activity History and Deal Detail's Past activity both read from this same set.", connects:["actlist","past","call","email"] },
-  { id:"session", name:"Session state — saved per browser", cat:"data", catLabel:"Data", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"Where the rep's work is kept: which deals are updated, the activity entries, Undo, the sort, the selected deal and unsent drafts. The page holds it while you work; on the live site each saved update is also stored in Supabase under this browser's anonymous rep, so a reload brings it back. Without the Supabase settings nothing is saved and a reload starts the sample day again.", connects:["feed","updated","dealsdata","app"] },
+  { id:"writepath", name:"Supabase write path", cat:"data", catLabel:"Data", ring:3, verdict:"mixed", verdictLabel:"P0 open — fix not yet built", about:"How a save reaches the database. completeDeal() shows the follow-up as done straight away, then supabase-source.js sends the activity and the follow-up status to Supabase in the background. When the save lands, a reload brings it back. When it fails — offline, for example — the page still shows it as done, including in Activity history; the only signal is a screen-reader announcement and a console warning, and the reload silently reverts it. That is the P0 from Module 5 Lab 2. The fix — show a save as done only after the server confirms it; on failure, an inline error with Retry, keep the follow-up queued, keep it out of Activity history — is the Module 6 sprint's one fix and is NOT yet built.", connects:["session","call","email","log","updated","actdata","dealsdata"] },
+  { id:"session", name:"Session state — saved per browser", cat:"data", catLabel:"Data", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"Where the rep's work is kept: which deals are updated, the activity entries, Undo, the sort, the selected deal and unsent drafts. The page holds it while you work, and each save is also sent to Supabase under this browser's anonymous rep. A reload brings the work back only when that save reached the server. P0 (Module 5 Lab 2, not yet fixed): a save made offline is shown as done here but never reaches Supabase, so the reload silently reverts it. Without the Supabase settings nothing is saved and a reload starts the sample day again.", connects:["writepath","feed","updated","dealsdata","app"] },
   { id:"design", name:"Design system", cat:"panel", catLabel:"Design", ring:3, verdict:"real", verdictLabel:"Real — works in this build", about:"The shared tokens from the design handoff: navy sidebar #131F32 with #283A59 for the selected item, canvas #F5F6F8 and white surfaces, primary blue #315CE8 with #EEF3FF for the selected row, text #172338 and #637086, dividers #E4E8EF, overdue #A52E31 and updated #23705A always paired with words. Spacing 4/8/12/16/24/32px, 10px panels and 6px controls.", connects:["app","today","detail","history"] },
   { id:"loading", name:"Loading state — skeletons", cat:"state", catLabel:"State", ring:2, verdict:"real", verdictLabel:"Real — works in this build", about:"While a list loads it shows skeletons in the shape of the real rows — three queue rows on Today, activity rows on Activity history — instead of a blank screen. The forced Data / Loading / Empty / Error switches now sit in a collapsed Test controls area, out of the rep's way.", connects:["followups","actlist","emptytoday","errortoday"] },
   { id:"emptytoday", name:"Empty state — Today", cat:"state", catLabel:"State · Today", ring:2, verdict:"real", verdictLabel:"Real — works in this build", about:"What the queue shows when there is nothing left to work, or every follow-up is updated. The exact wording is below. Reviewers can force it from the Test controls area at the bottom of Today.", exact:"All caught up. No follow-ups today.", connects:["followups","loading","errortoday"] },
@@ -306,21 +307,20 @@ byId("historySearch").addEventListener(
   return '<div class="feed-item">'
     + inner + '</div>';
 }` },
-  dealsdata: { fn:"var DEALS = [ … ]", does:"The 6 sample deals as plain data — each with an id, contact, company, ARR, due label, and next step. Every list and header in the app reads from this one array.",
-    where:"src/shared/data/sample-deals.js — the whole file is this one array.",
-    code:`var DEALS = [
-  { id:"james", contact:"James Whitfield",
-    company:"Meridian Legal", arr:312,
-    arrLabel:"$312k", due:"Due today",
-    overdue:false,
-    next:"Confirm renewal terms before legal review" },
-  { id:"daniel", contact:"Daniel Ortiz",
-    … arrLabel:"$148k" … },
-  … Priya $92k · Maya $54k · Sofia $38k …
-  { id:"aisha", contact:"Aisha Bello",
-    company:"GreenLeaf Grocers", arr:19,
-    arrLabel:"$19k", … }
-];   // 6 deals · $663k in total` },
+  dealsdata: { fn:"sbLoadAll() — seed, then load", does:"Asks Supabase to seed this rep once, then loads the rep's deals, activities and follow-ups from the database.",
+    where:"src/shared/data/supabase-source.js — sbLoadAll(). The SQL seed is seed_my_sample_data() in supabase/migrations/20261113000000_crm_companion.sql; src/shared/data/sample-deals.js is the offline fallback.",
+    code:`function sbLoadAll(){
+  return sbRest("rpc/seed_my_sample_data", { method: "POST", body: {} })
+    .then(function(){
+      return Promise.all([
+        sbRest("deals?select=*&order=arr.desc"),
+        sbRest("activities?select=*&order=created_at.desc"),
+        sbRest("follow_ups?select=*")
+      ]);
+    })
+    .then(function(res){
+      var deals = res[0], acts = res[1], fups = res[2], today = sbTodayISO();
+  …` },
   actdata: { fn:"var PAST = [ … ]", does:"The 12 seeded past activities as plain data. allActivity() is the one place session activity and this seed data are joined, newest first.",
     where:"src/shared/data/sample-activities.js — the whole file is this one array. allActivity() is in src/shared/model/deals-model.js.",
     code:`var PAST = [
@@ -336,8 +336,23 @@ byId("historySearch").addEventListener(
 ];
 function allActivity(){
   return feed.concat(PAST); }` },
+  writepath: { fn:"sbWireWrites() — completeDeal wrapper", does:"The current build: the base completeDeal() runs first (the deal shows as done), then the save is sent; a failure only warns and announces. This is the code the P0 fix must change.",
+    where:"src/shared/data/supabase-source.js — sbWireWrites(), with sbSaveActivity() and sbSetStatus() above it.",
+    code:`function sbWireWrites(){
+  var baseComplete = completeDeal, baseUndo = undoDeal;
+  completeDeal = function(id){
+    var saved = baseComplete.apply(null, arguments);
+    if(!saved || !SB.connected) return saved;
+    var entry = feed[0];
+    sbSaveActivity(entry, false).then(function(){ return sbSetStatus(id, "updated_today"); }).catch(function(e){ sbWarn("the activity", e); announce("Couldn't save that update to the server. It is kept on this page until you reload."); });
+    return saved;
+  };
+  undoDeal = function(id){
+    var entry = feed.find(function(f){ return f.dealId === id && !f.attempt; });
+    var undone = baseUndo.apply(null, arguments);
+  …` },
   session: { fn:"session state", does:"The session's state in one place, now including the sort, the selected deal and unsent drafts. With Supabase, supabase-source.js loads and saves it.",
-    where:"src/app/session-state.js.",
+    where:"src/app/session-state.js. Loading and saving it is src/shared/data/supabase-source.js — see the Supabase write path node.",
     code:`var done = {};       // id -> {via, summary}` },
   design: { fn:":root { … } — the design tokens", does:"Every colour, spacing step and radius comes from these variables; components never use raw colours for state.",
     where:"src/app/base.css — the first rule, loaded before every other stylesheet.",

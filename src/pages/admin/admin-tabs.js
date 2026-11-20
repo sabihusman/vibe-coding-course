@@ -28,6 +28,7 @@ var NODE_DOCS = {
   rowopen:     { prd:["prd-03"],          ho:["ho-flows"] },
   dealsdata:   { prd:["prd-05","prd-08"], ho:["ho-backend"] },
   actdata:     { prd:["prd-05","prd-06"], ho:["ho-backend","ho-risks"] },
+  writepath:   { prd:["prd-05","prd-06"], ho:["ho-backend","ho-risks"] },
   session:     { prd:["prd-05"],          ho:["ho-backend"] },
   design:      { prd:["prd-05"],          ho:["ho-frontend"] },
   loading:     { prd:["prd-07","prd-04"], ho:["ho-flows"] },
