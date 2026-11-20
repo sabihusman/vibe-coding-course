@@ -24,7 +24,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('Admin opens with Orbit Code Explorer in the first tab', await vis('#viewAdmin') && (await txt('#viewAdmin h1')).trim()==='Admin' && /Orbit Code Explorer/.test(await txt('#adminTabOrbit .tab-head h2')));
   const nodeCount = await page.locator('#orbitStage .onode').count();
   const centre = await page.locator('#orbitStage .onode.centre').count();
-  ok('Orbit renders 31 nodes incl. CRM Companion centre', nodeCount === 31 && centre === 1, 'onode count ' + nodeCount + ', centre ' + centre);
+  ok('Orbit renders 32 nodes incl. CRM Companion centre', nodeCount === 32 && centre === 1, 'onode count ' + nodeCount + ', centre ' + centre);
   ok('Admin only badge present', /Admin only/.test(await txt('#viewAdmin')));
   ok('One persistent sample-data notice, in the sidebar', /Sample data/.test(await txt('#sampleNotice')) && (await page.locator('.sample-pill').count()) === 0);
   await page.locator('#orbitStage .onode', { hasText: 'Today' }).first().click();
@@ -46,7 +46,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
 
   // --- Admin tabs ---
   const tabs = await page.locator('.admin-tabs [data-atab]').allTextContents();
-  ok('Admin shows three tabs in order', tabs.length === 3 && /^Orbit/.test(tabs[0]) && /^Living PRD/.test(tabs[1]) && /^Handoff/.test(tabs[2]), tabs.map(t => t.split('\n')[0]).join(' | '));
+  ok('Admin shows four tabs in order', tabs.length === 4 && tabs[0].startsWith('Orbit') && tabs[1].startsWith('Living PRD') && tabs[2].startsWith('Handoff') && tabs[3].startsWith('Analytics'), tabs.map(t => t.split('\n')[0]).join(' | '));
   ok('Intro explains the three tabs', /Living PRD.*says what the app does/.test(await txt('.admin-intro')) && /Orbit.*where each part lives/.test(await txt('.admin-intro')) && /Handoff.*how to run/.test(await txt('.admin-intro')));
   ok('Orbit tab visible by default, others hidden', await vis('#adminTabOrbit') && !(await vis('#adminTabPrd')) && !(await vis('#adminTabHandoff')));
   await page.click('[data-atab="prd"]');
@@ -75,7 +75,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   ok('Backend section states Supabase is live', /Live since 2026-11-13\./.test(hoText) && await vis('#ho-backend .doc-note'));
   ok('Handoff keeps the honest limits', /Call and Email panels stay simulated in v1/.test(hoText) && /sample data/.test(hoText) && /anonymous/.test(hoText));
   ok('Handoff describes the src/ code layout', /one folder per screen/.test(hoText) && /src\/pages/.test(hoText));
-  ok('Solid/duct-tape table has 11 rows', (await page.locator('#ho-solid tbody tr').count()) === 11);
+  ok('Solid/duct-tape table has 12 rows', (await page.locator('#ho-solid tbody tr').count()) === 12);
   await page.locator('#ho-backend [data-orbit-link="dealsdata"]').click();
   await page.waitForTimeout(300);
   ok('Handoff link selects Deals data node', await vis('#adminTabOrbit') && /^Deals data/.test((await txt('#orbitDetail h2')).trim()));
@@ -89,7 +89,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   await page.screenshot({ path: SHOTS + '/prd.png' });
   await page.click('[data-atab="orbit"]');
   await page.waitForTimeout(200);
-  ok('Orbit still renders after tab switching', (await page.locator('#orbitStage .onode').count()) === 31);
+  ok('Orbit still renders after tab switching', (await page.locator('#orbitStage .onode').count()) === 32);
 
   // --- Sidebar hide / show ---
   const sbBefore = await page.locator('.sidebar').boundingBox();
@@ -109,7 +109,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
   const t1 = await phone.locator('[data-atab="orbit"]').boundingBox();
   const t2 = await phone.locator('[data-atab="prd"]').boundingBox();
   ok('Phone: tabs stack vertically', t2.y > t1.y + t1.height - 1 && tabBox.width <= 390, `tab1 y=${Math.trunc(t1.y)} tab2 y=${Math.trunc(t2.y)}`);
-  ok('Phone: orbit stage hidden, list shown', !(await phone.isVisible('#orbitStage')) && (await phone.locator('#orbitList .lnode').count()) === 31);
+  ok('Phone: orbit stage hidden, list shown', !(await phone.isVisible('#orbitStage')) && (await phone.locator('#orbitList .lnode').count()) === 32);
   ok('Phone: no horizontal overflow', await phone.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   await phone.click('[data-atab="prd"]');
   ok('Phone: PRD tab works', await phone.isVisible('#adminTabPrd'));

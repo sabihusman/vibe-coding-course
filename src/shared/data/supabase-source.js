@@ -100,6 +100,7 @@ function sbLoadAll(){
       });
       undoStack = Object.keys(done);
       SB.connected = true;
+      if(typeof analyticsFlush === "function") analyticsFlush();
       sbShowSavedNotice();
     });
 }

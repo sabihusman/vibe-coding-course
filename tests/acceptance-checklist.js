@@ -277,7 +277,7 @@ const state = (page) => page.evaluate(() => ({
     ok("10. History row opens Deal Detail", (await page.textContent("#detailName")) === "Maya Chen");
     await page.click("#navAdminLink");
     const tabs = await page.$$eval(".admin-tabs [data-atab]", (els) => els.map((e) => e.dataset.atab));
-    ok("10. Admin keeps Orbit, Living PRD and Handoff", JSON.stringify(tabs) === JSON.stringify(["orbit", "prd", "handoff"]));
+    ok("10. Admin keeps Orbit, Living PRD and Handoff, plus Analytics", JSON.stringify(tabs) === JSON.stringify(["orbit", "prd", "handoff", "analytics"]));
     await page.click('[data-atab="prd"]'); await page.locator("#prd-03 [data-orbit-link]").first().click();
     ok("10. Cross-links still work", await page.isVisible("#adminTabOrbit"));
     ok("10. Deals is not presented as a broken link", (await page.locator(".sidebar .navitem", { hasText: "Deals" }).count()) === 0);
