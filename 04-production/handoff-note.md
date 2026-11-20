@@ -1,14 +1,16 @@
 # Engineering Handoff — CRM Companion
 
-**Product:** CRM Companion, Module 3 prototype → production transition (Module 4)
+**Product:** CRM Companion, Module 3 prototype → production transition (Module 4), full-stack (Module 5), iteration (Module 6)
 **Live prototype:** https://vibe-coding-course-weld-omega.vercel.app
-**Repo main baseline:** c7514e5 (Handoff: record the live Supabase backend). This note describes the design handoff v1.0 build on top of it.
+**Repo main baseline:** cace521 (Design handoff v1.0). This note describes that build, plus the Module 5 full-stack record and the Module 6 iteration sprint on top of it.
 **Living PRD:** `04-production/PRD.md` — read it first. This note is the engineer-ready summary of that PRD.
-**Last updated:** 2026-11-13 (design handoff v1.0 built: focused Today queue, Problem statement, intentional forms)
+**Last updated:** 2026-11-19 (Modules 5–6: offline-write P0 found, not yet fixed; verdict do-not-ship until it is)
 
 ## What this is
 
-CRM Companion is a rep's Today view for a CRM at 18% adoption. A rep opens Today and sees a compact queue of 6 follow-ups, sorted by ARR or overdue-first, with the selected deal's context beside it. Call, Email and Log activity open dialogs; only an explicit save records one activity and moves the deal to Updated today, and Undo reverses it. Opening or cancelling a dialog records nothing. Activity history and Problem statement (the research block, moved off Today) are sidebar destinations; Deal Detail opens from a deal. Loading, empty and error states keep their exact wording. Everything is sample data. Each browser signs in anonymously as its own rep, and its deals and activities are saved in Supabase, so work survives a reload. No real call is placed and no real email is sent.
+CRM Companion is a rep's Today view for a CRM at 18% adoption. A rep opens Today and sees a compact queue of 6 follow-ups, sorted by ARR or overdue-first, with the selected deal's context beside it. Call, Email and Log activity open dialogs; only an explicit save records one activity and moves the deal to Updated today, and Undo reverses it. Opening or cancelling a dialog records nothing. Activity history and Problem statement (the research block, moved off Today) are sidebar destinations; Deal Detail opens from a deal. Loading, empty and error states keep their exact wording. Everything is sample data. Each browser signs in anonymously as its own rep, and its deals and activities are saved in Supabase, so work survives a reload — when the save reaches the server. **P0, found Nov 17 (Module 5 Lab 2, not yet fixed): a save made while offline is shown as done, including in Activity history, but never reaches Supabase; on reload it silently reverts with no notification. Do not ship until that is fixed and re-tested.** No real call is placed and no real email is sent.
+
+**Module 5–6, in one line each:** Module 5 audited the schema (no table added), verified anonymous auth + RLS and a two-browser isolation test, and stress-tested the live site — spam-click held, ghost user held, kill switch failed (the P0 above). Full record: `05-fullstack/fullstack.md`. Module 6 read the evidence on the no-numbers path (no analytics tool, no cohort replies recorded) and picked one fix — the P0 — with the call Iterate, not Go. Record: `06-iteration/iteration.md`.
 
 ## Frontend
 
@@ -24,7 +26,7 @@ CRM Companion is a rep's Today view for a CRM at 18% adoption. A rep opens Today
 - Dialogs: Call starts its timer only after Start simulated call and needs an outcome (Connected, No answer, Left voicemail); Email needs a subject and a message; Log activity needs a real note. One save creates one activity; the save button is disabled on first submit. Cancel, Escape, the close button or a backdrop click records nothing and keeps the draft. Focus stays inside the dialog and returns afterwards; saves, Undo and errors are announced.
 - Design system: the handoff tokens in `src/app/base.css` — navy sidebar #131F32 (selected #283A59), canvas #F5F6F8, surface #FFFFFF, primary #315CE8, selected row #EEF3FF, text #172338 / #637086, divider #E4E8EF, overdue #A52E31 and updated #23705A paired with words; spacing 4–32px; radius 10px panels, 6px controls; system sans. No dark theme.
 - Test controls: Data / Loading / Empty / Error switches sit in a collapsed Test controls area at the bottom of Today and Activity history. The real recovery UI (skeletons, empty, error with Retry) stays in the lists.
-- Admin portal: Orbit Code Explorer with 30 nodes — CRM Companion in the centre; Today, Problem statement, Deal Detail and Activity history on the inner orbit; panels, data, states and the design system outside. Each node has a plain-language explanation, its connections, whether it is real or mocked, and a "Show code" excerpt cut from its `src/` file. Two more tabs render the Living PRD and this handoff note, with cross-links.
+- Admin portal: Orbit Code Explorer with 30 nodes — CRM Companion in the centre; Today, Problem statement, Deal Detail and Activity history on the inner orbit; panels, data, states and the design system outside. Each node has a plain-language explanation, its connections, whether it is real or mocked, and a "Show code" excerpt cut from its `src/` file. Two more tabs render the Living PRD and this handoff note, with cross-links. **Orbit gap (Nov 19): the Orbit has no dedicated Supabase/write-path node, and its Session and Deals-data nodes do not mention the offline-write P0 — the Orbit sync in this same change must add a write-path node and correct those two nodes, so the Orbit, PRD and handoff all say the same thing.**
 
 ## Backend / data
 
@@ -38,7 +40,7 @@ CRM Companion is a rep's Today view for a CRM at 18% adoption. A rep opens Today
   - Row-level security is on for all three tables, with one policy each: a rep reads and writes only their own deals, and only the activities and follow-ups for those deals. The anon role has no table access.
   - `seed_my_sample_data()` — gives a signed-in rep their own copy of the 6 sample deals ($663k) and the 12 seeded activities (Oct 28–Nov 4), once.
 - Auth: Supabase Auth with anonymous sign-in, switched on in the project. There is no sign-in screen (adding one would change the rep flow), so each browser becomes its own rep with a private copy of the sample data. The session is kept in the browser, so a reload returns to the same rep.
-- App side: `src/shared/data/supabase-source.js` signs in, seeds, loads deals and activities, and saves every saved call, sent email, logged note and Undo. Nothing is written when a dialog is cancelled. If the load fails, Today shows the error state with Retry.
+- App side: `src/shared/data/supabase-source.js` signs in, seeds, loads deals and activities, and saves every saved call, sent email, logged note and Undo. Nothing is written when a dialog is cancelled. If the load fails, Today shows the error state with Retry. **If a save fails — offline or error — the current build still shows it as done. That is the P0: a write must only show as done after the server confirms it; on failure show an inline error with Retry, keep the follow-up queued, and never show it in Activity history.**
 - Keys: the browser gets the project URL and the public anon key from `/api/supabase-config`, a Vercel function that reads the `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment variables in the Vercel project. Neither is in the repo, and no key was shared in chat. The anon key is meant to be public; row-level security is what protects the data. Never put the service_role key in the app or in Vercel. If the variables are removed, the app falls back to its in-page sample data.
 - Live verification, 2026-11-13 (before the design handoff build): a fresh browser signed in anonymously, received its own 6 deals, saved a call on James Whitfield with a unique note, and reloaded. After the reload James was in Updated today, progress read 1 of 6, and the database held that call under that rep with the follow-up marked `updated_today`.
 - The `activities.attempted` column stays for older rows. Since the design handoff build, the app never writes attempted rows; any from earlier sessions still show in Activity history.
@@ -64,13 +66,13 @@ Walk these first, in this order:
 | Today list, ARR order, 6 deals | Solid | Verified live 2026-11-10, in the exact order and amounts in the PRD |
 | Call / Email / Log dialogs | Solid | Explicit save only, required fields, one activity per save, drafts kept on cancel, double-click safe; checked by `tests/acceptance-checklist.js` (handoff section 7) |
 | Deal Detail and Activity History navigation | Solid | Verified live, including pre-filtered Activity History from Deal Detail and search by name and company |
-| Loading / empty / error states | Solid | Exact wording verified live on both screens, Retry restores the list |
+| Loading / empty / error states | Solid for loads, **broken for writes (P0)** | Exact wording verified live on both screens for loads, Retry restores the list. Writes are the gap: an offline save shows as done and silently reverts — see Risks |
 | Problem statement and navigation | Solid | The research block moved off Today intact; Today, Activity history, Problem statement and Admin are working sidebar destinations; Back works. The old kill-switch test line is on no screen |
 | Accessibility and responsive | Solid | Focus kept in dialogs and returned, Escape cancels, live announcements, contrast at least 4.5:1 for text; checked at 320, 390, 768, 1024, 1366px and 200% zoom with 44px touch targets. Not checked with a real screen reader or on real devices |
 | Code structure | Solid | Split by feature into `src/` in Lab 2; pixel-identical to the single-file version on every screen at desktop and phone widths. Still classic scripts with shared globals and a fixed load order, no modules or build step |
 | No README inside the project | Rough | The build summary is on the computer only; PROMPTS.md is the only in-repo record of how the build was made |
 | Sample data | Rough | All 6 deals and 12 activities are invented; the history dates are Oct 28–Nov 4 and will go stale |
-| Backend, auth, persistence | Rough | Live in Supabase with row-level security, verified 2026-11-13. Rough because auth is anonymous (one rep per browser, no real accounts) and there are no backups, migrations tooling or monitoring set up beyond Supabase defaults |
+| Backend, auth, persistence | Rough | Live in Supabase with row-level security, verified 2026-11-13 and re-verified 2026-11-18 (two-browser isolation: rep B got 0 rows, writes refused 403). Rough because auth is anonymous (one rep per browser, no real accounts), there are no backups, migrations tooling or monitoring set up beyond Supabase defaults, and the offline-write P0 is open |
 | Tests | Rough | `tests/logic-checks.js` (data, model, sort), `tests/browser-rep-flow.js` (rep flow, Admin, phone), `tests/acceptance-checklist.js` (design handoff section 7), `tests/supabase-mode-mock.js` (Supabase path against a stand-in). Run by hand; no CI yet |
 
 ## Risks & assumptions for the team
@@ -80,6 +82,8 @@ Walk these first, in this order:
 - Do not look for Deals. It is hidden from the sidebar until a Deals screen is built; building one is a product decision.
 - Do not assume the load order is optional. The `src/` files are classic scripts that share globals; `index.html` loads them in a fixed order, and moving one can break the app. Converting to ES modules is the next structural step.
 - Do not trust anonymous sign-in for real reps. It gives each browser a private sample copy, which suits a prototype test. Real reps need a sign-in screen, and anonymous users should then be switched off.
+- **Do not ship until the offline-write P0 is fixed.** Acting on a follow-up while offline shows it as done, including in Activity history, but the write never reaches Supabase; after reconnecting and reloading, the follow-up is back in the queue with no notification. The fix: a write only shows as done after the server confirms it; on failure, inline error with Retry, keep it queued, never show it in Activity history, never silently roll back. Re-run the kill-switch test live after the fix, then update `05-fullstack/fullstack.md` and `06-iteration/iteration.md`.
+- Do not assume a save in two tabs is safe. The same rep in two tabs can save the same deal twice; `follow_ups.status` is plain last-write-wins.
 - The hypothesis is still unproven. A partner understood it exactly right in Module 2, but no A/B session has run yet. Version B exists for that test, and the test plan is written, but no tester has tried either version against the other.
 
 ## How to run it
