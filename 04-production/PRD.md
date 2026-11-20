@@ -40,7 +40,7 @@ CRM Companion is a rep's Today view. Each morning, a rep opens one screen, sees 
 8. **Deal Detail:** Open deal in the context panel (or a row in Activity history, or Updated today) opens the full deal. Back returns to Today.
 9. **Activity history:** a sidebar destination. Every call, email and note, newest first. Search by name or company. Select a row to open Deal Detail.
 10. **Problem statement:** a sidebar destination with the full research block. Switching to it and back keeps the queue, sort, selection, progress and history.
-11. **Admin:** in its own sidebar group. Orbit Code Explorer (31 nodes, each with a "Show code" excerpt), Living PRD and Handoff, with cross-links.
+11. **Admin:** in its own sidebar group. Orbit Code Explorer (32 nodes, each with a "Show code" excerpt), Living PRD and Handoff, with cross-links.
 
 *Screen map:* `Today → Call / Email / Log dialog → Updated today` · `Today → context panel → Open deal → Deal Detail → Activity history → Deal Detail` · `Sidebar → Activity history` · `Sidebar → Problem statement → Today` · `Sidebar → Admin → Orbit / Living PRD / Handoff`
 
@@ -72,6 +72,7 @@ Extracted from the prototype, what was actually built.
 - **State:** saved in Supabase for each browser's anonymous rep (project `toctukiccnirfkkoaqog`, tables `deals`, `activities`, `follow_ups`, with row-level security), so it survives a reload — when the save reaches the server. **P0 (Module 5 Lab 2, found Nov 17, not yet fixed):** a save made while offline is shown as done, including in Activity history, but never reaches Supabase; on reload it silently reverts with no notification. A write must only show as done after the server confirms it. Without the Supabase settings, the app falls back to in-page sample data that resets on reload.
 - **Auth decision (Module 5, Nov 17):** anonymous auth kept; email login is a future step, not in this build.
 - **Known gaps (Module 5, verified live):** same rep in two tabs can save the same deal twice (live test wrote two activities for Aisha Bello); `follow_ups.status` is plain last-write-wins with no version check; no "Get Started" CTA, and a new rep never reaches the empty state because seeding always gives 6 deals. Full record: `05-fullstack/fullstack.md`. Iteration record: `06-iteration/iteration.md`.
+- **In-app analytics (Nov 20):** Supabase only, no vendor. Each view change writes one row to `analytics_events` (owner_id, session_id, view, entered_at — no names, companies, deal ids or notes), fire-and-forget: it never blocks the rep and never shows an error, because it is telemetry, not rep data, so the P0 write-confirmation rule does not apply to it. Row-level security: a rep inserts and reads only their own rows; anon has no access. The Admin Analytics tab reads only `get_analytics_summary()` (security definer, totals only) — Visitors, Page Views, Views Per Visit, Duration, Bounce Rate and views per screen, for the last 30 days and all time. Migration: `supabase/migrations/20261120000000_analytics_events.sql`, run by hand in the Supabase SQL editor; until it is run, the tab says "Analytics is not set up yet" and nothing else changes. History starts when it shipped.
 - **Naming:** screens and functions are named for what they do — `showView`, `openDeal`, `openHistory`, `renderTodo`, `renderContext`, `sortDeals`, `completeDeal`, `undoDeal`, `openDialog`. An engineer can tell what each does from its name.
 - **Separation:** sample data in `src/shared/data/`, calculations (including the sort) in `src/shared/model/`, dialogs and list states in `src/shared/components/`, one folder per screen in `src/pages/`, navigation and start-up in `src/app/`, and checks in `tests/`.
 - **Documentation:** this PRD, the handoff note, the prompt chain in `03-chaining/PROMPTS.md`, the full-stack record in `05-fullstack/fullstack.md`, the iteration record in `06-iteration/iteration.md`, and the Orbit Code Explorer. The build summary is on the computer only, per the Module 3 lab guide.
@@ -99,7 +100,8 @@ Extracted from the prototype, what was actually built.
 - Loading, empty and error states for Today and Activity history, with exact wording and Retry; forced-state controls in a Test controls area.
 - Accessible dialogs, keyboard operation, screen-reader announcements, and layouts from 320px to 1366px and at 200% zoom.
 - Supabase persistence with anonymous auth and row-level security.
-- Admin portal: Orbit Code Explorer, with 31 nodes, search, filters, FAQ and tips, and "Show code" per node; Living PRD and Handoff tabs.
+- Admin portal: Orbit Code Explorer, with 32 nodes, search, filters, FAQ and tips, and "Show code" per node; Living PRD, Handoff and Analytics tabs.
+- In-app analytics: one counts-only event per view change in Supabase (`analytics_events`), and an Admin Analytics tab with five totals and a per-screen table, read only through `get_analytics_summary()`.
 
 **Out of scope (this build):**
 - Real calls or emails. Call and Email are simulated. Nothing is sent.
@@ -116,6 +118,7 @@ Extracted from the prototype, what was actually built.
 - **Cleanup:** done in Lab 2 — the code is split by feature into `src/`. Next: convert the classic scripts to ES modules so the load order is explicit.
 - **Memory:** done — deals and activities live in Supabase with row-level security. Call and Email stay simulated in v1; the backend only stores what was saved or sent in the tool.
 - **Next spike:** fix the offline-write P0 (Module 6 sprint, one fix): a write only shows as done after the server confirms it; on failure, inline error with Retry, keep the follow-up queued, never show it in Activity history, never silently roll back. Then re-run the kill-switch test live and update `05-fullstack/fullstack.md` and `06-iteration/iteration.md` with the result. After that, run the A/B test, Version A against Version B. The test plan is written. If Version B wins, move the backend to the winning layout.
+- **Measure:** run `supabase/migrations/20261120000000_analytics_events.sql` in the Supabase SQL editor so the Admin Analytics tab starts counting before the A/B test; it gives Visitors, Page Views, Views Per Visit, Duration and Bounce Rate per period. It counts screens, not outcomes — the kill-switch metrics still need their own measurement.
 - **Handoff:** see `04-production/handoff-note.md` for the engineer-ready summary.
 
 ---

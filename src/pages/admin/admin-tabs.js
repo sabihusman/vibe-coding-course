@@ -29,6 +29,7 @@ var NODE_DOCS = {
   dealsdata:   { prd:["prd-05","prd-08"], ho:["ho-backend"] },
   actdata:     { prd:["prd-05","prd-06"], ho:["ho-backend","ho-risks"] },
   writepath:   { prd:["prd-05","prd-06"], ho:["ho-backend","ho-risks"] },
+  analytics:   { prd:["prd-05","prd-07"], ho:["ho-backend","ho-risks"] },
   session:     { prd:["prd-05"],          ho:["ho-backend"] },
   design:      { prd:["prd-05"],          ho:["ho-frontend"] },
   loading:     { prd:["prd-07","prd-04"], ho:["ho-flows"] },
@@ -51,7 +52,7 @@ function docLinksHtml(nodeId){
 }
 function showAdminTab(t, targetId){
   adminTab = t;
-  var panels = { orbit:"adminTabOrbit", prd:"adminTabPrd", handoff:"adminTabHandoff" };
+  var panels = { orbit:"adminTabOrbit", prd:"adminTabPrd", handoff:"adminTabHandoff", analytics:"adminTabAnalytics" };
   Object.keys(panels).forEach(function(k){ var p = byId(panels[k]); if(p) p.hidden = (k!==t); });
   document.querySelectorAll("[data-atab]").forEach(function(b){
     var on = b.getAttribute("data-atab")===t;
@@ -59,6 +60,7 @@ function showAdminTab(t, targetId){
     b.setAttribute("aria-selected", on ? "true" : "false");
   });
   if(currentView!=="admin") showView("admin");
+  if(t==="analytics" && typeof loadAnalyticsTab === "function") loadAnalyticsTab();
   if(targetId){
     var el = byId(targetId);
     if(el){

@@ -25,7 +25,7 @@ function renderOrbit(){
     list.forEach(function(n, i){
       var ang;
       if(r==="1"){ ang = [-45, 45, 135, 225][i] || 0; }  /* four screens on the diagonals, clear of the rings' axis nodes */
-      else { ang = -90 + (360/list.length)*i; }  /* rings 2 and 3 start at the top; measured clearest with 31 nodes */
+      else { ang = -90 + (r==="2" ? 1 : 14) + (360/list.length)*i; }  /* start offsets measured clearest with 32 nodes (fewest overlaps at 1024–1920px) */
       var rad = ang * Math.PI/180;
       var b = document.createElement("button");
       b.type = "button";
