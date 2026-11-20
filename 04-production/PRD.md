@@ -1,11 +1,11 @@
 # Living PRD — CRM Companion
 
 **Product:** CRM Companion. A rep's Today view for a CRM that only 18% of reps use.
-**Stage:** Prototype (Modules 1–3) → Production (Module 4)
+**Stage:** Prototype (Modules 1–3) → Production (Module 4) → Full-stack (Module 5) → Iteration (Module 6)
 **Owner:** Sabih Usman
-**Last updated:** 2026-11-13 (design handoff v1.0 built: focused Today queue, Problem statement, intentional forms)
+**Last updated:** 2026-11-19 (Modules 5–6: full-stack record + iteration sprint; offline-write P0 found, not yet fixed)
 **Live prototype:** https://vibe-coding-course-weld-omega.vercel.app
-**Repo main:** c7514e5
+**Repo main:** cace521
 **Source of truth:** the live prototype above. This PRD is extracted from what that build actually does, in the eight blocks below. Where the build is mocked, this PRD says so.
 
 ---
@@ -40,7 +40,7 @@ CRM Companion is a rep's Today view. Each morning, a rep opens one screen, sees 
 8. **Deal Detail:** Open deal in the context panel (or a row in Activity history, or Updated today) opens the full deal. Back returns to Today.
 9. **Activity history:** a sidebar destination. Every call, email and note, newest first. Search by name or company. Select a row to open Deal Detail.
 10. **Problem statement:** a sidebar destination with the full research block. Switching to it and back keeps the queue, sort, selection, progress and history.
-11. **Admin:** in its own sidebar group. Orbit Code Explorer (30 nodes, each with a "Show code" excerpt), Living PRD and Handoff, with cross-links.
+11. **Admin:** in its own sidebar group. Orbit Code Explorer (31 nodes, each with a "Show code" excerpt), Living PRD and Handoff, with cross-links.
 
 *Screen map:* `Today → Call / Email / Log dialog → Updated today` · `Today → context panel → Open deal → Deal Detail → Activity history → Deal Detail` · `Sidebar → Activity history` · `Sidebar → Problem statement → Today` · `Sidebar → Admin → Orbit / Living PRD / Handoff`
 
@@ -59,6 +59,8 @@ CRM Companion is a rep's Today view. Each morning, a rep opens one screen, sees 
 
 No metric above has been measured in a real user session yet. The A/B test plan is written (6–8 testers, each tries Version A and Version B, half A-first). No session has run yet.
 
+**Module 5–6, measured on the live site (Nov 17–18, main `cace521`):** spam-click held — 5 rapid saves wrote exactly 1 activity. Ghost user held — a fresh browser gets its own anonymous rep with the 6 seeded deals, straight into Today, never a blank page. Kill switch FAILED — P0: acting on a follow-up while offline shows it as done, including in Activity history, but the write never reaches Supabase; after reconnecting and reloading, the follow-up is back in the queue with no notification. Verdict: do not ship until the P0 is fixed. Recorded in `05-fullstack/fullstack.md` and `06-iteration/iteration.md` (both on main). Module 6 call: Iterate, not Go.
+
 ## 05 · Technical Reality
 
 Extracted from the prototype, what was actually built.
@@ -67,11 +69,13 @@ Extracted from the prototype, what was actually built.
 - **Screens:** Today, Problem statement, Deal Detail, Activity history and Admin, switched in place. Each has its own address (`#today`, `#problem`, `#history`, `#admin`, `#deal-…`), so browser Back works.
 - **Call / Email / Log:** accessible dialogs with focus kept inside, Escape to cancel, and focus returned afterwards. Call and Email are simulated: no real call is made and no real email is sent.
 - **Data:** 6 sample deals and 12 seeded sample activities, Oct 28–Nov 4. On the live site, each browser gets its own copy in Supabase.
-- **State:** saved in Supabase for each browser's anonymous rep (project `toctukiccnirfkkoaqog`, tables `deals`, `activities`, `follow_ups`, with row-level security), so it survives a reload. Without the Supabase settings, the app falls back to in-page sample data that resets on reload.
+- **State:** saved in Supabase for each browser's anonymous rep (project `toctukiccnirfkkoaqog`, tables `deals`, `activities`, `follow_ups`, with row-level security), so it survives a reload — when the save reaches the server. **P0 (Module 5 Lab 2, found Nov 17, not yet fixed):** a save made while offline is shown as done, including in Activity history, but never reaches Supabase; on reload it silently reverts with no notification. A write must only show as done after the server confirms it. Without the Supabase settings, the app falls back to in-page sample data that resets on reload.
+- **Auth decision (Module 5, Nov 17):** anonymous auth kept; email login is a future step, not in this build.
+- **Known gaps (Module 5, verified live):** same rep in two tabs can save the same deal twice (live test wrote two activities for Aisha Bello); `follow_ups.status` is plain last-write-wins with no version check; no "Get Started" CTA, and a new rep never reaches the empty state because seeding always gives 6 deals. Full record: `05-fullstack/fullstack.md`. Iteration record: `06-iteration/iteration.md`.
 - **Naming:** screens and functions are named for what they do — `showView`, `openDeal`, `openHistory`, `renderTodo`, `renderContext`, `sortDeals`, `completeDeal`, `undoDeal`, `openDialog`. An engineer can tell what each does from its name.
 - **Separation:** sample data in `src/shared/data/`, calculations (including the sort) in `src/shared/model/`, dialogs and list states in `src/shared/components/`, one folder per screen in `src/pages/`, navigation and start-up in `src/app/`, and checks in `tests/`.
-- **Documentation:** this PRD, the handoff note, the prompt chain in `03-chaining/PROMPTS.md`, and the Orbit Code Explorer. The build summary is on the computer only, per the Module 3 lab guide.
-- **Gap to production:** real sign-in instead of anonymous reps, and a decision on a Deals screen.
+- **Documentation:** this PRD, the handoff note, the prompt chain in `03-chaining/PROMPTS.md`, the full-stack record in `05-fullstack/fullstack.md`, the iteration record in `06-iteration/iteration.md`, and the Orbit Code Explorer. The build summary is on the computer only, per the Module 3 lab guide.
+- **Gap to production:** the offline-write P0 (above) must be fixed and re-tested first; then real sign-in instead of anonymous reps, and a decision on a Deals screen.
 
 ## 06 · Assumptions & Risks
 
@@ -81,6 +85,8 @@ Extracted from the prototype, what was actually built.
 - **Risk:** removing attempted-on-close means a rep who makes a call and then closes the dialog without saving leaves no record. The handoff chose this so that only intentional saves count; the cost is under-counting abandoned attempts.
 - **Risk:** the `src/` files share globals and a fixed load order. Moving one script in `index.html` can break the app. Converting to ES modules is the next structural step.
 - **Risk:** anonymous sign-in gives each browser its own rep. It suits a prototype test; real reps need accounts.
+- **Risk (P0, Module 5 Lab 2):** an offline save is shown as done but never saved, then silently reverts on reload with no notification. A rep who loses one log will stop trusting the tool and go back to their spreadsheet. This is the Module 6 iteration sprint's one fix; do not ship until it is fixed and the kill-switch test is re-run live.
+- **Risk:** the same rep in two tabs can save the same deal twice; there is no duplicate guard across tabs.
 - **Comprehension debt:** the build was made with prompts, not written by hand. This PRD, the prompt chain in `03-chaining/PROMPTS.md`, and the Orbit Code Explorer in the Admin portal are the first steps in paying that debt down.
 
 ## 07 · In vs. Out of Scope
@@ -93,7 +99,7 @@ Extracted from the prototype, what was actually built.
 - Loading, empty and error states for Today and Activity history, with exact wording and Retry; forced-state controls in a Test controls area.
 - Accessible dialogs, keyboard operation, screen-reader announcements, and layouts from 320px to 1366px and at 200% zoom.
 - Supabase persistence with anonymous auth and row-level security.
-- Admin portal: Orbit Code Explorer, with 30 nodes, search, filters, FAQ and tips, and "Show code" per node; Living PRD and Handoff tabs.
+- Admin portal: Orbit Code Explorer, with 31 nodes, search, filters, FAQ and tips, and "Show code" per node; Living PRD and Handoff tabs.
 
 **Out of scope (this build):**
 - Real calls or emails. Call and Email are simulated. Nothing is sent.
@@ -109,7 +115,7 @@ Extracted from the prototype, what was actually built.
 - **Front Door:** this PRD lives at `04-production/PRD.md`. The handoff note lives at `04-production/handoff-note.md`.
 - **Cleanup:** done in Lab 2 — the code is split by feature into `src/`. Next: convert the classic scripts to ES modules so the load order is explicit.
 - **Memory:** done — deals and activities live in Supabase with row-level security. Call and Email stay simulated in v1; the backend only stores what was saved or sent in the tool.
-- **Next spike:** run the A/B test, Version A against Version B. The test plan is written. If Version B wins, move the backend to the winning layout.
+- **Next spike:** fix the offline-write P0 (Module 6 sprint, one fix): a write only shows as done after the server confirms it; on failure, inline error with Retry, keep the follow-up queued, never show it in Activity history, never silently roll back. Then re-run the kill-switch test live and update `05-fullstack/fullstack.md` and `06-iteration/iteration.md` with the result. After that, run the A/B test, Version A against Version B. The test plan is written. If Version B wins, move the backend to the winning layout.
 - **Handoff:** see `04-production/handoff-note.md` for the engineer-ready summary.
 
 ---
