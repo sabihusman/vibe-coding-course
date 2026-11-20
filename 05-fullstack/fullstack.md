@@ -73,7 +73,16 @@ Verified on the live site, 2026-11-18, against `main` at `cace521`.
 3. **Pagination** — not present and not needed at this size: 6 deals and about 12–20 activity rows per rep fit on one screen.
 4. **Last-write-wins** — `follow_ups.status` is plain last-write-wins (each save overwrites it); there is no version check or conflict message. `activities` are inserts, so simultaneous saves both land (see gap 2).
 5. **Empty-state CTA** — no "Get Started" action, and a new rep never reaches the empty state because seeding always gives 6 deals.
+6. **Offline writes (P0, Lab 2)** — acting on a follow-up while offline is shown as done (including in Activity history) but never saved; on reload it silently reverts to the last database state with no notification. Fix before shipping: a write must only show as done after the server confirms it; a failed write shows an inline error + Retry and the follow-up stays queued.
 
 ## Stress test results
 
-Not yet run — Lab 2 fills this in.
+Run 2026-11-17 (Lab 2) on the live site. Verdict: **do not ship — P0 blocker found** (see Kill switch). The spam-click and ghost-user tests held. The known gaps (two-tab duplicate, last-write-wins, no empty-state CTA) are documented in Edge cases hardened.
+
+| Test | What was thrown at it | Result |
+|---|---|---|
+| Kill switch / offline | **FAILED — P0.** Load failure (Lab 1, requests blocked; Lab 2, built-in Test controls → Error): inline error + Retry, no hang — held. Write failure (Lab 2, real DevTools offline on the user's laptop): acting on a follow-up while offline shows it as done AND in Activity history, but the write never reaches the database; after reconnecting and reloading, the follow-up is back in the queue with no notification — neither when the unsaved action was shown as done, nor when it was reversed to the last database state |
+| Spam click | Log activity saved with 5 rapid clicks on James Whitfield (Meridian Legal) | Exactly 1 activity created ("Spam-click test note — 5 rapid saves"); the dialog closes on the first save so later clicks cannot resubmit. Toast: "Logged activity for James Whitfield. 1 of 6 updated. Undo is available." Activity history: 13 total (12 seeded + 1) |
+| Ghost user (brand-new user) | Fresh browser = new anonymous rep (no email sign-up by design) | No sign-in gate and no "Get Started" CTA anywhere. A new rep is seeded once with 6 deals ($663k) and 12 activities and sees the Today queue ("Make your next move.", "6 follow-ups · 2 overdue · $663k", "0 of 6 updated"). The empty state ("All caught up. No follow-ups today.") exists but a new rep never reaches it |
+
+Deployed link confirmed live during these tests: https://vibe-coding-course-weld-omega.vercel.app
