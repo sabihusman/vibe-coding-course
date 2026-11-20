@@ -40,7 +40,7 @@ CRM Companion is a rep's Today view. Each morning, a rep opens one screen, sees 
 8. **Deal Detail:** Open deal in the context panel (or a row in Activity history, or Updated today) opens the full deal. Back returns to Today.
 9. **Activity history:** a sidebar destination. Every call, email and note, newest first. Search by name or company. Select a row to open Deal Detail.
 10. **Problem statement:** a sidebar destination with the full research block. Switching to it and back keeps the queue, sort, selection, progress and history.
-11. **Admin:** in its own sidebar group. Orbit Code Explorer (30 nodes, each with a "Show code" excerpt), Living PRD and Handoff, with cross-links.
+11. **Admin:** in its own sidebar group. Orbit Code Explorer (31 nodes, each with a "Show code" excerpt), Living PRD and Handoff, with cross-links.
 
 *Screen map:* `Today → Call / Email / Log dialog → Updated today` · `Today → context panel → Open deal → Deal Detail → Activity history → Deal Detail` · `Sidebar → Activity history` · `Sidebar → Problem statement → Today` · `Sidebar → Admin → Orbit / Living PRD / Handoff`
 
@@ -99,7 +99,7 @@ Extracted from the prototype, what was actually built.
 - Loading, empty and error states for Today and Activity history, with exact wording and Retry; forced-state controls in a Test controls area.
 - Accessible dialogs, keyboard operation, screen-reader announcements, and layouts from 320px to 1366px and at 200% zoom.
 - Supabase persistence with anonymous auth and row-level security.
-- Admin portal: Orbit Code Explorer, with 30 nodes, search, filters, FAQ and tips, and "Show code" per node; Living PRD and Handoff tabs.
+- Admin portal: Orbit Code Explorer, with 31 nodes, search, filters, FAQ and tips, and "Show code" per node; Living PRD and Handoff tabs.
 
 **Out of scope (this build):**
 - Real calls or emails. Call and Email are simulated. Nothing is sent.
