@@ -26,8 +26,6 @@ function seed() {
     const d = { id: uid(), contact, company, arr, due, next_step, owner_id: "rep-1" };
     db.deals.push(d); db.follow_ups.push({ id: uid(), deal_id: d.id, status: "open", updated_at: new Date().toISOString() });
   });
-  db.activities.push({ id: uid(), deal_id: db.deals[3].id, type: "call", title: "Call — Maya Chen, Northwind Retail · No answer",
-    detail: "Left a voicemail about the expansion plan", date: "2026-11-04", time: "4:02 PM", attempted: false, created_at: "2026-11-04T16:02:00-08:00" });
   return 6;
 }
 const filterEq = (rows, url) => {
@@ -75,7 +73,7 @@ const ok = (n, c, d) => { if (c) { passed++; console.log("PASS " + n); } else { 
     (await page.locator("#todoList .qrow").count()) === 6 && (await page.locator("#todoList .deal-name").first().textContent()) === "James Whitfield");
   ok("With Supabase, the one sample-data notice says work is saved for this browser",
     /saved for this browser/.test(await page.textContent("#sampleNotice")) && (await page.locator(".sample-pill").count()) === 0);
-  ok("Seeded activity from Supabase is in Activity History data", await page.evaluate(() => PAST.some((a) => /Maya Chen/.test(a.title))));
+  ok("A new rep starts with no activity history (seed has no activities)", await page.evaluate(() => PAST.length === 0 && feed.length === 0));
 
   // Save a call: start, outcome, note, save (double-click must still write once)
   await page.locator("#todoList .qrow").first().locator("[data-call]").click();
