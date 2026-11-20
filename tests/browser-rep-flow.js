@@ -46,7 +46,7 @@ function ok(name, cond, detail) { results.push({ name, pass: !!cond, detail: det
 
   // --- Admin tabs ---
   const tabs = await page.locator('.admin-tabs [data-atab]').allTextContents();
-  ok('Admin shows four tabs in order', tabs.length === 4 && /^Orbit/.test(tabs[0]) && /^Living PRD/.test(tabs[1]) && /^Handoff/.test(tabs[2]) && /^Analytics/.test(tabs[3]), tabs.map(t => t.split('\n')[0]).join(' | '));
+  ok('Admin shows four tabs in order', tabs.length === 4 && tabs[0].startsWith('Orbit') && tabs[1].startsWith('Living PRD') && tabs[2].startsWith('Handoff') && tabs[3].startsWith('Analytics'), tabs.map(t => t.split('\n')[0]).join(' | '));
   ok('Intro explains the three tabs', /Living PRD.*says what the app does/.test(await txt('.admin-intro')) && /Orbit.*where each part lives/.test(await txt('.admin-intro')) && /Handoff.*how to run/.test(await txt('.admin-intro')));
   ok('Orbit tab visible by default, others hidden', await vis('#adminTabOrbit') && !(await vis('#adminTabPrd')) && !(await vis('#adminTabHandoff')));
   await page.click('[data-atab="prd"]');

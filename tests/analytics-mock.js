@@ -4,7 +4,7 @@
    one counts-only event per view change, fire-and-forget, a new tab is a new session,
    the Admin Analytics tab and its states, and that a missing table leaves the rep flow alone.
    The SQL itself (RLS, totals only) is checked against Postgres, not here. */
-const path = require("path");
+const path = require("node:path");
 const { chromium } = require("playwright");
 
 const APP = "file://" + path.join(__dirname, "..", "index.html");
@@ -21,7 +21,7 @@ const repOf = (req) => { const m = /^Bearer tok-(\d+)$/.exec(req.headers()["auth
 
 function summary(rows) {
   const sess = {};
-  rows.forEach((e) => { (sess[e.session_id] = sess[e.session_id] || []).push(Date.parse(e.entered_at)); });
+  rows.forEach((e) => { if (!sess[e.session_id]) sess[e.session_id] = []; sess[e.session_id].push(Date.parse(e.entered_at)); });
   const s = Object.values(sess), pv = rows.length, n = s.length;
   const avg = n ? s.reduce((t, a) => t + (Math.max(...a) - Math.min(...a)) / 1000, 0) / n : 0;
   return { visitors: new Set(rows.map((e) => e.owner_id)).size, page_views: pv, sessions: n,
@@ -36,17 +36,23 @@ async function handle(route) {
   const body = req.postData() ? JSON.parse(req.postData()) : {};
   if (p === "/auth/v1/signup") { db.users++; return json(200, { access_token: "tok-" + db.users, refresh_token: "ref", expires_in: 3600, user: { id: "rep-" + db.users } }); }
   const rep = repOf(req); if (!rep) return json(401, { message: "no session" });
-  if (p === "/rest/v1/analytics_events" || p === "/rest/v1/rpc/get_analytics_summary") {
-    if (!db.analyticsSetUp) return json(404, { code: p.includes("rpc") ? "PGRST202" : "42P01", message: "not found" });
-    if (m === "POST" && p.endsWith("analytics_events")) { db.bodies.push(body); db.events.push({ ...body, owner_id: rep }); return json(201); }
-    return json(200, { generated_at: new Date().toISOString(), periods: { last_30_days: summary(db.events), all_time: summary(db.events) } });
-  }
-  if (p === "/rest/v1/rpc/seed_my_sample_data") {
-    if (db.deals[rep]) return json(200, 0);
-    db.deals[rep] = SEED.map(([contact, company, arr]) => ({ id: uid(), contact, company, arr, due: "Due today", next_step: "Follow up", owner_id: rep }));
-    db.deals[rep].forEach((d) => db.follow_ups.push({ id: uid(), deal_id: d.id, status: "open", owner: rep }));
-    return json(200, 6);
-  }
+  if (p === "/rest/v1/analytics_events" || p === "/rest/v1/rpc/get_analytics_summary") return handleAnalytics(p, m, body, rep, json);
+  if (p === "/rest/v1/rpc/seed_my_sample_data") return handleSeed(rep, json);
+  return handleRest(p, m, body, url, rep, json);
+}
+function handleAnalytics(p, m, body, rep, json) {
+  if (!db.analyticsSetUp) return json(404, { code: p.includes("rpc") ? "PGRST202" : "42P01", message: "not found" });
+  if (m === "POST" && p.endsWith("analytics_events")) { db.bodies.push(body); db.events.push({ ...body, owner_id: rep }); return json(201); }
+  return json(200, { generated_at: new Date().toISOString(), periods: { last_30_days: summary(db.events), all_time: summary(db.events) } });
+}
+function handleSeed(rep, json) {
+  if (db.deals[rep]) return json(200, 0);
+  db.deals[rep] = SEED.map(([contact, company, arr]) => ({ id: uid(), contact, company, arr, due: "Due today", next_step: "Follow up", owner_id: rep }));
+  db.deals[rep].forEach((d) => db.follow_ups.push({ id: uid(), deal_id: d.id, status: "open", owner: rep }));
+  return json(200, 6);
+}
+const matchesEq = (r, url) => [...url.searchParams].every(([k, v]) => !v.startsWith("eq.") || String(r[k]) === v.slice(3));
+function handleRest(p, m, body, url, rep, json) {
   const table = p.replace("/rest/v1/", "");
   const mine = new Set((db.deals[rep] || []).map((d) => d.id));
   if (m === "GET") {
@@ -55,7 +61,7 @@ async function handle(route) {
     return json(404, {});
   }
   if (m === "POST") { const row = { id: uid(), created_at: new Date().toISOString(), ...body }; db[table].push(row); return json(201, [row]); }
-  if (m === "PATCH") { db[table].filter((r) => [...url.searchParams].every(([k, v]) => !v.startsWith("eq.") || String(r[k]) === v.slice(3))).forEach((r) => Object.assign(r, body)); return json(204); }
+  if (m === "PATCH") { db[table].filter((r) => matchesEq(r, url)).forEach((r) => Object.assign(r, body)); return json(204); }
   if (m === "DELETE") return json(204);
   return json(405, {});
 }
@@ -109,13 +115,13 @@ async function openAnalytics(page) {
   await a.page.evaluate(() => { showView("today"); showView("today"); openDeal(DEALS[0].id); openHistory(); showView("problem"); showView("admin"); });
   await settle(a.page);
   ok("One event per view change, repeats ignored", db.events.map((e) => e.view).join(",") === "today,deal,history,problem,admin", db.events.map((e) => e.view).join(","));
-  ok("Event holds only session_id, view and entered_at", db.bodies.every((b) => Object.keys(b).sort().join(",") === "entered_at,session_id,view"), JSON.stringify(db.bodies[0]));
+  ok("Event holds only session_id, view and entered_at", db.bodies.every((b) => Object.keys(b).sort((x, y) => x.localeCompare(y)).join(",") === "entered_at,session_id,view"), JSON.stringify(db.bodies[0]));
   const sessA = db.events[0].session_id;
   ok("One session id across the tab", db.events.every((e) => e.session_id === sessA));
   await a.page.reload(); await a.page.waitForSelector("#todoList .qrow", { state: "attached" }); await settle(a.page);
-  ok("A reload keeps the session", db.events[db.events.length - 1].session_id === sessA);
+  ok("A reload keeps the session", db.events.at(-1).session_id === sessA);
   const tab2 = await a.ctx.newPage(); await tab2.goto(APP); await tab2.waitForSelector("#todoList .qrow"); await settle(tab2);
-  ok("A new tab is a new session", db.events[db.events.length - 1].session_id !== sessA);
+  ok("A new tab is a new session", db.events.at(-1).session_id !== sessA);
   await tab2.close();
 
   // (a) Two browsers: 2 visitors, per-view counts add up.
@@ -133,7 +139,7 @@ async function openAnalytics(page) {
   ok("(a) Table lists the five screens", rows.map((r) => r[0]).join("|") === "Today|Activity history|Problem statement|Deal Detail|Admin");
   ok("(a) Duration shown as mm:ss", /^\d\d:\d\d$/.test(card.Duration), card.Duration);
   ok("(a) Bounce rate shown as a %", /^\d+(\.\d)?%$/.test(card["Bounce Rate"]), card["Bounce Rate"]);
-  ok("(a) Shares add up to about 100%", Math.abs(rows.reduce((t, r) => t + parseFloat(r[2]), 0) - 100) < 1);
+  ok("(a) Shares add up to about 100%", Math.abs(rows.reduce((t, r) => t + Number.parseFloat(r[2]), 0) - 100) < 1);
   ok("(a) No names or companies on the tab", !/Whitfield|Meridian|Ortiz|rep-\d/.test(text));
   ok("No JavaScript errors", a.page.errors.length + b.page.errors.length === 0, a.page.errors.concat(b.page.errors).join(" | "));
 

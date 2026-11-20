@@ -13,7 +13,7 @@ function analyticsSessionId(){
     var id = sessionStorage.getItem(key);   // a reload in the same tab keeps it; a new tab gets a new one
     if(!id){ id = (crypto.randomUUID ? crypto.randomUUID() : analyticsUuid()); sessionStorage.setItem(key, id); }
     return id;
-  } catch(e){
+  } catch(e){ /* sessionStorage blocked (private mode, sandbox): keep one id for this page instead */
     if(!window.__analyticsSessionFallback) window.__analyticsSessionFallback = analyticsUuid();
     return window.__analyticsSessionFallback;
   }
@@ -47,7 +47,7 @@ function analyticsFlush(){
 }
 (function(){
   var baseShowView = showView;
-  showView = function(v, opts){
+  window.showView = function(v, opts){
     baseShowView(v, opts);
     var key = currentView === "detail" ? "detail:" + detailId : currentView;
     if(key === analyticsLastView) return;  /* same view again (e.g. a re-render) is not a new page view */
